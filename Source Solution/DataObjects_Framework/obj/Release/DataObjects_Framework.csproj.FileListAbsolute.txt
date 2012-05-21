@@ -1,0 +1,6 @@
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\bin\Release\DataObjects_Framework.XML
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\bin\Release\DataObjects_Framework.dll
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\bin\Release\DataObjects_Framework.pdb
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\obj\Release\ResolveAssemblyReference.cache
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\obj\Release\DataObjects_Framework.dll
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\DataObjects_Framework\obj\Release\DataObjects_Framework.pdb
