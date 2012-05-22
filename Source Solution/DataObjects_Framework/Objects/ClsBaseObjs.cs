@@ -13,6 +13,9 @@ using DataObjects_Framework.Base;
 
 namespace DataObjects_Framework.Objects
 {
+    /// <summary>
+    /// Object storage for list of ClsBase objects
+    /// </summary>
     public class ClsBaseObjs
     {
         #region _Variables
@@ -35,9 +38,22 @@ namespace DataObjects_Framework.Objects
 
         #region _Methods
 
+        /// <summary>
+        /// Adds a ClsBase object to the collection
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the ClsBase object to be used for retrieval
+        /// </param>
+        /// <param name="Obj">
+        /// The ClsBase object to be added
+        /// </param>
         public void Add(string Name, ClsBase Obj)
         { this.mList_Obj.Add(new Str_Obj(Name, Obj)); }
 
+        /// <summary>
+        /// Gets the number of ClsBase objects stored in the collection
+        /// </summary>
+        /// <returns></returns>
         public Int32 Count()
         { return this.mList_Obj.Count; }
 
@@ -45,19 +61,31 @@ namespace DataObjects_Framework.Objects
 
         #region _Properties
 
+        /// <summary>
+        /// Returns the object with the name specified
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the object to retrieve
+        /// </param>
+        /// <returns></returns>
         public ClsBase this[string Name]
         {
             get
             {
-                foreach (Str_Obj Obj in this.mList_Obj)
-                {
-                    if (Name == Obj.Name)
-                    { return Obj.Obj; }
-                }
-                return null;
+                //foreach (Str_Obj Obj in this.mList_Obj)
+                //{
+                //    if (Name == Obj.Name)
+                //    { return Obj.Obj; }
+                //}
+                //return null;
+
+                return this.mList_Obj.FirstOrDefault(X => X.Name == Name).Obj;
             }
         }
 
+        /// <summary>
+        /// Returns a string array of the Names of the ClsBase objects in the collection
+        /// </summary>
         public string[] pName
         {
             get
@@ -69,6 +97,9 @@ namespace DataObjects_Framework.Objects
             }
         }
 
+        /// <summary>
+        /// Returns the ClsBase object collection
+        /// </summary>
         public List<Str_Obj> pList_Obj
         {
             get
@@ -76,6 +107,5 @@ namespace DataObjects_Framework.Objects
         }
 
         #endregion
-
     }
 }
