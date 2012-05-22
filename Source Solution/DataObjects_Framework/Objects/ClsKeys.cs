@@ -19,10 +19,26 @@ namespace DataObjects_Framework.Objects
     {
         #region _Variables
 
+        /// <summary>
+        /// Struct Str_Keys
+        /// </summary>
         public struct Str_Keys
         {
+            /// <summary>
+            /// The name of the key
+            /// </summary>
             public string Name;
+
+            /// <summary>
+            /// The value of the key
+            /// </summary>
             public Int64 Value;
+
+            /// <summary>
+            /// Constructor for Str_Keys
+            /// </summary>
+            /// <param name="pName"></param>
+            /// <param name="pValue"></param>
             public Str_Keys(string pName, Int64 pValue)
             {
                 Name = pName;
@@ -46,9 +62,7 @@ namespace DataObjects_Framework.Objects
         /// The value of the key, most likely the ID of the table
         /// </param>
         public void Add(string Name, Int64 Value = 0)
-        {
-            this.mObj.Add(new Str_Keys(Name, Value));
-        }
+        { this.mObj.Add(new Str_Keys(Name, Value)); }
 
         /// <summary>
         /// Returns the number of keys contained in this object

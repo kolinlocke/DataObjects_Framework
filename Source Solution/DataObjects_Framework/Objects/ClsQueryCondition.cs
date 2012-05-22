@@ -20,16 +20,51 @@ namespace DataObjects_Framework.Objects
     {
         #region _Variables
 
+        /// <summary>
+        /// Struct Query Condition
+        /// </summary>
         [Serializable]
         public struct Str_QueryCondition 
         {
+            /// <summary>
+            /// The Name of the condition
+            /// </summary>
             public string Name;
+
+            /// <summary>
+            /// The Field Name of the condition on the data source
+            /// </summary>
             public string FieldName;
+
+            /// <summary>
+            /// The operator of the condition
+            /// </summary>
             public string Operator;
+
+            /// <summary>
+            /// The condition value
+            /// </summary>
             public object Value;
+
+            /// <summary>
+            /// The data type of the condition field
+            /// </summary>
             public string DataType;
+
+            /// <summary>
+            /// The default value of the condition field if its null
+            /// </summary>
             public string DefaultValue;
 
+            /// <summary>
+            /// Constructor for Str_QueryCondition
+            /// </summary>
+            /// <param name="pName"></param>
+            /// <param name="pFieldName"></param>
+            /// <param name="pOperator"></param>
+            /// <param name="pValue"></param>
+            /// <param name="pDataType"></param>
+            /// <param name="pDefaultValue"></param>
             public Str_QueryCondition(
                 string pName
                 , string pFieldName
@@ -48,6 +83,10 @@ namespace DataObjects_Framework.Objects
         }
 
         Int64 mCt = 0;
+
+        /// <summary>
+        /// The condition object collection
+        /// </summary>
         protected List<Str_QueryCondition> mQc = new List<Str_QueryCondition>();
 
         #endregion
@@ -387,15 +426,29 @@ namespace DataObjects_Framework.Objects
 
         #region _Properties
 
+        /// <summary>
+        /// Gets the condition object value based on the name supplied
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the condition object to get the value from
+        /// </param>
+        /// <returns></returns>
         public object pValue_Get(string Name)
         {
             foreach (Str_QueryCondition Obj in this.mQc)
-            {
-                if (Name == Obj.Name) return Obj.Value;
-            }
+            { if (Name == Obj.Name) return Obj.Value; }
             return DBNull.Value;
         }
 
+        /// <summary>
+        /// Sets the new condition object value based on the name supplied
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the object to set its value
+        /// </param>
+        /// <param name="Value">
+        /// The new value to set
+        /// </param>
         public void pValue_Set(string Name, object Value)
         {
             foreach (Str_QueryCondition Obj in this.mQc)
@@ -409,15 +462,29 @@ namespace DataObjects_Framework.Objects
             }
         }
 
+        /// <summary>
+        /// Gets the condition object based on the name supplied
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the condition object to get
+        /// </param>
+        /// <returns></returns>
         public Str_QueryCondition pObj_Get(string Name)
         {
             foreach (Str_QueryCondition Obj in this.mQc)
-            {
-                if (Name == Obj.Name) return Obj;
-            }
+            { if (Name == Obj.Name) return Obj; }
             return new Str_QueryCondition();
         }
 
+        /// <summary>
+        /// Sets a new condition object based on the name supplied
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the condition object to overwrite
+        /// </param>
+        /// <param name="Value">
+        /// The new condition object to assign
+        /// </param>
         public void pObj_Set(string Name, Str_QueryCondition Value)
         {
             foreach (Str_QueryCondition Obj in this.mQc)
@@ -427,11 +494,13 @@ namespace DataObjects_Framework.Objects
                     Str_QueryCondition Inner_Obj = Obj;
                     Inner_Obj = Value;
                     return;
-                }
-                
+                }                
             }
         }
         
+        /// <summary>
+        /// Gets the condition object collection
+        /// </summary>
         public List<Str_QueryCondition> pList
         {
             get { return this.mQc; }

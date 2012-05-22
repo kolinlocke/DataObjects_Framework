@@ -10,6 +10,9 @@ using DataObjects_Framework.Objects;
 
 namespace DataObjects_Framework.DataAccess
 {
+    /// <summary>
+    /// The SQL Server implementation of Interface_DataAccess
+    /// </summary>
     public class ClsDataAccess_SqlServer : Interface_DataAccess
     {
         #region _Variables
@@ -20,6 +23,25 @@ namespace DataObjects_Framework.DataAccess
 
         #region _ImpelementedMethods
 
+        /// <summary>
+        /// Fetches a result set from a data source object
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="SourceObject">
+        /// Data source object to fetch from
+        /// </param>
+        /// <param name="Fields">
+        /// List of fields tp fetch (SQL valid syntax)
+        /// </param>
+        /// <param name="Condition">
+        /// Condition to use the filter the result set (SQL Where valid syntax)
+        /// </param>
+        /// <param name="Sort">
+        /// Sort expression to use to sort the result set (SQL Order By valid syntax)
+        /// </param>
+        /// <returns></returns>
         public DataTable GetQuery(
             Interface_Connection Connection
             , string SourceObject
@@ -42,7 +64,23 @@ namespace DataObjects_Framework.DataAccess
 
             return Pq.ExecuteQuery().Tables[0];
         }
-        
+
+        /// <summary>
+        /// Fetches a result set from a data source object
+        /// </summary>
+        /// <param name="SourceObject">
+        /// Data source object to fetch from
+        /// </param>
+        /// <param name="Fields">
+        /// List of fields tp fetch (SQL valid syntax)
+        /// </param>
+        /// <param name="Condition">
+        /// Condition to use the filter the result set (SQL Where valid syntax)
+        /// </param>
+        /// <param name="Sort">
+        /// Sort expression to use to sort the result set (SQL Order By valid syntax)
+        /// </param>
+        /// <returns></returns>
         public DataTable GetQuery(string SourceObject, string Fields = "", string Condition = "", string Sort = "")
         {
             ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
@@ -57,6 +95,33 @@ namespace DataObjects_Framework.DataAccess
             { Cn.Close(); }
         }
 
+        /// <summary>
+        /// Fetches a result set from a data source object
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="SourceObject">
+        /// Data source object to fetch from
+        /// </param>
+        /// <param name="Fields">
+        /// List of fields tp fetch (SQL valid syntax)
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to use the filter the result set
+        /// </param>
+        /// <param name="Sort">
+        /// Sort expression to use to sort the result set (SQL Order By valid syntax)
+        /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
+        /// <returns></returns>
         public DataTable GetQuery(Interface_Connection Connection, string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
         {
             string Query_RowNumberSort = Sort;
@@ -92,6 +157,30 @@ namespace DataObjects_Framework.DataAccess
             return Pq.ExecuteQuery().Tables[0];
         }
 
+        /// <summary>
+        /// Fetches a result set from a data source object
+        /// </summary>
+        /// <param name="SourceObject">
+        /// Data source object to fetch from
+        /// </param>
+        /// <param name="Fields">
+        /// List of fields tp fetch (SQL valid syntax)
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to use the filter the result set
+        /// </param>
+        /// <param name="Sort">
+        /// Sort expression to use to sort the result set (SQL Order By valid syntax)
+        /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
+        /// <returns></returns>
         public DataTable GetQuery(string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
         {
             ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
@@ -105,33 +194,83 @@ namespace DataObjects_Framework.DataAccess
             finally
             { Da.Close(); }
         }
-                
+        
+        /// <summary>
+        /// Gets the current using Connection Object used by this instance
+        /// </summary>
         public Interface_Connection Connection
         {
             get { return this.mConnection; }
         }
 
+        /// <summary>
+        /// Connects to the defined datasource
+        /// </summary>
         public void Connect()
         {
             this.mConnection = new ClsConnection_SqlServer();
             this.mConnection.Connect();
         }
 
+        /// <summary>
+        /// Closes the current connection
+        /// </summary>
         public void Close()
         { this.mConnection.Close(); }
 
+        /// <summary>
+        /// Begins a new transaction
+        /// </summary>
         public void BeginTransaction()
         { this.mConnection.BeginTransaction(); }
 
+        /// <summary>
+        /// Commits the current transaction
+        /// </summary>
         public void CommitTransaction()
         { this.mConnection.CommitTransaction(); }
 
+        /// <summary>
+        /// Reverts the current transaction
+        /// </summary>
         public void RollbackTransaction()
         { this.mConnection.RollbackTransaction(); }
 
+        /// <summary>
+        /// Saves the datarow to the target table
+        /// </summary>
+        /// <param name="ObjDataRow">
+        /// The source datarow to be saved
+        /// </param>
+        /// <param name="TableName">
+        /// The name of the table to be operated
+        /// </param>
+        /// <param name="SchemaName">
+        /// The name of the schema of the target table
+        /// </param>
+        /// <param name="IsDelete">
+        /// If true, the operation will be a Delete operation
+        /// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
+        /// <returns></returns>
         public bool SaveDataRow(DataRow ObjDataRow, string TableName, string SchemaName = "", bool IsDelete = false, List<string> CustomKeys = null)
         { return this.mConnection.SaveDataRow(ObjDataRow, TableName, SchemaName, IsDelete, CustomKeys); }
-        
+
+        /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// Additional conditions to be used in fetching the data
+        /// </param>
+        /// <param name="Sort">
+        /// Additional sorting to be used in fetching the data
+        /// </param>
+        /// <returns></returns>
         public DataTable List(
             string ObjectName
             , string Condition = ""
@@ -141,6 +280,25 @@ namespace DataObjects_Framework.DataAccess
             return Dt;
         }
 
+        /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to be used in fetching the data
+        /// </param>
+        /// <param name="Sort">
+        /// Additional sorting to be used in fetching the data
+        /// </param>
+        /// <param name="Top">
+        /// Limits the result set, mainly used for pagination
+        /// </param>
+        /// <param name="Page">
+        /// Fetch a section of the result set based on the supplied Top, mainly used for pagination
+        /// </param>
+        /// <returns></returns>
         public DataTable List(
             string ObjectName
             , ClsQueryCondition Condition
@@ -151,7 +309,17 @@ namespace DataObjects_Framework.DataAccess
             DataTable Dt = this.GetQuery(ObjectName, "*", Condition, Sort, Top, Page);
             return Dt;
         }
-        
+
+        /// <summary>
+        /// Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to be used in fetching the data
+        /// </param>
+        /// <returns></returns>
         public long List_Count(string ObjectName, ClsQueryCondition Condition = null)
         {
             DataTable Dt = this.GetQuery(ObjectName, "Count(1) As [Ct]", Condition);
@@ -162,12 +330,31 @@ namespace DataObjects_Framework.DataAccess
             return ReturnValue;
         }
 
+        /// <summary>
+        /// Returns a Empy List based on the supplied source data object Name
+        /// Used for getting the definition of the data object
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <returns></returns>
         public DataTable List_Empty(Interface_Connection Connection, string ObjectName)
         {
             
             return this.GetQuery(Connection, ObjectName, "*", "1 = 0");
         }
 
+        /// <summary>
+        /// Returns a Empy List based on the supplied source data object Name
+        /// Used for getting the definition of the data object
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <returns></returns>
         public DataTable List_Empty(string ObjectName)
         {
             ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
@@ -182,6 +369,21 @@ namespace DataObjects_Framework.DataAccess
             { Cn.Close(); }
         }
 
+        /// <summary>
+        /// Loads the Data Object with the supplied Key,
+        /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+        /// if not supplied by an explicit foreign key definition
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object to be fetched
+        /// </param>
+        /// <param name="List_Key">
+        /// The defined Key names of the data objects
+        /// </param>
+        /// <param name="Keys">
+        /// The ClsKey object to use
+        /// </param>
+        /// <returns></returns>
         public DataRow Load(string ObjectName, List<string> List_Key, ClsKeys Keys)
         {
             DataTable Dt;
@@ -214,6 +416,22 @@ namespace DataObjects_Framework.DataAccess
             return Dr;
         }
 
+        /// <summary>
+        /// Loads the defined Data Object Table Detail
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object of the Table Detail
+        /// </param>
+        /// <param name="Keys">
+        /// The ClsKey object to use
+        /// </param>
+        /// <param name="Condition">
+        /// Additional conditions to be used in fetching the data
+        /// </param>
+        /// <param name="ForeignKeys">
+        /// Custom defined Keys of the Table Detail
+        /// </param>
+        /// <returns></returns>
         public DataTable Load_TableDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
             StringBuilder Sb_Condition = new StringBuilder();
@@ -275,6 +493,22 @@ namespace DataObjects_Framework.DataAccess
             return Dt;
         }
 
+        /// <summary>
+        /// Loads the defined Data Object Row Detail
+        /// </summary>
+        /// <param name="ObjectName">
+        /// The source data object of the Row Detail
+        /// </param>
+        /// <param name="Keys">
+        /// The ClsKey object to use
+        /// </param>
+        /// <param name="Condition">
+        /// Additional conditions to be used in fetching the data
+        /// </param>
+        /// <param name="ForeignKeys">
+        /// Custom defined Keys of the Row Detail
+        /// </param>
+        /// <returns></returns>
         public DataRow Load_RowDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
             StringBuilder Sb_Condition = new StringBuilder();
@@ -340,9 +574,20 @@ namespace DataObjects_Framework.DataAccess
             return Dr;
         }
 
+        /// <summary>
+        /// Creates a ClsQueryCondition based on the SQL Server implementation
+        /// </summary>
+        /// <returns></returns>
         public ClsQueryCondition CreateQueryCondition()
         { return new ClsQueryCondition(); }
 
+        /// <summary>
+        /// Gets the definition of the requested data object
+        /// </summary>
+        /// <param name="TableName">
+        /// The requested data object name
+        /// </param>
+        /// <returns></returns>
         public DataTable GetTableDef(string TableName)
         {
             DataTable Rv = null;

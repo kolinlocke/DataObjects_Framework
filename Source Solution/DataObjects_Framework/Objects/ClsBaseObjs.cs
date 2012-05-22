@@ -20,11 +20,26 @@ namespace DataObjects_Framework.Objects
     {
         #region _Variables
 
+        /// <summary>
+        /// Struct Str_Obj
+        /// </summary>
         public struct Str_Obj
         {
+            /// <summary>
+            /// Name of the ClsBase object
+            /// </summary>
             public string Name;
+
+            /// <summary>
+            /// The ClsBase object
+            /// </summary>
             public ClsBase Obj;
 
+            /// <summary>
+            /// Constructor for Str_Obj
+            /// </summary>
+            /// <param name="pName"></param>
+            /// <param name="pObj"></param>
             public Str_Obj(string pName, ClsBase pObj)
             {
                 this.Name = pName;

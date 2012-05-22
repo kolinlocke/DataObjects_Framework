@@ -4,73 +4,479 @@
         <name>DataObjects_Framework</name>
     </assembly>
     <members>
-        <member name="T:DataObjects_Framework.Objects.ClsQueryCondition">
+        <member name="T:DataObjects_Framework.Objects.ClsKeys">
             <summary>
-            Used for adding conditions for various fetching methods,
-            generally used to avoid Sql Injection attacks
+            Used for loading Data Objects
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Add(System.String,System.String,System.Object,System.String,System.String)">
+        <member name="M:DataObjects_Framework.Objects.ClsKeys.Add(System.String,System.Int64)">
             <summary>
-            Add a condition
+            Adds a Key Definition
             </summary>
             <param name="Name">
-            Field Name on the data source
-            </param>
-            <param name="Operator">
-            Operator to use (SQL valid operators)
+            Name of the key, most likely the primary key of the table used by the Data Object
             </param>
             <param name="Value">
-            The condition value
-            </param>
-            <param name="DataType">
-            Field Data Type
-            </param>
-            <param name="DefaultValue">
-            Default value to use with ISNULL function
+            The value of the key, most likely the ID of the table
             </param>
         </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Add(System.String,System.String,System.String,System.String)">
+        <member name="M:DataObjects_Framework.Objects.ClsKeys.Count">
             <summary>
-            Add a condition
+            Returns the number of keys contained in this object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsKeys.Item(System.String)">
+            <summary>
+            Default Property, gets/sets the Key Value with the Key Name supplied
             </summary>
             <param name="Name">
-            Field Name on the data source
+            Name of the key
+            </param>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsKeys.Item(System.Int32)">
+            <summary>
+            Default Property, gets/sets the Key Value with the index supplied
+            </summary>
+            <param name="Index">
+            Index of the key
+            </param>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsKeys.pName">
+            <summary>
+            Returns the array of the keys defined
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Objects.ClsKeys.Str_Keys">
+            <summary>
+            Struct Str_Keys
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsKeys.Str_Keys.Name">
+            <summary>
+            The name of the key
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsKeys.Str_Keys.Value">
+            <summary>
+            The value of the key
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsKeys.Str_Keys.#ctor(System.String,System.Int64)">
+            <summary>
+            Constructor for Str_Keys
+            </summary>
+            <param name="pName"></param>
+            <param name="pValue"></param>
+        </member>
+        <member name="T:DataObjects_Framework.Objects.ClsBaseObjs">
+            <summary>
+            Object storage for list of ClsBase objects
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsBaseObjs.Add(System.String,DataObjects_Framework.Base.ClsBase)">
+            <summary>
+            Adds a ClsBase object to the collection
+            </summary>
+            <param name="Name">
+            The name of the ClsBase object to be used for retrieval
+            </param>
+            <param name="Obj">
+            The ClsBase object to be added
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsBaseObjs.Count">
+            <summary>
+            Gets the number of ClsBase objects stored in the collection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsBaseObjs.Item(System.String)">
+            <summary>
+            Returns the object with the name specified
+            </summary>
+            <param name="Name">
+            The name of the object to retrieve
+            </param>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsBaseObjs.pName">
+            <summary>
+            Returns a string array of the Names of the ClsBase objects in the collection
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsBaseObjs.pList_Obj">
+            <summary>
+            Returns the ClsBase object collection
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Objects.ClsBaseObjs.Str_Obj">
+            <summary>
+            Struct Str_Obj
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsBaseObjs.Str_Obj.Name">
+            <summary>
+            Name of the ClsBase object
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsBaseObjs.Str_Obj.Obj">
+            <summary>
+            The ClsBase object
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsBaseObjs.Str_Obj.#ctor(System.String,DataObjects_Framework.Base.ClsBase)">
+            <summary>
+            Constructor for Str_Obj
+            </summary>
+            <param name="pName"></param>
+            <param name="pObj"></param>
+        </member>
+        <member name="T:DataObjects_Framework.Base.ClsBaseTableDetail">
+            <summary>
+            Internal, manages the defined table detail
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.#ctor(DataObjects_Framework.Base.ClsBase,System.String,System.String,System.String,System.String,System.Collections.Generic.List{System.String},System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Constructor for this class
+            </summary>
+            <param name="Obj_Base">
+            Parent Object Base
+            </param>
+            <param name="HeaderName">
+            Parent Table Name, (apparently not used at all)
+            </param>
+            <param name="TableName">
+            Detail Table Name
+            </param>
+            <param name="ViewName">
+            Detail View Name
+            </param>
+            <param name="OtherLoadCondition">
+            Additional conditions for fetching
+            </param>
+            <param name="CustomKeys">
+            Custom Key definition
+            </param>
+            <param name="CustomForeignKeys">
+            Custom Foreign Key definition
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.Load(DataObjects_Framework.DataAccess.Interface_DataAccess,DataObjects_Framework.Objects.ClsKeys)">
+            <summary>
+            Loads the detail table
+            </summary>
+            <param name="Da">
+            An open DataAccess from calling method
+            </param>
+            <param name="Keys">
+            Key Object to use
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.Save(DataObjects_Framework.DataAccess.Interface_DataAccess)">
+            <summary>
+            Saves the changes to the detail table
+            </summary>
+            <param name="Da">
+            An open DataAccess from calling method
+            </param>
+        </member>
+        <member name="P:DataObjects_Framework.Base.ClsBaseTableDetail.pTableName">
+            <summary>
+            Gets the defined table name for this detail table
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Base.ClsBaseTableDetail.pDt">
+            <summary>
+            Get/Set Property, gets or sets the datatable object for this detail table
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,System.String,System.String)">
+            <summary>
+            Fetches a result set from a data source object
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="SourceObject">
+            Data source object to fetch from
+            </param>
+            <param name="Fields">
+            List of fields tp fetch (SQL valid syntax)
             </param>
             <param name="Condition">
-            The condition value
+            Condition to use the filter the result set (SQL Where valid syntax)
             </param>
-            <param name="DataType">
-            Field Data Type
+            <param name="Sort">
+            Sort expression to use to sort the result set (SQL Order By valid syntax)
             </param>
-            <param name="DefaultValue">
-            Default value to use with ISNULL function
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(System.String,System.String,System.String,System.String)">
+            <summary>
+            Fetches a result set from a data source object
+            </summary>
+            <param name="SourceObject">
+            Data source object to fetch from
             </param>
+            <param name="Fields">
+            List of fields tp fetch (SQL valid syntax)
+            </param>
+            <param name="Condition">
+            Condition to use the filter the result set (SQL Where valid syntax)
+            </param>
+            <param name="Sort">
+            Sort expression to use to sort the result set (SQL Order By valid syntax)
+            </param>
+            <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Count">
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
             <summary>
-            Returns the number of conditions in this instance
+            Fetches a result set from a data source object
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="SourceObject">
+            Data source object to fetch from
+            </param>
+            <param name="Fields">
+            List of fields tp fetch (SQL valid syntax)
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to use the filter the result set
+            </param>
+            <param name="Sort">
+            Sort expression to use to sort the result set (SQL Order By valid syntax)
+            </param>
+            <param name="Top">
+            Limits the number of returned rows in the result set,
+            used in pagination
+            </param>
+            <param name="Page">
+            Selects a section based on the Page and Top values in the result set,
+            used in pagination
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
+            <summary>
+            Fetches a result set from a data source object
+            </summary>
+            <param name="SourceObject">
+            Data source object to fetch from
+            </param>
+            <param name="Fields">
+            List of fields tp fetch (SQL valid syntax)
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to use the filter the result set
+            </param>
+            <param name="Sort">
+            Sort expression to use to sort the result set (SQL Order By valid syntax)
+            </param>
+            <param name="Top">
+            Limits the number of returned rows in the result set,
+            used in pagination
+            </param>
+            <param name="Page">
+            Selects a section based on the Page and Top values in the result set,
+            used in pagination
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Connect">
+            <summary>
+            Connects to the defined datasource
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Close">
+            <summary>
+            Closes the current connection
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.BeginTransaction">
+            <summary>
+            Begins a new transaction
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.CommitTransaction">
+            <summary>
+            Commits the current transaction
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.RollbackTransaction">
+            <summary>
+            Reverts the current transaction
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.SaveDataRow(System.Data.DataRow,System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
+            <summary>
+            Saves the datarow to the target table
+            </summary>
+            <param name="ObjDataRow">
+            The source datarow to be saved
+            </param>
+            <param name="TableName">
+            The name of the table to be operated
+            </param>
+            <param name="SchemaName">
+            The name of the schema of the target table
+            </param>
+            <param name="IsDelete">
+            If true, the operation will be a Delete operation
+            </param>
+            <param name="CustomKeys">
+            Custom Key definition
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.List(System.String,System.String,System.String)">
+            <summary>
+            Returns a List based on the supplied Table/View Name
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="Sort">
+            Additional sorting to be used in fetching the data
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.List(System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int32,System.Int32)">
+            <summary>
+            Returns a List based on the supplied Table/View Name
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to be used in fetching the data
+            </param>
+            <param name="Sort">
+            Additional sorting to be used in fetching the data
+            </param>
+            <param name="Top">
+            Limits the result set, mainly used for pagination
+            </param>
+            <param name="Page">
+            Fetch a section of the result set based on the supplied Top, mainly used for pagination
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.List_Count(System.String,DataObjects_Framework.Objects.ClsQueryCondition)">
+            <summary>
+            Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to be used in fetching the data
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.List_Empty(DataObjects_Framework.Connection.Interface_Connection,System.String)">
+            <summary>
+            Returns a Empy List based on the supplied source data object Name
+            Used for getting the definition of the data object
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.List_Empty(System.String)">
+            <summary>
+            Returns a Empy List based on the supplied source data object Name
+            Used for getting the definition of the data object
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Load(System.String,System.Collections.Generic.List{System.String},DataObjects_Framework.Objects.ClsKeys)">
+            <summary>
+            Loads the Data Object with the supplied Key,
+            when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+            if not supplied by an explicit foreign key definition
+            </summary>
+            <param name="ObjectName">
+            The source data object to be fetched
+            </param>
+            <param name="List_Key">
+            The defined Key names of the data objects
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Load_TableDetails(System.String,DataObjects_Framework.Objects.ClsKeys,System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Loads the defined Data Object Table Detail
+            </summary>
+            <param name="ObjectName">
+            The source data object of the Table Detail
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="ForeignKeys">
+            Custom defined Keys of the Table Detail
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Load_RowDetails(System.String,DataObjects_Framework.Objects.ClsKeys,System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Loads the defined Data Object Row Detail
+            </summary>
+            <param name="ObjectName">
+            The source data object of the Row Detail
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="ForeignKeys">
+            Custom defined Keys of the Row Detail
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.CreateQueryCondition">
+            <summary>
+            Creates a ClsQueryCondition based on the implementation of this interface
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetQueryCondition">
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetTableDef(System.String)">
             <summary>
-            Returns the parameterized condition string, to be used with data fetching.
-            Used internally.
+            Gets the definition of the requested data object
             </summary>
+            <param name="TableName">
+            The requested data object name
+            </param>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetParameters">
+        <member name="P:DataObjects_Framework.DataAccess.Interface_DataAccess.Connection">
             <summary>
-            Returns the SqlParameter Collection associated in the conditions in this instance.
+            Gets the current using Connection Object used by this instance
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetQueryCondition_String">
-            <summary>
-            Returns the non-parameterized condition string, to be used with data fetching.
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:DataObjects_Framework.Base.ClsBase">
             <summary>
@@ -455,7 +861,12 @@
             Get Property, gets the List datatable for the Data Object, Me.Load() required
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,System.String,System.String)">
+        <member name="T:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer">
+            <summary>
+            The SQL Server implementation of Interface_DataAccess
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,System.String,System.String)">
             <summary>
             Fetches a result set from a data source object
             </summary>
@@ -476,7 +887,7 @@
             </param>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(System.String,System.String,System.String,System.String)">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetQuery(System.String,System.String,System.String,System.String)">
             <summary>
             Fetches a result set from a data source object
             </summary>
@@ -494,7 +905,7 @@
             </param>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
             <summary>
             Fetches a result set from a data source object
             </summary>
@@ -523,7 +934,7 @@
             </param>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetQuery(System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int64,System.Int32)">
             <summary>
             Fetches a result set from a data source object
             </summary>
@@ -549,32 +960,32 @@
             </param>
             <returns></returns>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Connect">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Connect">
             <summary>
             Connects to the defined datasource
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.Close">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Close">
             <summary>
             Closes the current connection
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.BeginTransaction">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.BeginTransaction">
             <summary>
             Begins a new transaction
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.CommitTransaction">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.CommitTransaction">
             <summary>
             Commits the current transaction
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.RollbackTransaction">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.RollbackTransaction">
             <summary>
             Reverts the current transaction
             </summary>
         </member>
-        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.SaveDataRow(System.Data.DataRow,System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.SaveDataRow(System.Data.DataRow,System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
             Saves the datarow to the target table
             </summary>
@@ -590,12 +1001,318 @@
             <param name="IsDelete">
             If true, the operation will be a Delete operation
             </param>
+            <param name="CustomKeys">
+            Custom Key definition
+            </param>
             <returns></returns>
         </member>
-        <member name="P:DataObjects_Framework.DataAccess.Interface_DataAccess.Connection">
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.List(System.String,System.String,System.String)">
+            <summary>
+            Returns a List based on the supplied Table/View Name
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="Sort">
+            Additional sorting to be used in fetching the data
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.List(System.String,DataObjects_Framework.Objects.ClsQueryCondition,System.String,System.Int32,System.Int32)">
+            <summary>
+            Returns a List based on the supplied Table/View Name
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to be used in fetching the data
+            </param>
+            <param name="Sort">
+            Additional sorting to be used in fetching the data
+            </param>
+            <param name="Top">
+            Limits the result set, mainly used for pagination
+            </param>
+            <param name="Page">
+            Fetch a section of the result set based on the supplied Top, mainly used for pagination
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.List_Count(System.String,DataObjects_Framework.Objects.ClsQueryCondition)">
+            <summary>
+            Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <param name="Condition">
+            ClsQueryCondition Object to be used in fetching the data
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.List_Empty(DataObjects_Framework.Connection.Interface_Connection,System.String)">
+            <summary>
+            Returns a Empy List based on the supplied source data object Name
+            Used for getting the definition of the data object
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.List_Empty(System.String)">
+            <summary>
+            Returns a Empy List based on the supplied source data object Name
+            Used for getting the definition of the data object
+            </summary>
+            <param name="ObjectName">
+            The source data object name
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Load(System.String,System.Collections.Generic.List{System.String},DataObjects_Framework.Objects.ClsKeys)">
+            <summary>
+            Loads the Data Object with the supplied Key,
+            when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+            if not supplied by an explicit foreign key definition
+            </summary>
+            <param name="ObjectName">
+            The source data object to be fetched
+            </param>
+            <param name="List_Key">
+            The defined Key names of the data objects
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Load_TableDetails(System.String,DataObjects_Framework.Objects.ClsKeys,System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Loads the defined Data Object Table Detail
+            </summary>
+            <param name="ObjectName">
+            The source data object of the Table Detail
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="ForeignKeys">
+            Custom defined Keys of the Table Detail
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Load_RowDetails(System.String,DataObjects_Framework.Objects.ClsKeys,System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Loads the defined Data Object Row Detail
+            </summary>
+            <param name="ObjectName">
+            The source data object of the Row Detail
+            </param>
+            <param name="Keys">
+            The ClsKey object to use
+            </param>
+            <param name="Condition">
+            Additional conditions to be used in fetching the data
+            </param>
+            <param name="ForeignKeys">
+            Custom defined Keys of the Row Detail
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.CreateQueryCondition">
+            <summary>
+            Creates a ClsQueryCondition based on the SQL Server implementation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetTableDef(System.String)">
+            <summary>
+            Gets the definition of the requested data object
+            </summary>
+            <param name="TableName">
+            The requested data object name
+            </param>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Connection">
             <summary>
             Gets the current using Connection Object used by this instance
             </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Objects.ClsQueryCondition">
+            <summary>
+            Used for adding conditions for various fetching methods,
+            generally used to avoid Sql Injection attacks
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.mQc">
+            <summary>
+            The condition object collection
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Add(System.String,System.String,System.Object,System.String,System.String)">
+            <summary>
+            Add a condition
+            </summary>
+            <param name="Name">
+            Field Name on the data source
+            </param>
+            <param name="Operator">
+            Operator to use (SQL valid operators)
+            </param>
+            <param name="Value">
+            The condition value
+            </param>
+            <param name="DataType">
+            Field Data Type
+            </param>
+            <param name="DefaultValue">
+            Default value to use with ISNULL function
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Add(System.String,System.String,System.String,System.String)">
+            <summary>
+            Add a condition
+            </summary>
+            <param name="Name">
+            Field Name on the data source
+            </param>
+            <param name="Condition">
+            The condition value
+            </param>
+            <param name="DataType">
+            Field Data Type
+            </param>
+            <param name="DefaultValue">
+            Default value to use with ISNULL function
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Count">
+            <summary>
+            Returns the number of conditions in this instance
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetQueryCondition">
+            <summary>
+            Returns the parameterized condition string, to be used with data fetching.
+            Used internally.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetParameters">
+            <summary>
+            Returns the SqlParameter Collection associated in the conditions in this instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.GetQueryCondition_String">
+            <summary>
+            Returns the non-parameterized condition string, to be used with data fetching.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.pValue_Get(System.String)">
+            <summary>
+            Gets the condition object value based on the name supplied
+            </summary>
+            <param name="Name">
+            The name of the condition object to get the value from
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.pValue_Set(System.String,System.Object)">
+            <summary>
+            Sets the new condition object value based on the name supplied
+            </summary>
+            <param name="Name">
+            The name of the object to set its value
+            </param>
+            <param name="Value">
+            The new value to set
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.pObj_Get(System.String)">
+            <summary>
+            Gets the condition object based on the name supplied
+            </summary>
+            <param name="Name">
+            The name of the condition object to get
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.pObj_Set(System.String,DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition)">
+            <summary>
+            Sets a new condition object based on the name supplied
+            </summary>
+            <param name="Name">
+            The name of the condition object to overwrite
+            </param>
+            <param name="Value">
+            The new condition object to assign
+            </param>
+        </member>
+        <member name="P:DataObjects_Framework.Objects.ClsQueryCondition.pList">
+            <summary>
+            Gets the condition object collection
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition">
+            <summary>
+            Struct Query Condition
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.Name">
+            <summary>
+            The Name of the condition
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.FieldName">
+            <summary>
+            The Field Name of the condition on the data source
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.Operator">
+            <summary>
+            The operator of the condition
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.Value">
+            <summary>
+            The condition value
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.DataType">
+            <summary>
+            The data type of the condition field
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.DefaultValue">
+            <summary>
+            The default value of the condition field if its null
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition.#ctor(System.String,System.String,System.String,System.Object,System.String,System.String)">
+            <summary>
+            Constructor for Str_QueryCondition
+            </summary>
+            <param name="pName"></param>
+            <param name="pFieldName"></param>
+            <param name="pOperator"></param>
+            <param name="pValue"></param>
+            <param name="pDataType"></param>
+            <param name="pDefaultValue"></param>
         </member>
         <member name="M:DataObjects_Framework.Common.Do_Methods.IsNull(System.Object,System.Object)">
             <summary>
@@ -653,108 +1370,6 @@
             <summary>
             Sets if the framework will use the soft delete feature, 
             will require the "IsDeleted As Bit" field on tables to use this feature.
-            </summary>
-        </member>
-        <member name="T:DataObjects_Framework.Base.ClsBaseTableDetail">
-            <summary>
-            Internal, manages the defined table detail
-            </summary>
-        </member>
-        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.#ctor(DataObjects_Framework.Base.ClsBase,System.String,System.String,System.String,System.String,System.Collections.Generic.List{System.String},System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
-            <summary>
-            Constructor for this class
-            </summary>
-            <param name="Obj_Base">
-            Parent Object Base
-            </param>
-            <param name="HeaderName">
-            Parent Table Name, (apparently not used at all)
-            </param>
-            <param name="TableName">
-            Detail Table Name
-            </param>
-            <param name="ViewName">
-            Detail View Name
-            </param>
-            <param name="OtherLoadCondition">
-            Additional conditions for fetching
-            </param>
-            <param name="CustomForeignKeys">
-            Custom Foreign Key definition
-            </param>
-        </member>
-        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.Load(DataObjects_Framework.DataAccess.Interface_DataAccess,DataObjects_Framework.Objects.ClsKeys)">
-            <summary>
-            Loads the detail table
-            </summary>
-            <param name="Da">
-            An open DataAccess from calling method
-            </param>
-            <param name="Keys">
-            Key Object to use
-            </param>
-        </member>
-        <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.Save(DataObjects_Framework.DataAccess.Interface_DataAccess)">
-            <summary>
-            Saves the changes to the detail table
-            </summary>
-            <param name="Da">
-            An open DataAccess from calling method
-            </param>
-        </member>
-        <member name="P:DataObjects_Framework.Base.ClsBaseTableDetail.pTableName">
-            <summary>
-            Gets the defined table name for this detail table
-            </summary>
-        </member>
-        <member name="P:DataObjects_Framework.Base.ClsBaseTableDetail.pDt">
-            <summary>
-            Get/Set Property, gets or sets the datatable object for this detail table
-            </summary>
-        </member>
-        <member name="T:DataObjects_Framework.Objects.ClsKeys">
-            <summary>
-            Used for loading Data Objects
-            </summary>
-        </member>
-        <member name="M:DataObjects_Framework.Objects.ClsKeys.Add(System.String,System.Int64)">
-            <summary>
-            Adds a Key Definition
-            </summary>
-            <param name="Name">
-            Name of the key, most likely the primary key of the table used by the Data Object
-            </param>
-            <param name="Value">
-            The value of the key, most likely the ID of the table
-            </param>
-        </member>
-        <member name="M:DataObjects_Framework.Objects.ClsKeys.Count">
-            <summary>
-            Returns the number of keys contained in this object
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:DataObjects_Framework.Objects.ClsKeys.Item(System.String)">
-            <summary>
-            Default Property, gets/sets the Key Value with the Key Name supplied
-            </summary>
-            <param name="Name">
-            Name of the key
-            </param>
-            <returns></returns>
-        </member>
-        <member name="P:DataObjects_Framework.Objects.ClsKeys.Item(System.Int32)">
-            <summary>
-            Default Property, gets/sets the Key Value with the index supplied
-            </summary>
-            <param name="Index">
-            Index of the key
-            </param>
-            <returns></returns>
-        </member>
-        <member name="P:DataObjects_Framework.Objects.ClsKeys.pName">
-            <summary>
-            Returns the array of the keys defined
             </summary>
         </member>
     </members>

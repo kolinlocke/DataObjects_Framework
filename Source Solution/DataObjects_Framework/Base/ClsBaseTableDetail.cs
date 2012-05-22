@@ -58,6 +58,9 @@ namespace DataObjects_Framework.Base
 		/// <param name="OtherLoadCondition">
 		/// Additional conditions for fetching
 		/// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
         /// <param name="CustomForeignKeys">
         /// Custom Foreign Key definition
         /// </param>
