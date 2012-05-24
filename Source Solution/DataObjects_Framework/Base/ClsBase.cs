@@ -446,10 +446,12 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Add required columns (e.g. validation flags) to supplier datatable,
+        /// Adds required columns (e.g. validation flags) to supplier datatable,
         /// mostly used in detail tables
         /// </summary>
-        /// <param name="Dt"></param>
+        /// <param name="Dt">
+        /// The target data table object
+        /// </param>
         public virtual void AddRequired(DataTable Dt)
         {
             Int64 Ct = 0;
@@ -473,7 +475,7 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Calls AddRequired to all defined Table Details
+        /// Calls AddRequired() to all defined Table Details
         /// </summary>
         protected virtual void AddRequired()
         {
@@ -485,9 +487,11 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Clears Validation Flags to supplied datatable
+        /// Clears Validation Flags to the specified data table
         /// </summary>
-        /// <param name="Dt"></param>
+        /// <param name="Dt">
+        /// The target data table object
+        /// </param>
         public virtual void Check_Clear(DataTable Dt)
         {
             DataRow[] Arr_Dr = Dt.Select("", "", DataViewRowState.CurrentRows);
@@ -499,7 +503,7 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Clears Validation flags to all defined Table Details
+        /// Clears Validation flags to all defined Table Details
         /// </summary>
         public virtual void Check_Clear()
         {
@@ -511,9 +515,11 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Static) Gets a new TmpKey Value from the supplied datatable with a TmpKey column
+        /// Gets a new TmpKey Value from the specified  data table with a TmpKey column
         /// </summary>
-        /// <param name="Dt_Source"></param>
+        /// <param name="Dt_Source">
+        /// The source data table
+        /// </param>
         /// <returns></returns>
         public static Int64 GetNewTmpKey(DataTable Dt_Source)
         {
@@ -537,12 +543,10 @@ namespace DataObjects_Framework.Base
             DataRow Dr = this.mHeader_Dr;
 
             bool IsDeleted = false;
-            try
-            { IsDeleted = (bool)Do_Methods.IsNull(Dr["IsDeleted"], false); }
+            try { IsDeleted = (bool)Do_Methods.IsNull(Dr["IsDeleted"], false); }
             catch { }
 
-            if (IsDeleted)
-            { throw new ClsCustomException("This record is deleted."); }
+            if (IsDeleted) { throw new ClsCustomException("This record is deleted."); }
         }
 
         #endregion

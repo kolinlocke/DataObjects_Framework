@@ -46,12 +46,15 @@ namespace DataObjects_Framework.Base
         /// View Name of the data object 
         /// this will be used Me.Load() if supplied
         /// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
         /// <param name="Qc_LoadCondition">
         /// Additional conditions when fetching the data object
         /// </param>
-        public virtual void Setup(string TableName, string ViewName = "", ClsQueryCondition Qc_LoadCondition = null)
+        public virtual void Setup(string TableName, string ViewName = "", List<string> CustomKeys = null, ClsQueryCondition Qc_LoadCondition = null)
         {
-            base.Setup(TableName, ViewName);
+            base.Setup(TableName, ViewName, CustomKeys);
             this.mQc_LoadCondition = Qc_LoadCondition;
         }
 
