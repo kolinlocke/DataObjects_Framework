@@ -15,6 +15,9 @@ using System.Security.Cryptography;
 
 namespace DataObjects_Framework.Common
 {
+    /// <summary>
+    /// Common Methods used by the framework are defined here.
+    /// </summary>
     public class Do_Methods
     {
         /// <summary>
@@ -418,75 +421,76 @@ namespace DataObjects_Framework.Common
             { Da.Close(); }
         }
 
-        public static string GetSeriesNo(string Name)
-        {
-            string Rv = "";
-            DataTable Dt;
-            string TableName;
-            string FieldName;
-            string Prefix;
-            Int32 Digits;
+        //Removed
+        //public static string GetSeriesNo(string Name)
+        //{
+        //    string Rv = "";
+        //    DataTable Dt;
+        //    string TableName;
+        //    string FieldName;
+        //    string Prefix;
+        //    Int32 Digits;
 
-            Dt = new ClsBase().pDa.GetQuery("System_DocumentSeries", "", "ModuleName = '" + Name + "'");
-            if (Dt.Rows.Count > 0)
-            {
-                TableName = (string)Do_Methods.IsNull(Dt.Rows[0]["TableName"], "");
-                FieldName = (string)Do_Methods.IsNull(Dt.Rows[0]["FieldName"], "");
-                Prefix = (string)Do_Methods.IsNull(Dt.Rows[0]["Prefix"], "");
-                Digits = (Int32)Do_Methods.IsNull(Dt.Rows[0]["Digits"], "");
-            }
-            else
-            { return Rv; }
+        //    Dt = new ClsBase().pDa.GetQuery("System_DocumentSeries", "", "ModuleName = '" + Name + "'");
+        //    if (Dt.Rows.Count > 0)
+        //    {
+        //        TableName = (string)Do_Methods.IsNull(Dt.Rows[0]["TableName"], "");
+        //        FieldName = (string)Do_Methods.IsNull(Dt.Rows[0]["FieldName"], "");
+        //        Prefix = (string)Do_Methods.IsNull(Dt.Rows[0]["Prefix"], "");
+        //        Digits = (Int32)Do_Methods.IsNull(Dt.Rows[0]["Digits"], "");
+        //    }
+        //    else
+        //    { return Rv; }
 
-            List<DataObjects_Framework.Common.Do_Constants.Str_Parameters> Sp = new List<DataObjects_Framework.Common.Do_Constants.Str_Parameters>();
-            Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@TableName", TableName));
-            Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@FieldName", FieldName));
-            Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@Prefix", Prefix));
-            Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@Digits", Digits));
+        //    List<DataObjects_Framework.Common.Do_Constants.Str_Parameters> Sp = new List<DataObjects_Framework.Common.Do_Constants.Str_Parameters>();
+        //    Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@TableName", TableName));
+        //    Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@FieldName", FieldName));
+        //    Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@Prefix", Prefix));
+        //    Sp.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters("@Digits", Digits));
 
-            Dt = new ClsConnection_SqlServer().ExecuteQuery("usp_GetSeriesNo", Sp).Tables[0];
-            if (Dt.Rows.Count > 0)
-            { Rv = (string)Dt.Rows[0][0]; }
+        //    Dt = new ClsConnection_SqlServer().ExecuteQuery("usp_GetSeriesNo", Sp).Tables[0];
+        //    if (Dt.Rows.Count > 0)
+        //    { Rv = (string)Dt.Rows[0][0]; }
 
-            return Rv;
-        }
+        //    return Rv;
+        //}
 
-        public static bool CheckSeriesDuplicate(
-            string TableName
-            , string SeriesField
-            , ClsKeys Keys
-            , string SeriesNo)
-        {
-            bool Rv = false;
-            DataTable Dt;
+        //public static bool CheckSeriesDuplicate(
+        //    string TableName
+        //    , string SeriesField
+        //    , ClsKeys Keys
+        //    , string SeriesNo)
+        //{
+        //    bool Rv = false;
+        //    DataTable Dt;
 
-            System.Text.StringBuilder Sb_Query_Key = new StringBuilder();
-            string Query_Key = "";
-            string Query_And = "";
+        //    System.Text.StringBuilder Sb_Query_Key = new StringBuilder();
+        //    string Query_Key = "";
+        //    string Query_And = "";
 
-            foreach (string Inner_Key in Keys.pName)
-            {
-                Sb_Query_Key.Append(Query_And + " " + Inner_Key + " = " + Keys[Inner_Key]);
-                Query_And = " And ";
-            }
+        //    foreach (string Inner_Key in Keys.pName)
+        //    {
+        //        Sb_Query_Key.Append(Query_And + " " + Inner_Key + " = " + Keys[Inner_Key]);
+        //        Query_And = " And ";
+        //    }
 
-            Query_Key = " 1 = 1 ";
-            if (Sb_Query_Key.ToString() != "")
-            { Query_Key = "(Not (" + Sb_Query_Key.ToString() + "))"; }
+        //    Query_Key = " 1 = 1 ";
+        //    if (Sb_Query_Key.ToString() != "")
+        //    { Query_Key = "(Not (" + Sb_Query_Key.ToString() + "))"; }
 
-            Dt = new ClsBase().pDa.GetQuery(
-                "[" + TableName + "]"
-                , "Count(1) As [Ct]"
-                , Query_Key + " And " + SeriesField + " = '" + SeriesNo + "'");
-            if (Dt.Rows.Count > 0)
-            {
-                if ((Int32)Dt.Rows[0][0] > 0)
-                { Rv = true; }
-            }
+        //    Dt = new ClsBase().pDa.GetQuery(
+        //        "[" + TableName + "]"
+        //        , "Count(1) As [Ct]"
+        //        , Query_Key + " And " + SeriesField + " = '" + SeriesNo + "'");
+        //    if (Dt.Rows.Count > 0)
+        //    {
+        //        if ((Int32)Dt.Rows[0][0] > 0)
+        //        { Rv = true; }
+        //    }
 
-            //True means duplicates have been found
-            return Rv;
-        }
+        //    //True means duplicates have been found
+        //    return Rv;
+        //}
 
     }
 }

@@ -50,10 +50,10 @@ namespace DataObjects_Framework.Base
 		/// Parent Table Name, (apparently not used at all)
 		/// </param>
 		/// <param name="TableName">
-		/// Detail Table Name
+		/// Table Detail Table Name
 		/// </param>
 		/// <param name="ViewName">
-		/// Detail View Name
+		/// Table Detail View Name
 		/// </param>
 		/// <param name="OtherLoadCondition">
 		/// Additional conditions for fetching
@@ -100,10 +100,10 @@ namespace DataObjects_Framework.Base
 		#region _Methods
 
 		/// <summary>
-		/// Loads the detail table
+		/// Loads the table detail data
 		/// </summary>
 		/// <param name="Da">
-		/// An open DataAccess from calling method
+		/// An open DataAccess object from calling method
 		/// </param>
 		/// <param name="Keys">
 		/// Key Object to use
@@ -186,8 +186,7 @@ namespace DataObjects_Framework.Base
 		/// </summary>
 		public string pTableName
 		{
-			get
-			{ return this.mTableName; }
+            get { return this.mTableName; }
 		}
 
 		/// <summary>
@@ -195,10 +194,8 @@ namespace DataObjects_Framework.Base
 		/// </summary>
 		public DataTable pDt
 		{
-			get
-			{ return this.mDt; }
-			set
-			{ this.mDt = value; }
+            get { return this.mDt; }
+            set { this.mDt = value; }
 		}
 
 		#endregion

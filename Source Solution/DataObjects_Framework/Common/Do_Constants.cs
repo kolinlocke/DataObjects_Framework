@@ -5,9 +5,15 @@ using System.Text;
 
 namespace DataObjects_Framework.Common
 {
+    /// <summary>
+    /// Constants and structs used in the framework are defined here.
+    /// </summary>
     public class Do_Constants
     {
 
+        /// <summary>
+        /// Struct Str_Parameters, used in various query execution methods.
+        /// </summary>
         public struct Str_Parameters
         {
             public string Name;
@@ -20,6 +26,9 @@ namespace DataObjects_Framework.Common
             }
         }
 
+        /// <summary>
+        /// Struct Str_Sort
+        /// </summary>
         public struct Str_Sort
         {
             public string Name;

@@ -10,6 +10,9 @@ using DataObjects_Framework.Objects;
 
 namespace DataObjects_Framework.DataAccess
 {
+    /// <summary>
+    /// Interface for Data Access Methods
+    /// </summary>
     public interface Interface_DataAccess
     {
         /// <summary>
@@ -161,22 +164,22 @@ namespace DataObjects_Framework.DataAccess
         void RollbackTransaction();
         
         /// <summary>
-        /// Saves the datarow to the target table
+        /// Saves the datarow to the target table.
         /// </summary>
         /// <param name="ObjDataRow">
-        /// The source datarow to be saved
+        /// The source datarow to be saved.
         /// </param>
         /// <param name="TableName">
-        /// The name of the table to be operated
+        /// The name of the table to be operated.
         /// </param>
         /// <param name="SchemaName">
-        /// The name of the schema of the target table
+        /// The name of the schema of the target table.
         /// </param>
         /// <param name="IsDelete">
-        /// If true, the operation will be a Delete operation
+        /// If true, the operation will be a Delete operation.
         /// </param>
         /// <param name="CustomKeys">
-        /// Custom Key definition
+        /// Custom Key definition.
         /// </param>
         /// <returns></returns>
         bool SaveDataRow(DataRow ObjDataRow, string TableName, string SchemaName = "", bool IsDelete = false, List<string> CustomKeys = null);
@@ -342,28 +345,57 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataTable GetTableDef(string TableName);
         
+        /// <summary>
+        /// Gets the specified system parameter value, or creates a new system parameter with the specified default value
+        /// </summary>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The default value for the parameter if it doesn't exists
+        /// </param>
+        /// <returns></returns>
         string GetSystemParameter(string ParameterName, string DefaultValue = "");
 
+        /// <summary>
+        /// Gets the specified system parameter value, or creates a new system parameter with the specified default value
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The default value for the parameter if it doesn't exists
+        /// </param>
+        /// <returns></returns>
         string GetSystemParameter(Interface_Connection Connection, string ParameterName, string DefaultValue = "");
 
+        /// <summary>
+        /// Sets a new value to the specified system parameter
+        /// </summary>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="ParameterValue">
+        /// The value to be set
+        /// </param>
         void SetSystemParameter(string ParameterName, string ParameterValue);
 
+        /// <summary>
+        /// Sets a new value to the specified system parameter
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="ParameterValue">
+        /// The value to be set
+        /// </param>
         void SetSystemParameter(Interface_Connection Connection, string ParameterName, string ParameterValue);
-
-        //[-]
-
-        /*
-        void AddSelected(
-            DataTable Dt_Target
-            , List<Int64> Selected_IDs
-            , string Selected_DataSourceName
-            , string Selected_KeyName
-            , string Target_Key
-            , bool HasTmpKey = false
-            , List<Constants.Str_AddSelectedFields> List_Selected_Fields = null
-            , List<Constants.Str_AddSelectedFieldsDefault> List_Selected_FieldsDefault = null);
-        */
-
     }
 }
 

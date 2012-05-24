@@ -7,55 +7,81 @@ using System.Data.SqlClient;
 
 namespace DataObjects_Framework.Connection
 {
+    /// <summary>
+    /// Wrapper for prepared sql statements, provides various methods for ease of use, (implemented using SQL Server)
+    /// </summary>
     public class ClsPreparedQuery
     {
-
         #region _Variables
 
         //string mQuery = "";
         SqlCommand mCmd = null;
-        ClsConnection_SqlServer mDa = null;
+        ClsConnection_SqlServer mCn = null;
         //bool IsDa = false;
 
         #endregion
 
         #region _Constructor
 
-        public ClsPreparedQuery(ClsConnection_SqlServer pDa, string pQuery, SqlParameter[] pArrSp)
+        /// <summary>
+        /// Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+        /// </summary>
+        /// <param name="Cn">
+        /// An open ClsConnection_SqlServer object
+        /// </param>
+        /// <param name="Query">
+        /// The query string to be executed
+        /// </param>
+        /// <param name="ArrSp">
+        /// Array of parameters to be used
+        /// </param>
+        public ClsPreparedQuery(ClsConnection_SqlServer Cn, string Query, SqlParameter[] ArrSp)
         {
-            this.mDa = pDa;
+            this.mCn = Cn;
             this.mCmd = new SqlCommand();
-            this.mCmd.Connection = (SqlConnection)this.mDa.pConnection;
-            this.mCmd.Transaction = (SqlTransaction)this.mDa.pTransaction;
+            this.mCmd.Connection = (SqlConnection)this.mCn.pConnection;
+            this.mCmd.Transaction = (SqlTransaction)this.mCn.pTransaction;
             this.mCmd.CommandType = System.Data.CommandType.Text;
-            this.mCmd.CommandText = pQuery;
+            this.mCmd.CommandText = Query;
 
-            foreach (SqlParameter Sp in pArrSp)
+            foreach (SqlParameter Sp in ArrSp)
             {
                 this.mCmd.Parameters.Add(Sp);
             }
         }
 
-        public ClsPreparedQuery(ClsConnection_SqlServer pDa)
+        /// <summary>
+        /// Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+        /// </summary>
+        /// <param name="Cn">
+        /// An open ClsConnection_SqlServer object
+        /// </param>
+        public ClsPreparedQuery(ClsConnection_SqlServer Cn)
         {
-            this.mDa = pDa;
+            this.mCn = Cn;
             this.mCmd = new SqlCommand();
-            this.mCmd.Connection = (SqlConnection)this.mDa.pConnection;
-            this.mCmd.Transaction = (SqlTransaction)this.mDa.pTransaction;
+            this.mCmd.Connection = (SqlConnection)this.mCn.pConnection;
+            this.mCmd.Transaction = (SqlTransaction)this.mCn.pTransaction;
             this.mCmd.CommandType = System.Data.CommandType.Text;
         }
 
+        /// <summary>
+        /// Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+        /// </summary>
         public ClsPreparedQuery()
         {
-            this.mDa = new ClsConnection_SqlServer();
-            this.mDa.Connect();
+            this.mCn = new ClsConnection_SqlServer();
+            this.mCn.Connect();
             this.mCmd = new SqlCommand();
-            this.mCmd.Connection = (SqlConnection)this.mDa.pConnection;
-            this.mCmd.Transaction = (SqlTransaction)this.mDa.pTransaction;
+            this.mCmd.Connection = (SqlConnection)this.mCn.pConnection;
+            this.mCmd.Transaction = (SqlTransaction)this.mCn.pTransaction;
             this.mCmd.CommandType = System.Data.CommandType.Text;
             //this.IsDa = true;
         }
 
+        /// <summary>
+        /// Deconstructor for ClsPreparedQuery
+        /// </summary>
         ~ClsPreparedQuery()
         {
             /*
@@ -68,18 +94,51 @@ namespace DataObjects_Framework.Connection
 
         #region _Methods
 
+        /// <summary>
+        /// Adds parameters from an array of parameters
+        /// </summary>
+        /// <param name="Arr_Sp"></param>
         public void Add_Parameter(SqlParameter[] Arr_Sp)
         {
             foreach (SqlParameter Sp in Arr_Sp)
             { this.mCmd.Parameters.Add(Sp); }
         }
 
+        /// <summary>
+        /// Adds a new parameter
+        /// </summary>
+        /// <param name="Sp"></param>
         public void Add_Parameter(SqlParameter Sp)
-        {
-            this.mCmd.Parameters.Add(Sp);
-        }
+        { this.mCmd.Parameters.Add(Sp); }
 
-        public void Add_Parameter(string Name, SqlDbType DbType, Int32 Size = 0, byte Precision = 0, byte Scale = 0, Object Value = null)
+        /// <summary>
+        /// Adds a new parameter
+        /// </summary>
+        /// <param name="Name">
+        /// The parameter name
+        /// </param>
+        /// <param name="DbType">
+        /// The datatype of the parameter
+        /// </param>
+        /// <param name="Size">
+        /// The size of the parameter, only needed in text datatypes such as varchar, nchar, etc.
+        /// </param>
+        /// <param name="Precision">
+        /// The precision value of the parameter, only needed in Numeric and Decimal datatypes
+        /// </param>
+        /// <param name="Scale">
+        /// The scale value of the parameter, only needed in Numeric and Decimal datatypes
+        /// </param>
+        /// <param name="Value">
+        /// The parameter value
+        /// </param>
+        public void Add_Parameter(
+            string Name
+            , SqlDbType DbType
+            , Int32 Size = 0
+            , byte Precision = 0
+            , byte Scale = 0
+            , Object Value = null)
         {
             SqlParameter Sp = new SqlParameter(Name, DbType, Size);
             Sp.Scale = Scale;
@@ -88,33 +147,18 @@ namespace DataObjects_Framework.Connection
             this.mCmd.Parameters.Add(Sp);
         }
 
-        /*
-        public void Add_Parameter(string Name, SqlDbType DbType, Int32 Size, byte Precision, byte Scale)
-        {
-            this.Add_Parameter(Name, DbType, Size, Precision, Scale, null);
-        }
-
-        public void Add_Parameter(string Name, SqlDbType DbType, Int32 Size, byte Precision)
-        {
-            this.Add_Parameter(Name, DbType, Size, Precision, 0, null);
-        }
-
-        public void Add_Parameter(string Name, SqlDbType DbType, Int32 Size)
-        {
-            this.Add_Parameter(Name, DbType, Size, 0, 0, null);
-        }
-
-        public void Add_Parameter(string Name, SqlDbType DbType)
-        {
-            this.Add_Parameter(Name, DbType, 0, 0, 0, null);
-        }
-        */
-
+        /// <summary>
+        /// Creates a prepared version of the command on an instance of SQL Server.
+        /// </summary>
         public void Prepare() 
         {
             this.mCmd.Prepare();
         }
 
+        /// <summary>
+        /// Executes the query with the supplied parameters and returns the resulting data set.
+        /// </summary>
+        /// <returns></returns>
         public DataSet ExecuteQuery()
         {
             DataSet Ds = new DataSet();
@@ -124,52 +168,49 @@ namespace DataObjects_Framework.Connection
             return Ds;
         }
 
+        /// <summary>
+        /// Executes the query with the supplied parameters without returning the result set.
+        /// </summary>
         public void ExecuteNonQuery()
-        {
-            this.mCmd.ExecuteNonQuery();
-        }
+        { this.mCmd.ExecuteNonQuery(); }
 
         #endregion
 
         #region _Properties
 
+        /// <summary>
+        /// Gets the connection object in this instance.
+        /// </summary>
         public ClsConnection_SqlServer pDa 
         {
-            get 
-            {
-                return this.mDa;
-            }
+            get { return this.mCn; }
         }
 
+        /// <summary>
+        /// Gets the sql command object in this instance.
+        /// </summary>
         public SqlCommand pCmd
         {
-            get
-            {
-                return this.mCmd;
-            }
+            get { return this.mCmd; }
         }
 
+        /// <summary>
+        /// Gets the parameter collection in this instance.
+        /// </summary>
         public SqlParameterCollection pParameters 
         {
-            get
-            {
-                return this.mCmd.Parameters;
-            }
+            get { return this.mCmd.Parameters; }
         }
 
+        /// <summary>
+        /// Gets/Sets the query text in this instance.
+        /// </summary>
         public string pQuery 
         {
-            get 
-            {
-                return this.mCmd.CommandText;
-            }
-            set 
-            {
-                this.mCmd.CommandText = value;
-            }
+            get { return this.mCmd.CommandText; }
+            set { this.mCmd.CommandText = value; }
         }
 
         #endregion
-
     }
 }

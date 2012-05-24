@@ -605,6 +605,16 @@ namespace DataObjects_Framework.DataAccess
             return Rv;
         }
 
+        /// <summary>
+        /// Gets the specified system parameter value, or creates a new system parameter with the specified default value
+        /// </summary>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The default value for the parameter if it doesn't exists
+        /// </param>
+        /// <returns></returns>
         public string GetSystemParameter(string ParameterName, string DefaultValue = "")
         {
             ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
@@ -619,6 +629,19 @@ namespace DataObjects_Framework.DataAccess
             { Cn.Close(); }
         }
 
+        /// <summary>
+        /// Gets the specified system parameter value, or creates a new system parameter with the specified default value
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The default value for the parameter if it doesn't exists
+        /// </param>
+        /// <returns></returns>
         public string GetSystemParameter(Interface_Connection Connection, string ParameterName, string DefaultValue = "")
         {
             ClsConnection_SqlServer Cn = (ClsConnection_SqlServer)Connection;
@@ -627,12 +650,21 @@ namespace DataObjects_Framework.DataAccess
             List<Do_Constants.Str_Parameters> Sp = new List<Do_Constants.Str_Parameters>();
             Sp.Add(new Do_Constants.Str_Parameters("ParameterName", ParameterName));
             Sp.Add(new Do_Constants.Str_Parameters("DefaultValue", DefaultValue));
-            DataTable Dt = Cn.ExecuteQuery("usp_Get_System_Parameter", Sp).Tables[0];
+            DataTable Dt = Cn.ExecuteQuery("usp_DataObjects_Parameter_Get", Sp).Tables[0];
             if (Dt.Rows.Count > 0)
             { Rv = (string)Dt.Rows[0][0]; }
             return Rv;                
         }
 
+        /// <summary>
+        /// Sets a new value to the specified system parameter
+        /// </summary>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="ParameterValue">
+        /// The value to be set
+        /// </param>
         public void SetSystemParameter(string ParameterName, string ParameterValue)
         {
             ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
@@ -646,87 +678,27 @@ namespace DataObjects_Framework.DataAccess
             finally
             { Cn.Close(); }
         }
-
+        
+        /// <summary>
+        /// Sets a new value to the specified system parameter
+        /// </summary>
+        /// <param name="Connection">
+        /// An open connection object
+        /// </param>
+        /// <param name="ParameterName">
+        /// The system parameter name
+        /// </param>
+        /// <param name="ParameterValue">
+        /// The value to be set
+        /// </param>
         public void SetSystemParameter(Interface_Connection Connection, string ParameterName, string ParameterValue)
         {
             ClsConnection_SqlServer Cn = (ClsConnection_SqlServer)Connection;
             List<Do_Constants.Str_Parameters> Sp = new List<Do_Constants.Str_Parameters>();
             Sp.Add(new Do_Constants.Str_Parameters("ParameterName", ParameterName));
             Sp.Add(new Do_Constants.Str_Parameters("ParameterValue", ParameterValue));
-            Cn.ExecuteNonQuery("usp_Set_System_Parameter", Sp);
+            Cn.ExecuteNonQuery("usp_DataObjects_Parameter_Set", Sp);
         }
-
-        /*
-        public void AddSelected(
-            DataTable Dt_Target
-            , List<long> Selected_IDs
-            , string Selected_DataSourceName
-            , string Selected_KeyName
-            , string Target_Key
-            , bool HasTmpKey
-            , List<Constants.Str_AddSelectedFields> List_Selected_Fields = null
-            , List<Constants.Str_AddSelectedFieldsDefault> List_Selected_FieldsDefault = null)
-        {
-            if (Selected_IDs == null)
-            { return; }
-
-            if (Selected_IDs.Count == 0)
-            { return; }
-
-            ClsPreparedQuery Pq = new ClsPreparedQuery();
-            Pq.pQuery = @"Select * From " + Selected_DataSourceName + @" Where " + Selected_KeyName + @" = @ID";
-            Pq.Add_Parameter("ID", SqlDbType.BigInt);
-            Pq.Prepare();
-
-            foreach (Int64 Selected_ID in Selected_IDs)
-            {
-                Pq.pParameters["ID"].Value = Selected_ID;
-                DataTable Dt_Selected = Pq.ExecuteQuery().Tables[0];
-                if (Dt_Selected.Rows.Count > 0)
-                {
-                    DataRow Dr_Selected = Dt_Selected.Rows[0];
-                    DataRow[] ArrDr;
-                    DataRow Dr_Target = null;
-                    
-                    ArrDr = Dt_Target.Select(Target_Key + @" = " + Methods.Convert_Int64(Dr_Selected[Selected_KeyName]));
-                    if (ArrDr.Length > 0)
-                    { Dr_Target = ArrDr[0]; }
-                    else
-                    {
-                        Dr_Target = Dt_Target.NewRow();
-                        Dt_Target.Rows.Add(Dr_Target);
-
-                        Dr_Target[Target_Key] = Dr_Selected[Selected_KeyName];
-
-                        if (HasTmpKey)
-                        {
-                            Int64 Ct = 0;
-                            ArrDr = Dt_Target.Select("", "TmpKey Desc", DataViewRowState.CurrentRows);
-                            if (ArrDr.Length > 0)
-                            { Ct = Methods.Convert_Int64(ArrDr[0]["TmpKey"]); }
-                            Ct++;
-
-                            Dr_Target["TmpKey"] = Ct;
-                            Dr_Target["Item_Style"] = "";
-                        }
-                    }
-
-                    if (List_Selected_Fields != null)
-                    {
-                        foreach (Constants.Str_AddSelectedFields Selected_Field in List_Selected_Fields)
-                        { Dr_Target[Selected_Field.Field_Target] = Dr_Selected[Selected_Field.Field_Selected]; }
-                    }
-
-                    if (List_Selected_FieldsDefault != null)
-                    {
-                        foreach (Constants.Str_AddSelectedFieldsDefault Selected_FieldDefault in List_Selected_FieldsDefault)
-                        { Dr_Target[Selected_FieldDefault.Field_Target] = Selected_FieldDefault.Value; }
-                    }
-
-                }
-            }
-        }
-        */
 
         #endregion
     }

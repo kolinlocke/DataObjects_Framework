@@ -150,10 +150,10 @@
             Parent Table Name, (apparently not used at all)
             </param>
             <param name="TableName">
-            Detail Table Name
+            Table Detail Table Name
             </param>
             <param name="ViewName">
-            Detail View Name
+            Table Detail View Name
             </param>
             <param name="OtherLoadCondition">
             Additional conditions for fetching
@@ -167,10 +167,10 @@
         </member>
         <member name="M:DataObjects_Framework.Base.ClsBaseTableDetail.Load(DataObjects_Framework.DataAccess.Interface_DataAccess,DataObjects_Framework.Objects.ClsKeys)">
             <summary>
-            Loads the detail table
+            Loads the table detail data
             </summary>
             <param name="Da">
-            An open DataAccess from calling method
+            An open DataAccess object from calling method
             </param>
             <param name="Keys">
             Key Object to use
@@ -192,6 +192,11 @@
         <member name="P:DataObjects_Framework.Base.ClsBaseTableDetail.pDt">
             <summary>
             Get/Set Property, gets or sets the datatable object for this detail table
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.DataAccess.Interface_DataAccess">
+            <summary>
+            Interface for Data Access Methods
             </summary>
         </member>
         <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetQuery(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String,System.String,System.String)">
@@ -315,22 +320,22 @@
         </member>
         <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.SaveDataRow(System.Data.DataRow,System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
-            Saves the datarow to the target table
+            Saves the datarow to the target table.
             </summary>
             <param name="ObjDataRow">
-            The source datarow to be saved
+            The source datarow to be saved.
             </param>
             <param name="TableName">
-            The name of the table to be operated
+            The name of the table to be operated.
             </param>
             <param name="SchemaName">
-            The name of the schema of the target table
+            The name of the schema of the target table.
             </param>
             <param name="IsDelete">
-            If true, the operation will be a Delete operation
+            If true, the operation will be a Delete operation.
             </param>
             <param name="CustomKeys">
-            Custom Key definition
+            Custom Key definition.
             </param>
             <returns></returns>
         </member>
@@ -472,6 +477,58 @@
             The requested data object name
             </param>
             <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetSystemParameter(System.String,System.String)">
+            <summary>
+            Gets the specified system parameter value, or creates a new system parameter with the specified default value
+            </summary>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="DefaultValue">
+            The default value for the parameter if it doesn't exists
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.GetSystemParameter(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String)">
+            <summary>
+            Gets the specified system parameter value, or creates a new system parameter with the specified default value
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="DefaultValue">
+            The default value for the parameter if it doesn't exists
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.SetSystemParameter(System.String,System.String)">
+            <summary>
+            Sets a new value to the specified system parameter
+            </summary>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="ParameterValue">
+            The value to be set
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.Interface_DataAccess.SetSystemParameter(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String)">
+            <summary>
+            Sets a new value to the specified system parameter
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="ParameterValue">
+            The value to be set
+            </param>
         </member>
         <member name="P:DataObjects_Framework.DataAccess.Interface_DataAccess.Connection">
             <summary>
@@ -785,10 +842,110 @@
             Current DataAccess Object
             </summary>
         </member>
+        <member name="T:DataObjects_Framework.Objects.ClsCustomException">
+            <summary>
+            A custom exception object
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsCustomException.#ctor">
+            <summary>
+            Constructor for ClsCustomException
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsCustomException.#ctor(System.String)">
+            <summary>
+            Constructor for ClsCustomException
+            </summary>
+            <param name="Message">
+            The error message that explains the reason for the exception.
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Objects.ClsCustomException.#ctor(System.String,System.Exception)">
+            <summary>
+            Constructor for ClsCustomException
+            </summary>
+            <param name="Message">
+            The error message that explains the reason for the exception.
+            </param>
+            <param name="InnerException">
+            The exception that is the cause of the current exception, or a null reference
+            (Nothing in Visual Basic) if no inner exception is specified. - from System.Exception        
+            </param>
+        </member>
+        <member name="T:DataObjects_Framework.Base.ClsBaseRowDetail">
+            <summary>
+            Internal, manages the defined row detail
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseRowDetail.#ctor(DataObjects_Framework.Base.ClsBase,System.String,System.String,System.String,System.String,System.Collections.Generic.List{System.String},System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation})">
+            <summary>
+            Constructor for this class
+            </summary>
+            <param name="pObj_Base">
+            Parent Object Base
+            </param>
+            <param name="pHeaderName">
+            Parent Table Name, (apparently not used at all)
+            </param>
+            <param name="pTableName">
+            Row Detail Table Name
+            </param>
+            <param name="pViewName">
+            Row Detail View Name
+            </param>
+            <param name="pOtherLoadCondition">
+            Additional conditions for fetching
+            </param>
+            <param name="CustomKeys">
+            Custom Key definition
+            </param>
+            <param name="ForeignKeys">
+            Custom Foreign Key definition
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseRowDetail.Load(DataObjects_Framework.DataAccess.Interface_DataAccess,DataObjects_Framework.Objects.ClsKeys)">
+            <summary>
+            Loads the row detail data
+            </summary>
+            <param name="Da">
+            An open DataAccess object from calling method
+            </param>
+            <param name="Keys">
+            Key Object to use
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Base.ClsBaseRowDetail.Save(DataObjects_Framework.DataAccess.Interface_DataAccess)">
+            <summary>
+            Saves the changes to the detail table
+            </summary>
+            <param name="Da">
+            An open DataAccess from calling method
+            </param>
+        </member>
+        <member name="P:DataObjects_Framework.Base.ClsBaseRowDetail.pTableName">
+            <summary>
+            Gets the defined table name for this row detail
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Base.ClsBaseRowDetail.pDr">
+            <summary>
+            Gets the DataRow object for this row detail
+            </summary>
+        </member>
         <member name="T:DataObjects_Framework.Base.ClsBase_List">
             <summary>
             Base Class for Data Objects, a List will be loaded instead
             The List can be edited and saved to the defined Table Name
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Base.ClsBase_List.mQc_LoadCondition">
+            <summary>
+            The additional fetching conditions is stored here.
+            </summary>
+        </member>
+        <member name="F:DataObjects_Framework.Base.ClsBase_List.mDt_List">
+            <summary>
+            The data table storage for the loaded Data Object, Me.Load() required
             </summary>
         </member>
         <member name="M:DataObjects_Framework.Base.ClsBase_List.Setup(System.String,System.String,DataObjects_Framework.Objects.ClsQueryCondition)">
@@ -803,7 +960,9 @@
             View Name of the data object 
             this will be used Me.Load() if supplied
             </param>
-            <param name="Qc_LoadCondition"></param>
+            <param name="Qc_LoadCondition">
+            Additional conditions when fetching the data object
+            </param>
         </member>
         <member name="M:DataObjects_Framework.Base.ClsBase_List.List(System.String,System.String)">
             <summary>
@@ -1145,6 +1304,58 @@
             </param>
             <returns></returns>
         </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetSystemParameter(System.String,System.String)">
+            <summary>
+            Gets the specified system parameter value, or creates a new system parameter with the specified default value
+            </summary>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="DefaultValue">
+            The default value for the parameter if it doesn't exists
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.GetSystemParameter(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String)">
+            <summary>
+            Gets the specified system parameter value, or creates a new system parameter with the specified default value
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="DefaultValue">
+            The default value for the parameter if it doesn't exists
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.SetSystemParameter(System.String,System.String)">
+            <summary>
+            Sets a new value to the specified system parameter
+            </summary>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="ParameterValue">
+            The value to be set
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.SetSystemParameter(DataObjects_Framework.Connection.Interface_Connection,System.String,System.String)">
+            <summary>
+            Sets a new value to the specified system parameter
+            </summary>
+            <param name="Connection">
+            An open connection object
+            </param>
+            <param name="ParameterName">
+            The system parameter name
+            </param>
+            <param name="ParameterValue">
+            The value to be set
+            </param>
+        </member>
         <member name="P:DataObjects_Framework.DataAccess.ClsDataAccess_SqlServer.Connection">
             <summary>
             Gets the current using Connection Object used by this instance
@@ -1314,6 +1525,119 @@
             <param name="pDataType"></param>
             <param name="pDefaultValue"></param>
         </member>
+        <member name="T:DataObjects_Framework.Connection.ClsPreparedQuery">
+            <summary>
+            Wrapper for prepared sql statements, provides various methods for ease of use, (implemented using SQL Server)
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.#ctor(DataObjects_Framework.Connection.ClsConnection_SqlServer,System.String,System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+            </summary>
+            <param name="Cn">
+            An open ClsConnection_SqlServer object
+            </param>
+            <param name="Query">
+            The query string to be executed
+            </param>
+            <param name="ArrSp">
+            Array of parameters to be used
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.#ctor(DataObjects_Framework.Connection.ClsConnection_SqlServer)">
+            <summary>
+            Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+            </summary>
+            <param name="Cn">
+            An open ClsConnection_SqlServer object
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.#ctor">
+            <summary>
+            Constructor for ClsPreparedQuery, uses the ClsConnection_SqlServer object
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.Finalize">
+            <summary>
+            Deconstructor for ClsPreparedQuery
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.Add_Parameter(System.Data.SqlClient.SqlParameter[])">
+            <summary>
+            Adds parameters from an array of parameters
+            </summary>
+            <param name="Arr_Sp"></param>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.Add_Parameter(System.Data.SqlClient.SqlParameter)">
+            <summary>
+            Adds a new parameter
+            </summary>
+            <param name="Sp"></param>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.Add_Parameter(System.String,System.Data.SqlDbType,System.Int32,System.Byte,System.Byte,System.Object)">
+            <summary>
+            Adds a new parameter
+            </summary>
+            <param name="Name">
+            The parameter name
+            </param>
+            <param name="DbType">
+            The datatype of the parameter
+            </param>
+            <param name="Size">
+            The size of the parameter, only needed in text datatypes such as varchar, nchar, etc.
+            </param>
+            <param name="Precision">
+            The precision value of the parameter, only needed in Numeric and Decimal datatypes
+            </param>
+            <param name="Scale">
+            The scale value of the parameter, only needed in Numeric and Decimal datatypes
+            </param>
+            <param name="Value">
+            The parameter value
+            </param>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.Prepare">
+            <summary>
+            Creates a prepared version of the command on an instance of SQL Server.
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.ExecuteQuery">
+            <summary>
+            Executes the query with the supplied parameters and returns the resulting data set.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsPreparedQuery.ExecuteNonQuery">
+            <summary>
+            Executes the query with the supplied parameters without returning the result set.
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsPreparedQuery.pDa">
+            <summary>
+            Gets the connection object in this instance.
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsPreparedQuery.pCmd">
+            <summary>
+            Gets the sql command object in this instance.
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsPreparedQuery.pParameters">
+            <summary>
+            Gets the parameter collection in this instance.
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsPreparedQuery.pQuery">
+            <summary>
+            Gets/Sets the query text in this instance.
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Common.Do_Methods">
+            <summary>
+            Common Methods used by the framework are defined here.
+            </summary>
+        </member>
         <member name="M:DataObjects_Framework.Common.Do_Methods.IsNull(System.Object,System.Object)">
             <summary>
             Checks the input objects and returns a default if it is a null, this includes for DBNull checking
@@ -1325,6 +1649,21 @@
             The default output
             </param>
             <returns></returns>
+        </member>
+        <member name="T:DataObjects_Framework.Common.Do_Constants">
+            <summary>
+            Constants and structs used in the framework are defined here.
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Common.Do_Constants.Str_Parameters">
+            <summary>
+            Struct Str_Parameters, used in various query execution methods.
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Common.Do_Constants.Str_Sort">
+            <summary>
+            Struct Str_Sort
+            </summary>
         </member>
         <member name="T:DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation">
             <summary>
@@ -1339,6 +1678,145 @@
         <member name="F:DataObjects_Framework.Common.Do_Constants.Str_ForeignKeyRelation.Child_Key">
             <summary>
             The matching foreign key for the target table detail
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Connection.Interface_Connection">
+            <summary>
+            Interface for the connection object used
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.Interface_Connection.pConnection">
+            <summary>
+            The connection object
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.Interface_Connection.pTransaction">
+            <summary>
+            The transaction object used by this connection
+            </summary>
+        </member>
+        <member name="T:DataObjects_Framework.Connection.ClsConnection_SqlServer">
+            <summary>
+            The SQL Server implementation of Interface_Connection
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.Connect">
+            <summary>
+            Opens a new connection with the specified connection string in Do_Globals.gSettings.pConnectionString.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.Close">
+            <summary>
+            Closes the current connection and disposes the transaction object if it exists.
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.BeginTransaction">
+            <summary>
+            Starts a database transaction.
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.CommitTransaction">
+            <summary>
+            Commits the database transaction.
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.RollbackTransaction">
+            <summary>
+            Rolls back a transaction from a pending state.
+            </summary>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteNonQuery(System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_Parameters})">
+            <summary>
+            Executes a SQL Server stored procedure.
+            </summary>
+            <param name="ProcedureName">
+            The stored procedure name to be executed.
+            </param>
+            <param name="ProcedureParameters">
+            A list of parameters to use with the execution.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteNonQuery(System.String,DataObjects_Framework.Common.Do_Constants.Str_Parameters[])">
+            <summary>
+            Executes a SQL Server stored procedure.
+            </summary>
+            <param name="ProcedureName">
+            The stored procedure name to be executed.
+            </param>
+            <param name="ProcedureParameters">
+            An array of parameters to use with the execution.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteNonQuery(System.String)">
+            <summary>
+            Executes a SQL Server Query Text.
+            </summary>
+            <param name="Query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteQuery(System.String,System.Collections.Generic.List{DataObjects_Framework.Common.Do_Constants.Str_Parameters})">
+            <summary>
+            Executes a SQL Server stored procedure and returns the resulting data set.
+            </summary>
+            <param name="ProcedureName">
+            The stored procedure name to be executed.
+            </param>
+            <param name="ProcedureParameters">
+            A list of parameters to use with the execution.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteQuery(System.String,DataObjects_Framework.Common.Do_Constants.Str_Parameters[])">
+            <summary>
+            Executes a SQL Server stored procedure and returns the resulting data set.
+            </summary>
+            <param name="ProcedureName">
+            The stored procedure name to be executed.
+            </param>
+            <param name="ProcedureParameters">
+            An array of parameters to use with the execution.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.ExecuteQuery(System.String)">
+            <summary>
+            Executes a SQL Server Query Text and returns the resulting data set.
+            </summary>
+            <param name="Query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataObjects_Framework.Connection.ClsConnection_SqlServer.SaveDataRow(System.Data.DataRow,System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
+            <summary>
+            Saves the datarow to the target table in the current connection.
+            </summary>
+            <param name="ObjDataRow">
+            The source datarow to be saved.
+            </param>
+            <param name="TableName">
+            The name of the table to be operated.
+            </param>
+            <param name="SchemaName">
+            The name of the schema of the target table.
+            </param>
+            <param name="IsDelete">
+            If true, the operation will be a Delete operation.
+            </param>
+            <param name="CustomKeys">
+            Custom Key definition.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsConnection_SqlServer.pConnection">
+            <summary>
+            Gets the current connection object
+            </summary>
+        </member>
+        <member name="P:DataObjects_Framework.Connection.ClsConnection_SqlServer.pTransaction">
+            <summary>
+            Gets the current transaction object
             </summary>
         </member>
         <member name="T:DataObjects_Framework.Common.Do_Globals">

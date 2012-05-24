@@ -14,6 +14,9 @@ using DataObjects_Framework.Base;
 
 namespace DataObjects_Framework.Base
 {
+    /// <summary>
+    /// Internal, manages the defined row detail
+    /// </summary>
     public class ClsBaseRowDetail
     {
         #region _Variables
@@ -35,9 +38,32 @@ namespace DataObjects_Framework.Base
 
         #region _Constructor
 
-        private ClsBaseRowDetail()
-        { }
+        private ClsBaseRowDetail() { }
 
+        /// <summary>
+        /// Constructor for this class
+        /// </summary>
+        /// <param name="pObj_Base">
+        /// Parent Object Base
+        /// </param>
+        /// <param name="pHeaderName">
+        /// Parent Table Name, (apparently not used at all)
+        /// </param>
+        /// <param name="pTableName">
+        /// Row Detail Table Name
+        /// </param>
+        /// <param name="pViewName">
+        /// Row Detail View Name
+        /// </param>
+        /// <param name="pOtherLoadCondition">
+        /// Additional conditions for fetching
+        /// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
+        /// <param name="ForeignKeys">
+        /// Custom Foreign Key definition
+        /// </param>
         public ClsBaseRowDetail(
             ClsBase pObj_Base
             , string pHeaderName
@@ -73,9 +99,24 @@ namespace DataObjects_Framework.Base
 
         #region _Methods
         
+        /// <summary>
+        /// Loads the row detail data
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess object from calling method
+        /// </param>
+        /// <param name="Keys">
+        /// Key Object to use
+        /// </param>
         public void Load(Interface_DataAccess Da, ClsKeys Keys)
         { this.mDr = Da.Load_RowDetails(this.mViewName, Keys, this.mOtherLoadCondition, this.mList_ForeignKey); }
 
+        /// <summary>
+        /// Saves the changes to the detail table
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess from calling method
+        /// </param>
         public void Save(Interface_DataAccess Da)
         {
             /*
@@ -110,16 +151,20 @@ namespace DataObjects_Framework.Base
 
         #region _Properties
 
+        /// <summary>
+        /// Gets the defined table name for this row detail
+        /// </summary>
         public string pTableName
         {
-            get
-            { return this.mTableName; }
+            get { return this.mTableName; }
         }
 
+        /// <summary>
+        /// Gets the DataRow object for this row detail
+        /// </summary>
         public DataRow pDr
         {
-            get
-            { return this.mDr; }
+            get { return this.mDr; }
         }
 
         #endregion

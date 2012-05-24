@@ -60,8 +60,6 @@ namespace DataObjects_Framework.Base
         /// </summary>
         protected Interface_DataAccess mDa = new ClsDataAccess_SqlServer();
 
-        protected ClsCustomException mException;
-
         #endregion
 
         #region _Constructor
@@ -109,8 +107,6 @@ namespace DataObjects_Framework.Base
             }
             else
             { this.mHeader_Key = CustomKeys; }
-            
-            this.mException = new ClsCustomException();
         }
 
         /// <summary>

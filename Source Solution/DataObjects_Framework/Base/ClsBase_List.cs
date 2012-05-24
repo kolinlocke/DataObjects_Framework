@@ -21,7 +21,14 @@ namespace DataObjects_Framework.Base
     {
         #region _Variables
 
+        /// <summary>
+        /// The additional fetching conditions is stored here.
+        /// </summary>
         protected ClsQueryCondition mQc_LoadCondition = null;
+
+        /// <summary>
+        /// The data table storage for the loaded Data Object, Me.Load() required
+        /// </summary>
         protected DataTable mDt_List;
         
         #endregion
@@ -39,7 +46,9 @@ namespace DataObjects_Framework.Base
         /// View Name of the data object 
         /// this will be used Me.Load() if supplied
         /// </param>
-        /// <param name="Qc_LoadCondition"></param>
+        /// <param name="Qc_LoadCondition">
+        /// Additional conditions when fetching the data object
+        /// </param>
         public virtual void Setup(string TableName, string ViewName = "", ClsQueryCondition Qc_LoadCondition = null)
         {
             base.Setup(TableName, ViewName);
