@@ -88,7 +88,10 @@ namespace DataObjects_Framework.Base
         /// <param name="CustomKeys">
         /// Custom Key definition
         /// </param>
-        protected virtual void Setup(string TableName, string ViewName = "", List<string> CustomKeys = null)
+        protected virtual void Setup(
+            string TableName
+            , string ViewName = ""
+            , List<string> CustomKeys = null)
         {
             this.mHeader_TableName = TableName;
 
@@ -239,7 +242,7 @@ namespace DataObjects_Framework.Base
         //[-]
 
         /// <summary>
-        /// (Overridable) Loads the Data Object with the supplied Key,
+        /// Loads the Data Object with the supplied Key,
         /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
         /// if not supplied by an explicit foreign key definition
         /// </summary>
@@ -258,6 +261,7 @@ namespace DataObjects_Framework.Base
 
                 //[-]
 
+                /*
                 if (this.mBase_TableDetail != null)
                 {
                     foreach (ClsBaseTableDetail Inner_Obj in this.mBase_TableDetail)
@@ -271,23 +275,55 @@ namespace DataObjects_Framework.Base
                     foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
                     { Inner_Obj.Load(this.mDa, Keys); }
                 }
+                */
+
+                //[-]
+
+                this.Load_Details(Keys);
 
                 //[-]
 
                 this.AddRequired();
             }
 
-            catch (Exception Ex)
-            { throw Ex; }
-            finally
-            { this.mDa.Close(); }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
         }
-        
+
         /// <summary>
-        /// (Overridable) Saves changes to the Data Object
+        /// Loads the Data Object from an existing data row.
+        /// </summary>
+        /// <param name="Dr">
+        /// Source data row to use
+        /// </param>
+        public virtual void Load(DataRow Dr)
+        { 
+            this.mHeader_Dr = Dr;
+            this.Load_Details(this.GetKeys()); 
+        }
+
+        void Load_Details(ClsKeys Keys = null)
+        {
+            if (this.mBase_TableDetail != null)
+            {
+                foreach (ClsBaseTableDetail Inner_Obj in this.mBase_TableDetail)
+                { Inner_Obj.Load(this.mDa, Keys); }
+            }
+
+            //[-]
+
+            if (this.mBase_RowDetail != null)
+            {
+                foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
+                { Inner_Obj.Load(this.mDa, Keys); }
+            }
+        }
+
+        /// <summary>
+        /// Saves changes to the Data Object
         /// </summary>
         /// <param name="Da">
-        /// Optional, an open Data_Access Objects that is reused from the calling method
+        /// An open Data_Access Objects that is reused from the calling method
         /// </param>
         /// <returns></returns>
         public virtual bool Save(Interface_DataAccess Da = null)
@@ -350,7 +386,7 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Deletes the Data Object
+        /// Deletes the Data Object
         /// </summary>
         public virtual void Delete()
         {
@@ -386,7 +422,14 @@ namespace DataObjects_Framework.Base
 
             foreach (string Key in this.mHeader_Key)
             {
-                Int64 ID = Do_Methods.Convert_Int64(this.mHeader_Dr[Key], 0);
+                Int64 ID = Do_Methods.Convert_Int64(this.mHeader_Dr[Key]);
+
+                if (ID == 0)
+                {
+                    Obj = null;
+                    break;
+                }
+
                 Obj.Add(Key, ID);
             }
 
@@ -407,6 +450,13 @@ namespace DataObjects_Framework.Base
             foreach (string Key in this.mHeader_Key)
             {
                 Int64 ID = Do_Methods.Convert_Int64(Dr[Key]);
+
+                if (ID == 0)
+                {
+                    Obj = null;
+                    break; 
+                }
+
                 Obj.Add(Key, ID);
             }
 
@@ -425,21 +475,30 @@ namespace DataObjects_Framework.Base
         /// <returns></returns>
         public ClsKeys GetKeys(DataRow Dr, List<string> KeyNames)
         {
-            bool IsFound = false;
+            bool IsFound = true;
             ClsKeys Key = new ClsKeys();
 
             foreach (string Inner_Key in KeyNames)
             {
                 if (!Information.IsDBNull(Dr[Inner_Key]))
-                { Key.Add(Inner_Key, Do_Methods.Convert_Int64(Dr[Inner_Key], 0)); }
+                {
+                    Int64 Inner_KeyID = Do_Methods.Convert_Int64(Dr[Inner_Key]);
+                    if (Inner_KeyID != 0)
+                    { Key.Add(Inner_Key, Inner_KeyID); }
+                    else
+                    { 
+                        IsFound = false;
+                        break;
+                    }
+                }
                 else
                 {
-                    IsFound = true;
+                    IsFound = false;
                     break;
                 }
             }
 
-            if (IsFound)
+            if (!IsFound)
             { Key = null; }
 
             return Key;
@@ -459,8 +518,7 @@ namespace DataObjects_Framework.Base
             try
             {
                 Dt.Columns.Add("TmpKey", typeof(Int64));
-                Dt.Columns.Add("IsError", typeof(bool));
-                Dt.Columns.Add("Item_Style", typeof(string));
+                Dt.Columns.Add("IsError", typeof(bool));                
             }
             catch { }
 
@@ -468,7 +526,6 @@ namespace DataObjects_Framework.Base
             {
                 Ct++;
                 Dr["TmpKey"] = Ct;
-                Dr["Item_Style"] = "";
             }
 
             Dt.AcceptChanges();
@@ -498,7 +555,6 @@ namespace DataObjects_Framework.Base
             foreach (DataRow Dr in Arr_Dr)
             {
                 Dr["IsError"] = false;
-                Dr["Item_Style"] = "";
             }
         }
 

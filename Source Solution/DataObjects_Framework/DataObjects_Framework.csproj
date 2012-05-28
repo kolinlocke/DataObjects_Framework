@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\ClsBase_List_Objects.cs" />
     <Compile Include="Common\Do_Globals.cs" />
     <Compile Include="Common\Do_Constants.cs" />
     <Compile Include="Common\Do_Methods.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\ClsBaseObjs.cs" />
     <Compile Include="Objects\ClsKeys.cs" />
+    <Compile Include="Test\Class1.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
