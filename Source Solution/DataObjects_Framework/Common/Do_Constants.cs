@@ -19,6 +19,11 @@ namespace DataObjects_Framework.Common
             public string Name;
             public object Value;
 
+            /// <summary>
+            /// Constructor for Str_Parameters
+            /// </summary>
+            /// <param name="pName"></param>
+            /// <param name="pValue"></param>
             public Str_Parameters(string pName, object pValue)
             {
                 Name = pName;
@@ -34,6 +39,11 @@ namespace DataObjects_Framework.Common
             public string Name;
             public bool IsDesc;
 
+            /// <summary>
+            /// Constructor for Str_Sort
+            /// </summary>
+            /// <param name="pName"></param>
+            /// <param name="pIsDesc"></param>
             public Str_Sort(string pName, bool pIsDesc)
             {
                 this.Name = pName;
@@ -56,6 +66,11 @@ namespace DataObjects_Framework.Common
             /// </summary>
             public string Child_Key;
 
+            /// <summary>
+            /// Constructor for Str_ForeignKeyRelation
+            /// </summary>
+            /// <param name="Parent_Key"></param>
+            /// <param name="Child_Key"></param>
             public Str_ForeignKeyRelation(string Parent_Key, string Child_Key)
             {
                 this.Parent_Key = Parent_Key;

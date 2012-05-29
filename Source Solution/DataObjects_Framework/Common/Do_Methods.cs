@@ -38,6 +38,13 @@ namespace DataObjects_Framework.Common
             { return Obj_Input; }
         }
 
+        /// <summary>
+        /// Generates a character from the inputted number, such as 1:A, 26:Z, 27:A1, etc.
+        /// </summary>
+        /// <param name="Input">
+        /// The number to be converted
+        /// </param>
+        /// <returns></returns>
         public static string GenerateChr(Int32 Input)
         {
             Int32 Ct = 0;
@@ -63,6 +70,15 @@ namespace DataObjects_Framework.Common
             return OutputChr;
         }
 
+        /// <summary>
+        /// Adds a new row to the specified data table with the supplied Str_Parameter List.
+        /// </summary>
+        /// <param name="Dt">
+        /// The target data table
+        /// </param>
+        /// <param name="Sp">
+        /// Contains the data to add
+        /// </param>
         public static void AddDataRow(ref DataTable Dt, List<Common.Do_Constants.Str_Parameters> Sp)
         {
             DataRow Nr = Dt.NewRow();
@@ -71,6 +87,18 @@ namespace DataObjects_Framework.Common
             Dt.Rows.Add(Nr);
         }
 
+        /// <summary>
+        /// Adds a new row to the specified data table with the supplied fields and values.
+        /// </summary>
+        /// <param name="Dt">
+        /// The target data table
+        /// </param>
+        /// <param name="Fields">
+        /// String array for Fields
+        /// </param>
+        /// <param name="Values">
+        /// Object array for Values, must contain the same number of elements as Fields
+        /// </param>
         public static void AddDataRow(ref DataTable Dt, string[] Fields, object[] Values)
         {
             DataRow Nr = Dt.NewRow();
@@ -79,6 +107,24 @@ namespace DataObjects_Framework.Common
             Dt.Rows.Add(Nr);
         }
 
+        /// <summary>
+        /// Converts a data table to a 2 dimensional array
+        /// </summary>
+        /// <param name="Dt">
+        /// The source data table
+        /// </param>
+        /// <param name="Fields">
+        /// The field list to use, if null all of the fields will be used
+        /// </param>
+        /// <param name="RowStart">
+        /// Conversion will start at the specified index
+        /// </param>
+        /// <param name="RowEnd">
+        /// Conversion will end at the specified index
+        /// </param>
+        /// <returns>
+        /// Returns a 2 dimensional array of objects
+        /// </returns>
         public static object[,] ConvertDataTo2DimArray(
             DataTable Dt
             , string[] Fields
@@ -196,24 +242,55 @@ namespace DataObjects_Framework.Common
             return Path;
         }
 
-        public static void ConvertCaps(DataRow Dr)
+        /// <summary>
+        /// Converts the capitalization of all the fields the specified datarow to the specified case if it is a string data type.
+        /// </summary>
+        /// <param name="Dr">
+        /// The target data row.
+        /// </param>
+        /// <param name="IsUpperCase">
+        /// If true, converts to Upper Case, else to Lower Case.
+        /// </param>
+        public static void ConvertCaps(DataRow Dr, bool IsUpperCase = true)
         {
             foreach (DataColumn Dc in Dr.Table.Columns)
             {
                 if (Dc.DataType.Name == typeof(string).Name)
-                { Dr[Dc] = ((string)IsNull(Dr[Dc], "")).ToUpper(); }
+                {
+                    if (IsUpperCase) { Dr[Dc] = ((string)IsNull(Dr[Dc], "")).ToUpper(); }
+                    else { Dr[Dc] = ((string)IsNull(Dr[Dc], "")).ToLower(); }
+                }
             }
         }
 
-        public static void ConvertCaps(DataTable Dt)
+        /// <summary>
+        /// Converts the capitalization of all the fields of all the data rows of the specified data table to the specified case if it is a string data type.
+        /// </summary>
+        /// <param name="Dt">
+        /// The target data table.
+        /// </param>
+        /// <param name="IsUpperCase">
+        /// If true, converts to Upper Case, else to Lower Case.
+        /// </param>
+        public static void ConvertCaps(DataTable Dt, bool IsUpperCase = true)
         {
             foreach (DataRow Dr in Dt.Rows)
             {
                 DataRow Inner_Dr = Dr;
-                ConvertCaps(Inner_Dr);
+                ConvertCaps(Inner_Dr, IsUpperCase);
             }
         }
 
+        /// <summary>
+        /// Converts an object to a double data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static double Convert_Double(object Value, double DefaultValue = 0)
         {
             string ValueString = string.Empty;
@@ -228,6 +305,16 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        /// <summary>
+        /// Converts an object to a Int32 data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static Int32 Convert_Int32(object Value, Int32 DefaultValue = 0)
         {
             string ValueString = string.Empty;
@@ -241,6 +328,16 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        /// <summary>
+        /// Converts an object to a Int64 data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static Int64 Convert_Int64(object Value, Int64 DefaultValue = 0)
         {
             string ValueString = string.Empty;
@@ -254,6 +351,16 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        /// <summary>
+        /// Converts an object to a Nullable Date Time data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static DateTime? Convert_DateTime(object Value, DateTime? DefaultValue = null)
         {
             string ValueString = string.Empty;
@@ -271,9 +378,29 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        /// <summary>
+        /// Converts an object to a string data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static string Convert_String(object Value, string DefaultValue = "")
         { return (string)IsNull(Value, DefaultValue); }
 
+        /// <summary>
+        /// Converts an object to a boolean data type without exceptions.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns></returns>
         public static bool Convert_Boolean(object Value, bool DefaultValue = false)
         { 
             string ValueString = string.Empty;

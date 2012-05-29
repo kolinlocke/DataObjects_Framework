@@ -79,7 +79,7 @@ namespace DataObjects_Framework.Base
         { throw new NotImplementedException(); }
 
         /// <summary>
-        /// (Overrided) Loads the List with the supplied Key
+        /// Loads the List with the supplied Key
         /// </summary>
         /// <param name="Keys">
         /// Key object to use
@@ -105,7 +105,19 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Loads the List with the supplied condition string
+        /// Loads the Data Object from the key of the specified data row.
+        /// </summary>
+        /// <param name="Dr">
+        /// Source data row to use
+        /// </param>
+        public override void Load(DataRow Dr)
+        {
+            ClsKeys Key = this.GetKeys(Dr);
+            this.Load(Key);
+        }
+
+        /// <summary>
+        /// Loads the List with the supplied condition string
         /// </summary>
         /// <param name="Condition">
         /// String condition to use
@@ -117,12 +129,12 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overridable) Loads the List with the supplied QueryCondition object
+        /// Loads the List with the supplied QueryCondition object
         /// </summary>
         /// <param name="Condition">
         /// QueryCondition object to use
         /// </param>
-        public virtual void Load(DataObjects_Framework.Objects.ClsQueryCondition Condition)
+        public virtual void Load(ClsQueryCondition Condition)
         {
             this.mDt_List = this.mDa.List(this.mHeader_ViewName, Condition);
             this.AddRequired(this.mDt_List);
@@ -135,10 +147,10 @@ namespace DataObjects_Framework.Base
         }
 
         /// <summary>
-        /// (Overrided) Saves changes to the List
+        /// Saves changes to the List
         /// </summary>
         /// <param name="Da">
-        /// Optional, an open Data_Access Objects that is reused from the calling method
+        /// An open Data_Access Objects that is reused from the calling method
         /// </param>
         /// <returns></returns>
         public override bool Save(DataAccess.Interface_DataAccess Da = null)
@@ -173,8 +185,7 @@ namespace DataObjects_Framework.Base
                     Da.SaveDataRow(Nr, this.mHeader_TableName, "", true);
                 }
 
-                if (IsDa)
-                { Da.CommitTransaction(); }
+                if (IsDa) { Da.CommitTransaction(); }
                 IsSave = true;
             }
             catch (Exception Ex)
@@ -201,8 +212,7 @@ namespace DataObjects_Framework.Base
         /// </summary>
         public DataTable pDt_List
         {
-            get
-            { return this.mDt_List; }
+            get { return this.mDt_List; }
         }
 
         #endregion

@@ -61,7 +61,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\ClsBaseObjs.cs" />
     <Compile Include="Objects\ClsKeys.cs" />
-    <Compile Include="Test\Class1.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

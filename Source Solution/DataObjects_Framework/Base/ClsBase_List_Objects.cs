@@ -13,12 +13,19 @@ using DataObjects_Framework.Base;
 
 namespace DataObjects_Framework.Base
 {
+    /// <summary>
+    /// Base Class for Data Objects, a list of Data Objects will be loaded instead.
+    /// </summary>
     public abstract class ClsBase_List_Objects : ClsBase_List
     {
         #region _Variables
 
         ClsBase mObj_ClsBase;
         List<Object> mObj_ClsBase_Constructors = new List<Object>();
+
+        /// <summary>
+        /// Storage for the list of data objects loaded.
+        /// </summary>
         protected List<Str_Obj> mList_Obj = new List<Str_Obj>();
 
         /// <summary>
@@ -52,6 +59,26 @@ namespace DataObjects_Framework.Base
 
         #region _Methods
 
+        /// <summary>
+        /// Sets the data object definition, 
+        /// must be set preferably in the constructor of the derived object
+        /// </summary>
+        /// <param name="Obj_ClsBase">
+        /// Object to use as a template for the list, must be derived from ClsBase
+        /// </param>
+        /// <param name="TableName">
+        /// Table Name of the data object will be using
+        /// </param>
+        /// <param name="ViewName">
+        /// View Name of the data object 
+        /// this will be used Me.Load() if supplied
+        /// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
+        /// <param name="Qc_LoadCondition">
+        /// Additional conditions when fetching the data object
+        /// </param>
         public virtual void Setup(
             ClsBase Obj_ClsBase
             , string TableName
@@ -64,12 +91,24 @@ namespace DataObjects_Framework.Base
             base.Setup(TableName, ViewName, CustomKeys, Qc_LoadCondition);
         }
 
+        /// <summary>
+        /// Loads the List with the supplied condition string
+        /// </summary>
+        /// <param name="Condition">
+        /// String condition to use
+        /// </param>
         public override void Load(string Condition)
         {
             base.Load(Condition);
             this.Load_Objects();
         }
 
+        /// <summary>
+        /// Loads the List with the supplied QueryCondition object
+        /// </summary>
+        /// <param name="Condition">
+        /// QueryCondition object to use
+        /// </param>
         public override void Load(ClsQueryCondition Condition)
         {
             base.Load(Condition);
@@ -86,6 +125,13 @@ namespace DataObjects_Framework.Base
             }
         }
 
+        /// <summary>
+        /// Saves changes to the List
+        /// </summary>
+        /// <param name="Da">
+        /// An open Data_Access Objects that is reused from the calling method
+        /// </param>
+        /// <returns></returns>
         public override bool Save(DataAccess.Interface_DataAccess Da = null)
         {
             bool Rv = base.Save(Da);
@@ -107,6 +153,10 @@ namespace DataObjects_Framework.Base
             }
         }
         
+        /// <summary>
+        /// Can be overrided to add additional 
+        /// </summary>
+        /// <param name="Obj"></param>
         protected virtual void Save_Objects(ClsBase Obj) { }
 
         public ClsBase Add_Object()
@@ -120,6 +170,18 @@ namespace DataObjects_Framework.Base
             this.mList_Obj.Add(new Str_Obj(Do_Methods.Convert_Int64(Dr["TmpKey"]).ToString(), Obj));
 
             return Obj;
+        }
+
+        #endregion
+
+        #region _Properties
+
+        /// <summary>
+        /// Gets the list of data objects loaded.
+        /// </summary>
+        public List<Str_Obj> pList_Obj
+        {
+            get { return this.mList_Obj; }
         }
 
         #endregion
