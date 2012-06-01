@@ -46,13 +46,18 @@ namespace DataObjects_Framework.Base
         /// View Name of the data object 
         /// this will be used Me.Load() if supplied
         /// </param>
+        /// /// <param name="Qc_LoadCondition">
+        /// Additional conditions when fetching the data object
+        /// </param>
         /// <param name="CustomKeys">
         /// Custom Key definition
         /// </param>
-        /// <param name="Qc_LoadCondition">
-        /// Additional conditions when fetching the data object
-        /// </param>
-        public virtual void Setup(string TableName, string ViewName = "", List<string> CustomKeys = null, ClsQueryCondition Qc_LoadCondition = null)
+        public virtual void Setup(
+            string TableName
+            , string ViewName = ""
+            , ClsQueryCondition Qc_LoadCondition = null
+            , List<string> CustomKeys = null
+            )
         {
             base.Setup(TableName, ViewName, CustomKeys);
             this.mQc_LoadCondition = Qc_LoadCondition;
@@ -77,14 +82,17 @@ namespace DataObjects_Framework.Base
         /// <returns></returns>
         public override DataTable List(ClsQueryCondition Condition = null, string Sort = "", int Top = 0, int Page = 0)
         { throw new NotImplementedException(); }
-
+        
         /// <summary>
         /// Loads the List with the supplied Key
         /// </summary>
         /// <param name="Keys">
-        /// Key object to use
+        /// Key object to use, if null, it implies to create a new data object.
         /// </param>
-        public override void Load(ClsKeys Keys = null)
+        /// <param name="Obj_Parent">
+        /// The Parent Data Object.
+        /// </param>
+        public override void Load(ClsKeys Keys, ClsBase Obj_Parent = null)
         {
             if (Keys == null)
             { this.New(); }
@@ -96,12 +104,15 @@ namespace DataObjects_Framework.Base
 
                 if (this.mQc_LoadCondition != null)
                 {
-                    foreach (DataObjects_Framework.Objects.ClsQueryCondition.Str_QueryCondition Str_Qc in this.mQc_LoadCondition.pList)
+                    foreach (ClsQueryCondition.Str_QueryCondition Str_Qc in this.mQc_LoadCondition.pList)
                     { Qc.pList.Add(Str_Qc); }
                 }
 
                 this.Load(Qc);
             }
+
+            this.mObj_Parent = Obj_Parent;
+            this.Load_Details(Keys);
         }
 
         /// <summary>
@@ -137,12 +148,6 @@ namespace DataObjects_Framework.Base
         public virtual void Load(ClsQueryCondition Condition)
         {
             this.mDt_List = this.mDa.List(this.mHeader_ViewName, Condition);
-            this.AddRequired(this.mDt_List);
-        }
-
-        void New()
-        {
-            this.mDt_List = this.mDa.List_Empty(this.mHeader_ViewName);
             this.AddRequired(this.mDt_List);
         }
 
@@ -201,6 +206,23 @@ namespace DataObjects_Framework.Base
             }
 
             return IsSave;
+        }
+
+        void New()
+        {
+            this.mDt_List = this.mDa.List_Empty(this.mHeader_ViewName);
+            this.AddRequired(this.mDt_List);
+        }
+
+        /// <summary>
+        /// Adds a new data row to the collection.
+        /// </summary>
+        public virtual DataRow Add_Item()
+        {
+            DataRow Dr = this.mDt_List.NewRow();
+            Dr["TmpKey"] = ClsBase.GetNewTmpKey(this.mDt_List);
+            this.mDt_List.Rows.Add(Dr);
+            return Dr;
         }
 
         #endregion

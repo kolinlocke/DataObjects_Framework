@@ -24,6 +24,11 @@ namespace DataObjects_Framework.Base
         #region _Variables
 
         /// <summary>
+        /// The Parent Data Object for this instance.
+        /// </summary>
+        protected ClsBase mObj_Parent;
+
+        /// <summary>
         /// The declared TableName of the Data Object
         /// </summary>
         protected string mHeader_TableName;
@@ -247,35 +252,33 @@ namespace DataObjects_Framework.Base
         /// if not supplied by an explicit foreign key definition
         /// </summary>
         /// <param name="Keys">
-        /// Key object to use
+        /// Key object to use, if null, it implies to create a new data object.
         /// </param>
         public virtual void Load(ClsKeys Keys = null)
+        { this.Load(Keys, null); }
+
+        /// <summary>
+        /// Loads the Data Object with the supplied Key,
+        /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+        /// if not supplied by an explicit foreign key definition
+        /// </summary>
+        /// <param name="Keys">
+        /// Key object to use, if null, it implies to create a new data object.
+        /// </param>
+        /// <param name="Obj_Parent">
+        /// The Parent Data Object.
+        /// </param>
+        public virtual void Load(ClsKeys Keys, ClsBase Obj_Parent = null)
         {
             try
             {
+                this.mObj_Parent = Obj_Parent;
+
                 this.mDa.Connect();
 
                 //[-]
 
                 this.mHeader_Dr = this.mDa.Load(this.mHeader_ViewName, this.mHeader_Key, Keys);
-
-                //[-]
-
-                /*
-                if (this.mBase_TableDetail != null)
-                {
-                    foreach (ClsBaseTableDetail Inner_Obj in this.mBase_TableDetail)
-                    { Inner_Obj.Load(this.mDa, Keys); }
-                }
-
-                //[-]
-
-                if (this.mBase_RowDetail != null)
-                {
-                    foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
-                    { Inner_Obj.Load(this.mDa, Keys); }
-                }
-                */
 
                 //[-]
 
@@ -302,7 +305,13 @@ namespace DataObjects_Framework.Base
             this.Load_Details(this.GetKeys()); 
         }
 
-        void Load_Details(ClsKeys Keys = null)
+        /// <summary>
+        /// Loads the declared details of the data object.
+        /// </summary>
+        /// <param name="Keys">
+        /// Key object to use
+        /// </param>
+        protected void Load_Details(ClsKeys Keys = null)
         {
             if (this.mBase_TableDetail != null)
             {
@@ -608,6 +617,14 @@ namespace DataObjects_Framework.Base
         #endregion
 
         #region _Properties
+
+        /// <summary>
+        /// Gets the parent data object of this instance.
+        /// </summary>
+        public ClsBase pObj_Parent
+        {
+            get { return this.mObj_Parent; }
+        }
 
         /// <summary>
         /// Get Property, gets the Data Object ID (or primary key)

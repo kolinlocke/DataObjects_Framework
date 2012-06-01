@@ -20,13 +20,22 @@ namespace DataObjects_Framework.Base
     {
         #region _Variables
 
-        ClsBase mObj_ClsBase;
+        //ClsBase mTemplate_Obj;
+        //string mTemplate_ViewName;
+        Str_Template mTemplate;
         List<Object> mObj_ClsBase_Constructors = new List<Object>();
 
         /// <summary>
         /// Storage for the list of data objects loaded.
         /// </summary>
         protected List<Str_Obj> mList_Obj = new List<Str_Obj>();
+
+        public struct Str_Template
+        {
+            public ClsBase Obj;
+            public string ViewName;
+            public List<string> Keys;
+        }
 
         /// <summary>
         /// Struct Str_Obj
@@ -63,7 +72,7 @@ namespace DataObjects_Framework.Base
         /// Sets the data object definition, 
         /// must be set preferably in the constructor of the derived object
         /// </summary>
-        /// <param name="Obj_ClsBase">
+        /// <param name="Template_Obj">
         /// Object to use as a template for the list, must be derived from ClsBase
         /// </param>
         /// <param name="TableName">
@@ -73,55 +82,50 @@ namespace DataObjects_Framework.Base
         /// View Name of the data object 
         /// this will be used Me.Load() if supplied
         /// </param>
-        /// <param name="CustomKeys">
-        /// Custom Key definition
-        /// </param>
         /// <param name="Qc_LoadCondition">
         /// Additional conditions when fetching the data object
         /// </param>
+        /// <param name="CustomKeys">
+        /// Custom Key definition
+        /// </param>
         public virtual void Setup(
-            ClsBase Obj_ClsBase
+            Str_Template Template
             , string TableName
             , string ViewName = ""
+            , ClsQueryCondition Qc_LoadCondition = null
             , List<string> CustomKeys = null
-            , ClsQueryCondition Qc_LoadCondition = null) 
+            )
         {
-            if (!(Obj_ClsBase is ClsBase)) { throw new Exception("Obj_ClsBase must be derived from ClsBase."); }
-            this.mObj_ClsBase = Obj_ClsBase;
-            base.Setup(TableName, ViewName, CustomKeys, Qc_LoadCondition);
+            if (!(Template.Obj is ClsBase)) { throw new Exception("Template.Obj must be derived from ClsBase."); }
+            this.mTemplate = Template;
+            base.Setup(TableName, ViewName, Qc_LoadCondition, CustomKeys);
         }
 
         /// <summary>
-        /// Loads the List with the supplied condition string
+        /// Key object to use, if null, it implies to create a new data object.
         /// </summary>
-        /// <param name="Condition">
-        /// String condition to use
-        /// </param>
-        public override void Load(string Condition)
+        /// <param name="Keys"></param>
+        public override void Load(ClsKeys Keys = null)
         {
-            base.Load(Condition);
-            this.Load_Objects();
+            base.Load(Keys);
+            this.Load_Objects(Keys);
         }
-
-        /// <summary>
-        /// Loads the List with the supplied QueryCondition object
-        /// </summary>
-        /// <param name="Condition">
-        /// QueryCondition object to use
-        /// </param>
-        public override void Load(ClsQueryCondition Condition)
+        
+        void Load_Objects(ClsKeys Keys)
         {
-            base.Load(Condition);
-            this.Load_Objects();
-        }
-
-        void Load_Objects()
-        {
-            foreach (DataRow Dr in this.mDt_List.Rows)
+            if (Keys != null)
             {
-                ClsBase Inner_Obj = (ClsBase)Activator.CreateInstance(this.mObj_ClsBase.GetType(), this.mObj_ClsBase_Constructors.ToArray());
-                Inner_Obj.Load(Dr);
-                this.mList_Obj.Add(new Str_Obj(Do_Methods.Convert_Int64(Dr["TmpKey"]).ToString(), Inner_Obj));
+                ClsQueryCondition Qc = this.mDa.CreateQueryCondition();
+                foreach (string KeyName in Keys.pName)
+                { Qc.Add(KeyName, Keys[KeyName].ToString(), typeof(Int64).ToString(), "0"); }
+
+                DataTable Dt = this.mDa.List(this.mTemplate.ViewName, Qc);
+                foreach (DataRow Dr in Dt.Rows)
+                {
+                    ClsBase Inner_Obj = (ClsBase)Activator.CreateInstance(this.mTemplate.Obj.GetType(), this.mObj_ClsBase_Constructors.ToArray());
+                    Inner_Obj.Load(Dr);
+                    this.mList_Obj.Add(new Str_Obj(Do_Methods.Convert_Int64(Dr["TmpKey"]).ToString(), Inner_Obj));
+                }
             }
         }
 
@@ -159,13 +163,20 @@ namespace DataObjects_Framework.Base
         /// <param name="Obj"></param>
         protected virtual void Save_Objects(ClsBase Obj) { }
 
+        /// <summary>
+        /// Not Implemented. Use Add_Object().
+        /// </summary>
+        public override DataRow Add_Item()
+        { throw new NotImplementedException(); }
+
+        /// <summary>
+        /// Adds a new ClsBase object with the related data row to the collection.
+        /// </summary>
+        /// <returns></returns>
         public ClsBase Add_Object()
         {
-            DataRow Dr = this.mDt_List.NewRow();
-            Dr["TmpKey"] = ClsBase.GetNewTmpKey(this.mDt_List);
-            this.mDt_List.Rows.Add(Dr);
-
-            ClsBase Obj = (ClsBase)Activator.CreateInstance(this.mObj_ClsBase.GetType(), this.mObj_ClsBase_Constructors.ToArray());
+            DataRow Dr = base.Add_Item();
+            ClsBase Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mObj_ClsBase_Constructors.ToArray());
             Obj.Load(Dr);
             this.mList_Obj.Add(new Str_Obj(Do_Methods.Convert_Int64(Dr["TmpKey"]).ToString(), Obj));
 
