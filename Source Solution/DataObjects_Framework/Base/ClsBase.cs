@@ -136,7 +136,7 @@ namespace DataObjects_Framework.Base
         /// <param name="CustomForeignKeys">
         /// Custom Foreign Key definition
         /// </param>
-        protected void Add_TableDetail(
+        protected virtual void Setup_AddTableDetail(
             string TableName
             , string ViewName = ""
             , string LoadCondition = ""
@@ -173,7 +173,7 @@ namespace DataObjects_Framework.Base
         /// <param name="CustomForeignKeys">
         /// Custom Foreign Key definition
         /// </param>
-        protected void Add_RowDetails(
+        protected virtual void Setup_AddRowDetails(
             string TableName
             , string ViewName = ""
             , string LoadCondition = ""

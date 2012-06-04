@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\ClsBase_List_Objects.cs" />
+    <Compile Include="Base\ClsBaseListObject.cs" />
     <Compile Include="Common\Do_Globals.cs" />
     <Compile Include="Common\Do_Constants.cs" />
     <Compile Include="Common\Do_Methods.cs" />

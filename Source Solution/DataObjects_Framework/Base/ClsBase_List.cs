@@ -30,7 +30,9 @@ namespace DataObjects_Framework.Base
         /// The data table storage for the loaded Data Object, Me.Load() required
         /// </summary>
         protected DataTable mDt_List;
-        
+
+		protected List<ClsBaseListObject> mBase_ListObject = new List<ClsBaseListObject>();
+
         #endregion
 
         #region _Methods
@@ -62,6 +64,49 @@ namespace DataObjects_Framework.Base
             base.Setup(TableName, ViewName, CustomKeys);
             this.mQc_LoadCondition = Qc_LoadCondition;
         }
+
+		/// <summary>
+		/// Not Implemented. Don't use.
+		/// </summary>
+		/// <param name="TableName"></param>
+		/// <param name="ViewName"></param>
+		/// <param name="LoadCondition"></param>
+		/// <param name="CustomKeys"></param>
+		/// <param name="CustomForeignKeys"></param>
+		protected override void Setup_AddTableDetail(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
+		{ throw new NotImplementedException(); }
+
+		/// <summary>
+		/// Not Implemented. Don't use.
+		/// </summary>
+		/// <param name="TableName"></param>
+		/// <param name="ViewName"></param>
+		/// <param name="LoadCondition"></param>
+		/// <param name="CustomKeys"></param>
+		/// <param name="CustomForeignKeys"></param>
+		protected override void Setup_AddRowDetails(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
+		{ throw new NotImplementedException(); }
+
+		protected virtual void Setup_AddListObject(
+			string Name
+			, ClsBase Template_Obj
+			, List<Object> Template_Obj_Constructors
+			, string Template_ViewName
+            , List<Do_Constants.Str_ForeignKeyRelation> Template_FetchKeys
+			, List<Do_Constants.Str_ForeignKeyRelation> Template_ForeignKeys
+			, ClsQueryCondition Template_LoadCondition = null)
+		{
+            this.mBase_ListObject.Add(
+                new ClsBaseListObject(
+                    this
+                    , Name
+                    , Template_Obj
+                    , Template_Obj_Constructors
+                    , Template_ViewName
+                    , Template_FetchKeys
+                    , Template_ForeignKeys
+                    , Template_LoadCondition));
+		}
 
         /// <summary>
         /// Not Implemented, use Me.Load()
@@ -111,8 +156,13 @@ namespace DataObjects_Framework.Base
                 this.Load(Qc);
             }
 
+            if (this.mBase_ListObject != null)
+            {
+                foreach (ClsBaseListObject Lo in this.mBase_ListObject)
+                { Lo.Load(this.mDa, Keys); }
+            }
+
             this.mObj_Parent = Obj_Parent;
-            this.Load_Details(Keys);
         }
 
         /// <summary>
@@ -158,7 +208,22 @@ namespace DataObjects_Framework.Base
         /// An open Data_Access Objects that is reused from the calling method
         /// </param>
         /// <returns></returns>
-        public override bool Save(DataAccess.Interface_DataAccess Da = null)
+        public sealed override bool Save(DataAccess.Interface_DataAccess Da = null)
+        {
+            this.Save_ListObjects(Da);
+            this.Save_Add();
+            return this.Save_Ex(Da);
+        }
+
+        protected virtual void Save_Add() { }
+
+        void Save_ListObjects(DataAccess.Interface_DataAccess Da = null)
+        {
+            foreach (ClsBaseListObject Lo in this.mBase_ListObject)
+            { Lo.Save(Da); }
+        }
+
+        bool Save_Ex(DataAccess.Interface_DataAccess Da = null)
         {
             bool IsSave = false;
             bool IsDa = false;
@@ -180,6 +245,8 @@ namespace DataObjects_Framework.Base
                     { Da.SaveDataRow(Dr, this.mHeader_TableName); }
                 }
 
+                //[-]
+
                 ArrDr = this.mDt_List.Select("", "", DataViewRowState.Deleted);
                 foreach (DataRow Dr in ArrDr)
                 {
@@ -190,19 +257,19 @@ namespace DataObjects_Framework.Base
                     Da.SaveDataRow(Nr, this.mHeader_TableName, "", true);
                 }
 
+                //[-]
+
                 if (IsDa) { Da.CommitTransaction(); }
                 IsSave = true;
             }
             catch (Exception Ex)
             {
-                if (IsDa)
-                { Da.RollbackTransaction(); }
+                if (IsDa) { Da.RollbackTransaction(); }
                 throw Ex;
             }
             finally
             {
-                if (IsDa)
-                { Da.Close(); }
+                if (IsDa) { Da.Close(); }
             }
 
             return IsSave;
@@ -217,12 +284,23 @@ namespace DataObjects_Framework.Base
         /// <summary>
         /// Adds a new data row to the collection.
         /// </summary>
-        public virtual DataRow Add_Item()
+		public virtual DataRow Add_Item()
+		{
+			DataRow Dr = this.mDt_List.NewRow();
+			Dr["TmpKey"] = ClsBase.GetNewTmpKey(this.mDt_List);
+			this.mDt_List.Rows.Add(Dr);
+
+			foreach (ClsBaseListObject Obj in this.mBase_ListObject)
+			{ Obj.Add_Object(Do_Methods.Convert_Int64(Dr["TmpKey"])); }
+
+			return Dr;
+		}
+
+        public void Refresh_Desc(string Name, List<ClsBaseListObject.Str_Desc> List_Desc)
         {
-            DataRow Dr = this.mDt_List.NewRow();
-            Dr["TmpKey"] = ClsBase.GetNewTmpKey(this.mDt_List);
-            this.mDt_List.Rows.Add(Dr);
-            return Dr;
+            ClsBaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);
+            if (Obj != null)
+            { Obj.Refresh_Desc(List_Desc); }
         }
 
         #endregion
@@ -236,6 +314,16 @@ namespace DataObjects_Framework.Base
         {
             get { return this.mDt_List; }
         }
+
+		public DataTable pDt_ListObject_Get(string Name)
+		{ return this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name).pDt_Obj; }
+
+		public ClsBase pObj_ListObject_Get(string Name, Int64 TmpKey)
+		{
+			ClsBaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);
+			if (Obj != null) { return Obj.pList_Obj.FirstOrDefault(Item => Item.Name == TmpKey.ToString()).Obj; }
+			else { return null; }
+		}
 
         #endregion
     }

@@ -148,7 +148,7 @@ namespace DataObjects_Framework.Base
             DataRow[] ArrDr = this.mDt_List.Select("", "", DataViewRowState.CurrentRows);
             foreach (DataRow Inner_Dr in ArrDr)
             {
-                ClsBase Inner_Obj = this.mList_Obj.FirstOrDefault(X => X.Name == Do_Methods.Convert_String(Inner_Dr["TmpKey"])).Obj;
+                ClsBase Inner_Obj = this.mList_Obj.FirstOrDefault(Item => Item.Name == Do_Methods.Convert_String(Inner_Dr["TmpKey"])).Obj;
                 if (Inner_Obj != null)
                 {
                     this.Save_Objects(Inner_Obj);
@@ -176,7 +176,7 @@ namespace DataObjects_Framework.Base
         public ClsBase Add_Object()
         {
             DataRow Dr = base.Add_Item();
-            ClsBase Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mObj_ClsBase_Constructors.ToArray());
+            ClsBase Obj = (ClsBase)Activator.CreateInstance(this.mTemplate.Obj.GetType(), this.mObj_ClsBase_Constructors.ToArray());
             Obj.Load(Dr);
             this.mList_Obj.Add(new Str_Obj(Do_Methods.Convert_Int64(Dr["TmpKey"]).ToString(), Obj));
 
