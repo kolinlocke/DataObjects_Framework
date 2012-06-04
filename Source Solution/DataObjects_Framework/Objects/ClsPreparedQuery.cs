@@ -17,7 +17,7 @@ namespace DataObjects_Framework.Connection
         //string mQuery = "";
         SqlCommand mCmd = null;
         ClsConnection_SqlServer mCn = null;
-        //bool IsDa = false;
+        //bool IsConnection = false;
 
         #endregion
 
@@ -45,9 +45,7 @@ namespace DataObjects_Framework.Connection
             this.mCmd.CommandText = Query;
 
             foreach (SqlParameter Sp in ArrSp)
-            {
-                this.mCmd.Parameters.Add(Sp);
-            }
+            { this.mCmd.Parameters.Add(Sp); }
         }
 
         /// <summary>
@@ -76,18 +74,16 @@ namespace DataObjects_Framework.Connection
             this.mCmd.Connection = (SqlConnection)this.mCn.pConnection;
             this.mCmd.Transaction = (SqlTransaction)this.mCn.pTransaction;
             this.mCmd.CommandType = System.Data.CommandType.Text;
-            //this.IsDa = true;
+            //this.IsConnection = true;
         }
 
         /// <summary>
         /// Deconstructor for ClsPreparedQuery
         /// </summary>
         ~ClsPreparedQuery()
-        {
-            /*
-            if (this.IsDa)
-            { this.mDa.Close(); }
-            */
+        {            
+            //if (this.IsConnection)
+            //{ this.mCn.Close(); }
         }
 
         #endregion
@@ -150,10 +146,8 @@ namespace DataObjects_Framework.Connection
         /// <summary>
         /// Creates a prepared version of the command on an instance of SQL Server.
         /// </summary>
-        public void Prepare() 
-        {
-            this.mCmd.Prepare();
-        }
+        public void Prepare()
+        { this.mCmd.Prepare(); }
 
         /// <summary>
         /// Executes the query with the supplied parameters and returns the resulting data set.

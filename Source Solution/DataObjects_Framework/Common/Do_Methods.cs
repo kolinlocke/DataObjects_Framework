@@ -548,6 +548,11 @@ namespace DataObjects_Framework.Common
             { Da.Close(); }
         }
 
+        public static DataAccess.Interface_DataAccess CreateDataAccess()
+        {
+            return new ClsBase().pDa;
+        }
+
         //Removed
         //public static string GetSeriesNo(string Name)
         //{

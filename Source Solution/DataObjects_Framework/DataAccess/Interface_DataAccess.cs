@@ -33,13 +33,23 @@ namespace DataObjects_Framework.DataAccess
         /// <param name="Sort">
         /// Sort expression to use to sort the result set (SQL Order By valid syntax)
         /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
         /// <returns></returns>
         DataTable GetQuery(
             Interface_Connection Connection
             , string SourceObject
             , string Fields = ""
             , string Condition = ""
-            , string Sort = "");
+            , string Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0);
         
         /// <summary>
         /// Fetches a result set from a data source object
@@ -56,12 +66,22 @@ namespace DataObjects_Framework.DataAccess
         /// <param name="Sort">
         /// Sort expression to use to sort the result set (SQL Order By valid syntax)
         /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
         /// <returns></returns>
         DataTable GetQuery(
             string SourceObject
             , string Fields = ""
             , string Condition = ""
-            , string Sort = "");
+            , string Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0);
 
         /// <summary>
         /// Fetches a result set from a data source object

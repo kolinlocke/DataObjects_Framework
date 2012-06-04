@@ -47,6 +47,7 @@
     <Compile Include="Common\Do_Globals.cs" />
     <Compile Include="Common\Do_Constants.cs" />
     <Compile Include="Common\Do_Methods.cs" />
+    <Compile Include="Common\Do_Methods_Query.cs" />
     <Compile Include="Connection\ClsConnection_SqlServer.cs" />
     <Compile Include="Connection\Interface_Connection.cs" />
     <Compile Include="DataAccess\ClsDataAccess_SqlServer.cs" />

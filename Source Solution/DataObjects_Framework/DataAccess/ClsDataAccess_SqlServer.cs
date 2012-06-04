@@ -41,25 +41,55 @@ namespace DataObjects_Framework.DataAccess
         /// <param name="Sort">
         /// Sort expression to use to sort the result set (SQL Order By valid syntax)
         /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
         /// <returns></returns>
         public DataTable GetQuery(
             Interface_Connection Connection
             , string SourceObject
             , string Fields = ""
             , string Condition = ""
-            , string Sort = "")
+            , string Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0)
         {
             if (SourceObject.Trim() != "") SourceObject = " From " + SourceObject + " ";
             if (Fields.Trim() == "") Fields = " * ";
             if (Condition.Trim() != "") Condition = " Where " + Condition;
             if (Sort.Trim() != "") Sort = " Order By " + Sort;
 
+
+            string Query_RowNumberSort = Sort;
+            if (Query_RowNumberSort.Trim() == "") Query_RowNumberSort = "(Select 0)";
+
+            string Query_Top = "";
+            if (Top > 0) { Query_Top = "Top " + Top.ToString(); }
+
+            Int64 PageCondition = 0;
+            if (Page > 0) { PageCondition = Top * (Page - 1); }
+
             ClsPreparedQuery Pq = new ClsPreparedQuery((ClsConnection_SqlServer)Connection);
-            Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ' + @Sort; Exec(@Query)";
+            //Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ' + @Sort; Exec(@Query)";
+            //Pq.Add_Parameter("ViewObject", SqlDbType.VarChar, 8000, 0, 0, SourceObject);
+            //Pq.Add_Parameter("Fields", SqlDbType.VarChar, 8000, 0, 0, Fields);
+            //Pq.Add_Parameter("Condition", SqlDbType.VarChar, 8000, 0, 0, Condition);
+            //Pq.Add_Parameter("Sort", SqlDbType.VarChar, 8000, 0, 0, Sort);
+
+            Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Top ' + [Tb].* From ( Select Row_Number() Over (Order By ' + @RowNumberSort + ') As [RowNumber], ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ' + @Sort + ' ) As [Tb] Where [Tb].RowNumber >= ' + @PageCondtion + ''; Exec(@Query)";
             Pq.Add_Parameter("ViewObject", SqlDbType.VarChar, 8000, 0, 0, SourceObject);
+            Pq.Add_Parameter("Top", SqlDbType.VarChar, 8000, 0, 0, Query_Top);
+            Pq.Add_Parameter("RowNumberSort", SqlDbType.VarChar, 8000, 0, 0, Query_RowNumberSort);
+            Pq.Add_Parameter("PageCondtion", SqlDbType.BigInt, 0, 0, 0, PageCondition);
             Pq.Add_Parameter("Fields", SqlDbType.VarChar, 8000, 0, 0, Fields);
             Pq.Add_Parameter("Condition", SqlDbType.VarChar, 8000, 0, 0, Condition);
             Pq.Add_Parameter("Sort", SqlDbType.VarChar, 8000, 0, 0, Sort);
+
             Pq.Prepare();
 
             return Pq.ExecuteQuery().Tables[0];
@@ -80,8 +110,22 @@ namespace DataObjects_Framework.DataAccess
         /// <param name="Sort">
         /// Sort expression to use to sort the result set (SQL Order By valid syntax)
         /// </param>
+        /// <param name="Top">
+        /// Limits the number of returned rows in the result set,
+        /// used in pagination
+        /// </param>
+        /// <param name="Page">
+        /// Selects a section based on the Page and Top values in the result set,
+        /// used in pagination
+        /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(string SourceObject, string Fields = "", string Condition = "", string Sort = "")
+        public DataTable GetQuery(
+            string SourceObject
+            , string Fields = ""
+            , string Condition = ""
+            , string Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0)
         {
             ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
             try
