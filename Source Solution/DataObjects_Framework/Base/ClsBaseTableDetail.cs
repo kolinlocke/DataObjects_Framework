@@ -25,7 +25,7 @@ namespace DataObjects_Framework.Base
 		string mTableName;
 		string mViewName;
 		List<string> mList_Key = new List<string>();
-        List<Do_Constants.Str_ForeignKeyRelation> mList_ForeignKey = new List<Common.Do_Constants.Str_ForeignKeyRelation>();
+        List<Do_Constants.Str_ForeignKeyRelation> mList_ForeignKey = new List<Do_Constants.Str_ForeignKeyRelation>();
 		ClsBase mObj_Base;
         bool mIsCustomKeys = false;
 

@@ -215,6 +215,9 @@ namespace DataObjects_Framework.Base
             return this.Save_Ex(Da);
         }
 
+        /// <summary>
+        /// Overide this method to add additional methods before saving.
+        /// </summary>
         protected virtual void Save_Add() { }
 
         void Save_ListObjects(DataAccess.Interface_DataAccess Da = null)
@@ -295,6 +298,26 @@ namespace DataObjects_Framework.Base
 
 			return Dr;
 		}
+
+        /// <summary>
+        /// Removes the data row and its corresponding List_Obj objects
+        /// </summary>
+        /// <param name="TmpKey">
+        /// The key of the data row to be removed
+        /// </param>
+        public virtual void Delete_Item(Int64 TmpKey)
+        {
+            DataRow[] ArrDr = this.mDt_List.Select("TmpKey = " + TmpKey.ToString());
+            if (ArrDr.Length > 0)
+            {
+                ArrDr[0].Delete();
+                foreach (ClsBaseListObject Lo in this.mBase_ListObject)
+                {
+                    ClsBaseListObject.Str_Obj Lo_Obj = Lo.pList_Obj.FirstOrDefault(Item => Item.Name == TmpKey.ToString());
+                    if (Lo_Obj.Obj != null) { Lo.pList_Obj.Remove(Lo_Obj); }
+                }
+            }
+        }
 
         public void Refresh_Desc(string Name, List<ClsBaseListObject.Str_Desc> List_Desc)
         {

@@ -60,6 +60,8 @@ namespace DataObjects_Framework.Base
         /// </summary>
         protected List<ClsBaseRowDetail> mBase_RowDetail = new List<ClsBaseRowDetail>();
 
+        protected List<ClsBaseListDetail> mBase_ListDetail = new List<ClsBaseListDetail>();
+
         /// <summary>
         /// Current Data Access object
         /// </summary>
@@ -190,6 +192,24 @@ namespace DataObjects_Framework.Base
                     , CustomKeys
                     , CustomForeignKeys)); 
         }
+
+        /// <summary>
+        /// Adds a List Detail.
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the List Detail.
+        /// </param>
+        /// <param name="Obj_List">
+        /// The ClsBase_List object to be used.
+        /// </param>
+        /// <param name="CustomForeignKeys">
+        /// Custom Foreign Key definition.
+        /// </param>
+        protected virtual void Setup_AddListDetail(
+            string Name
+            , ClsBase_List Obj_List
+            , List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
+        { this.mBase_ListDetail.Add(new ClsBaseListDetail(this, Name, Obj_List, CustomForeignKeys)); }
 
         //[-]
 
@@ -326,6 +346,14 @@ namespace DataObjects_Framework.Base
                 foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
                 { Inner_Obj.Load(this.mDa, Keys); }
             }
+
+            //[-]
+
+            if (this.mBase_ListDetail != null)
+            {
+                foreach (ClsBaseListDetail Inner_Obj in this.mBase_ListDetail)
+                { Inner_Obj.Load(this.mDa, Keys); }
+            }
         }
 
         /// <summary>
@@ -370,6 +398,12 @@ namespace DataObjects_Framework.Base
                 if (this.mBase_RowDetail != null)
                 {
                     foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
+                    { Inner_Obj.Save(Da); }
+                }
+
+                if (this.mBase_ListDetail != null)
+                {
+                    foreach (ClsBaseListDetail Inner_Obj in this.mBase_ListDetail)
                     { Inner_Obj.Save(Da); }
                 }
 
@@ -792,6 +826,16 @@ namespace DataObjects_Framework.Base
             DataRow Dr = null;
             if (Obj != null) Dr = Obj.pDr;
             return Dr;
+        }
+
+        public ClsBase_List pListDetail_Get(string Name)
+        {
+            ClsBaseListDetail Ld = this.mBase_ListDetail.FirstOrDefault(Item => Item.pName == Name);
+            ClsBase_List Obj_List = null;
+            if (Ld != null)
+            { Obj_List = Ld.pObj_List; }
+
+            return Obj_List;            
         }
 
         /// <summary>
