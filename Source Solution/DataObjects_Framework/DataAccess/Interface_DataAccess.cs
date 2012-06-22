@@ -159,9 +159,17 @@ namespace DataObjects_Framework.DataAccess
         //[-]
 
         /// <summary>
-        /// Connects to the defined datasource
+        /// Connects to the datasource defined in Do_Globals.gSettings.Datasource
         /// </summary>
         void Connect();
+
+        /// <summary>
+        /// Connects to the specified datasource
+        /// </summary>
+        /// <param name="ConnectionString">
+        /// The specified connection definition to the datasource
+        /// </param>
+        void Connect(string ConnectionString);
 
         /// <summary>
         /// Closes the current connection

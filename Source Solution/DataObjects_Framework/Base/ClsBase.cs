@@ -224,7 +224,14 @@ namespace DataObjects_Framework.Base
         /// </param>
         /// <returns></returns>
         public virtual DataTable List(string Condition = "", string Sort = "")
-        { return this.mDa.List(this.mHeader_ViewName, Condition, Sort); }
+        {
+            DataTable Dt = null;
+            this.mDa.Connect();
+            try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort); }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
+            return Dt;
+        }
 
         /// <summary>
         /// Returns a List based on the supplied Table/View Name
@@ -243,7 +250,14 @@ namespace DataObjects_Framework.Base
         /// </param>
         /// <returns></returns>
         public virtual DataTable List(ClsQueryCondition Condition, string Sort = "", Int32 Top = 0, Int32 Page = 0)
-        { return this.mDa.List(this.mHeader_ViewName, Condition, Sort, Top, Page); }
+        {
+            DataTable Dt = null;
+            this.mDa.Connect();
+            try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort, Top, Page); }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
+            return Dt;
+        }
 
         /// <summary>
         /// Returns a Empy List based on the supplied Table/View Name
@@ -251,7 +265,14 @@ namespace DataObjects_Framework.Base
         /// </summary>
         /// <returns></returns>
         public virtual DataTable List_Empty()
-        { return this.mDa.List_Empty(this.mHeader_ViewName); }
+        {
+            DataTable Dt = null;
+            this.mDa.Connect();
+            try { Dt = this.mDa.List_Empty(this.mHeader_ViewName); }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
+            return Dt;            
+        }
 
         /// <summary>
         /// Returns the Result Set Count with out actually fetching the result set,
@@ -262,7 +283,14 @@ namespace DataObjects_Framework.Base
         /// </param>
         /// <returns></returns>
         public virtual Int64 List_Count(ClsQueryCondition Condition = null)
-        { return this.mDa.List_Count(this.mHeader_ViewName, Condition); }
+        {
+            Int64 Rv = 0;
+            this.mDa.Connect();
+            try { Rv = this.mDa.List_Count(this.mHeader_ViewName, Condition); }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
+            return Rv;
+        }
 
         //[-]
 
@@ -292,25 +320,33 @@ namespace DataObjects_Framework.Base
         {
             try
             {
-                this.mObj_Parent = Obj_Parent;
-
                 this.mDa.Connect();
-
-                //[-]
-
-                this.mHeader_Dr = this.mDa.Load(this.mHeader_ViewName, this.mHeader_Key, Keys);
-
-                //[-]
-
-                this.Load_Details(Keys);
-
-                //[-]
-
-                this.AddRequired();
+                this.Load(this.mDa, Keys, Obj_Parent);
             }
-
             catch (Exception Ex) { throw Ex; }
             finally { this.mDa.Close(); }
+        }
+
+        /// <summary>
+        /// Loads the Data Object with the supplied Key,
+        /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+        /// if not supplied by an explicit foreign key definition
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Keys">
+        /// Key object to use, if null, it implies to create a new data object.
+        /// </param>
+        /// <param name="Obj_Parent">
+        /// The Parent Data Object.
+        /// </param>
+        public virtual void Load(Interface_DataAccess Da, ClsKeys Keys, ClsBase Obj_Parent = null)
+        {
+            this.mObj_Parent = Obj_Parent;
+            this.mHeader_Dr = Da.Load(this.mHeader_ViewName, this.mHeader_Key, Keys);
+            this.Load_Details(Da, Keys);
+            this.AddRequired();
         }
 
         /// <summary>
@@ -329,9 +365,23 @@ namespace DataObjects_Framework.Base
         /// Loads the declared details of the data object.
         /// </summary>
         /// <param name="Keys">
-        /// Key object to use
+        /// Key object to use.
         /// </param>
         protected void Load_Details(ClsKeys Keys = null)
+        {
+            this.Load_Details(this.mDa, Keys);
+        }
+
+        /// <summary>
+        /// Loads the declared details of the data object.
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Keys">
+        /// Key object to use.
+        /// </param>
+        protected void Load_Details(Interface_DataAccess Da, ClsKeys Keys = null)
         {
             if (this.mBase_TableDetail != null)
             {

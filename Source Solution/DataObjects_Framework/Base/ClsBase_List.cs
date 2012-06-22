@@ -8,6 +8,7 @@ using Microsoft.VisualBasic;
 using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
+using DataObjects_Framework.DataAccess;
 using DataObjects_Framework.Objects;
 using DataObjects_Framework.Base;
 
@@ -87,6 +88,16 @@ namespace DataObjects_Framework.Base
 		protected override void Setup_AddRowDetails(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
 		{ throw new NotImplementedException(); }
 
+        /// <summary>
+        /// Need comments.
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Template_Obj"></param>
+        /// <param name="Template_Obj_Constructors"></param>
+        /// <param name="Template_ViewName"></param>
+        /// <param name="Template_FetchKeys"></param>
+        /// <param name="Template_ForeignKeys"></param>
+        /// <param name="Template_LoadCondition"></param>
 		protected virtual void Setup_AddListObject(
 			string Name
 			, ClsBase Template_Obj
@@ -129,7 +140,7 @@ namespace DataObjects_Framework.Base
         { throw new NotImplementedException(); }
         
         /// <summary>
-        /// Loads the List with the supplied Key
+        /// Loads the List with the supplied Key.
         /// </summary>
         /// <param name="Keys">
         /// Key object to use, if null, it implies to create a new data object.
@@ -138,6 +149,29 @@ namespace DataObjects_Framework.Base
         /// The Parent Data Object.
         /// </param>
         public override void Load(ClsKeys Keys, ClsBase Obj_Parent = null)
+        {
+            try
+            { 
+                this.mDa.Connect();
+                this.Load(this.mDa, Keys, Obj_Parent);
+            }
+            catch (Exception Ex) { throw Ex; }
+            finally { this.mDa.Close(); }
+        }
+
+        /// <summary>
+        /// Loads the List with the supplied Key.
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Keys">
+        /// Key object to use, if null, it implies to create a new data object.
+        /// </param>
+        /// <param name="Obj_Parent">
+        /// The Parent Data Object.
+        /// </param>
+        public override void Load(DataAccess.Interface_DataAccess Da, ClsKeys Keys, ClsBase Obj_Parent = null)
         {
             if (Keys == null)
             { this.New(); }
@@ -153,13 +187,13 @@ namespace DataObjects_Framework.Base
                     { Qc.pList.Add(Str_Qc); }
                 }
 
-                this.Load(Qc);
+                this.Load(Da, Qc);
             }
 
             if (this.mBase_ListObject != null)
             {
                 foreach (ClsBaseListObject Lo in this.mBase_ListObject)
-                { Lo.Load(this.mDa, Keys); }
+                { Lo.Load(Da, Keys); }
             }
 
             this.mObj_Parent = Obj_Parent;
@@ -184,8 +218,20 @@ namespace DataObjects_Framework.Base
         /// String condition to use
         /// </param>
         public virtual void Load(string Condition)
+        { this.Load(this.mDa, Condition); }
+
+        /// <summary>
+        /// Loads the List with the supplied condition string.
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Condition">
+        /// String condition to use.
+        /// </param>
+        public virtual void Load(Interface_DataAccess Da, string Condition)
         {
-            this.mDt_List = this.mDa.List(this.mHeader_ViewName, Condition);
+            this.mDt_List = Da.List(this.mHeader_ViewName, Condition);
             this.AddRequired(this.mDt_List);
         }
 
@@ -196,8 +242,20 @@ namespace DataObjects_Framework.Base
         /// QueryCondition object to use
         /// </param>
         public virtual void Load(ClsQueryCondition Condition)
+        { this.Load(this.mDa, Condition); }
+
+        /// <summary>
+        /// Loads the List with the supplied QueryCondition object
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Condition">
+        /// QueryCondition object to use.
+        /// </param>
+        public virtual void Load(Interface_DataAccess Da, ClsQueryCondition Condition)
         {
-            this.mDt_List = this.mDa.List(this.mHeader_ViewName, Condition);
+            this.mDt_List = Da.List(this.mHeader_ViewName, Condition);
             this.AddRequired(this.mDt_List);
         }
 

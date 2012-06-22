@@ -166,7 +166,14 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(Interface_Connection Connection, string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        public DataTable GetQuery(
+            Interface_Connection Connection
+            , string SourceObject
+            , string Fields
+            , ClsQueryCondition Condition
+            , string Sort = ""
+            , long Top = 0
+            , int Page = 0)
         {
             string Query_RowNumberSort = Sort;
             if (Query_RowNumberSort.Trim() == "") Query_RowNumberSort = "(Select 0)";
@@ -225,7 +232,13 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        public DataTable GetQuery(
+            string SourceObject
+            , string Fields
+            , ClsQueryCondition Condition
+            , string Sort = ""
+            , long Top = 0
+            , int Page = 0)
         {
             ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
             try
@@ -248,12 +261,24 @@ namespace DataObjects_Framework.DataAccess
         }
 
         /// <summary>
-        /// Connects to the defined datasource
+        /// Connects to the datasource defined in Do_Globals.gSettings.Datasource
         /// </summary>
         public void Connect()
         {
             this.mConnection = new ClsConnection_SqlServer();
             this.mConnection.Connect();
+        }
+
+        /// <summary>
+        /// Connects to the specified datasource
+        /// </summary>
+        /// <param name="ConnectionString">
+        /// The specified connection definition to the datasource
+        /// </param>
+        public void Connect(string ConnectionString)
+        {
+            this.mConnection = new ClsConnection_SqlServer();
+            this.mConnection.Connect(ConnectionString);
         }
 
         /// <summary>
@@ -320,7 +345,7 @@ namespace DataObjects_Framework.DataAccess
             , string Condition = ""
             , string Sort = "")
         {
-            DataTable Dt = this.GetQuery(ObjectName, "*", Condition, Sort);
+            DataTable Dt = this.GetQuery(this.mConnection, ObjectName, "*", Condition, Sort);
             return Dt;
         }
 
@@ -350,7 +375,7 @@ namespace DataObjects_Framework.DataAccess
             , int Top = 0
             , int Page = 0)
         {
-            DataTable Dt = this.GetQuery(ObjectName, "*", Condition, Sort, Top, Page);
+            DataTable Dt = this.GetQuery(this.mConnection, ObjectName, "*", Condition, Sort, Top, Page);
             return Dt;
         }
 
@@ -386,10 +411,7 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         public DataTable List_Empty(Interface_Connection Connection, string ObjectName)
-        {
-            
-            return this.GetQuery(Connection, ObjectName, "*", "1 = 0");
-        }
+        { return this.GetQuery(Connection, ObjectName, "*", "1 = 0"); }
 
         /// <summary>
         /// Returns a Empy List based on the supplied source data object Name
@@ -400,18 +422,7 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         public DataTable List_Empty(string ObjectName)
-        {
-            ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
-            try
-            {
-                Cn.Connect();
-                return this.List_Empty(Cn, ObjectName);
-            }
-            catch (Exception ex)
-            { throw ex; }
-            finally
-            { Cn.Close(); }
-        }
+        { return this.List_Empty(this.mConnection, ObjectName); }
 
         /// <summary>
         /// Loads the Data Object with the supplied Key,

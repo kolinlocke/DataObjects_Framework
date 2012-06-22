@@ -36,6 +36,12 @@ namespace DataObjects_Framework.Common
     /// </summary>
 	public sealed class Global_Settings
     {
+        #region _Variables
+
+        Dictionary<string, object> mCollection = new Dictionary<string, object>();
+
+        #endregion
+
         #region _Constructor
 
         static readonly Global_Settings mInstance = new Global_Settings() { pConnectionString = "", pUseSoftDelete = false };
@@ -64,6 +70,14 @@ namespace DataObjects_Framework.Common
         /// will require the "IsDeleted As Bit" field on tables to use this feature.
         /// </summary>
         public bool pUseSoftDelete { get; set; }
+
+        /// <summary>
+        /// Generic Dictionary of settings, fill it up as needed.
+        /// </summary>
+        public Dictionary<string, object> pCollection
+        {
+            get { return this.mCollection; }
+        }
 
         #endregion
     }

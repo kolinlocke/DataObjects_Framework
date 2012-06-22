@@ -105,14 +105,12 @@ namespace DataObjects_Framework.Base
 		public void Load(Interface_DataAccess Da, ClsKeys Keys)
 		{
 			if (Keys == null)
-			{ this.mDt_Obj = this.mDa.List_Empty(this.mTemplate_ViewName); }
+			{ this.mDt_Obj = Da.List_Empty(this.mTemplate_ViewName); }
 			else
 			{
-				ClsQueryCondition Qc = this.mDa.CreateQueryCondition();
+				ClsQueryCondition Qc = Da.CreateQueryCondition();
 				foreach (string KeyName in Keys.pName)
 				{
-                    //Qc.Add(KeyName, Keys[KeyName].ToString(), typeof(Int64).ToString(), "0"); 
-
                     Do_Constants.Str_ForeignKeyRelation Fk = this.mTemplate_FetchKeys.FirstOrDefault(Item => Item.Parent_Key == KeyName);
                     Qc.Add(Fk.Child_Key, Keys[KeyName].ToString(), typeof(Int64).ToString(), "0");
                 }
@@ -123,7 +121,7 @@ namespace DataObjects_Framework.Base
 					{ Qc.pList.Add(Str_Qc); }
 				}
 
-				DataTable Dt = this.mDa.List(this.mTemplate_ViewName, Qc);
+				DataTable Dt = Da.List(this.mTemplate_ViewName, Qc);
 				this.mDt_Obj = Dt;
 				foreach (DataRow Dr in Dt.Rows)
 				{
@@ -137,8 +135,6 @@ namespace DataObjects_Framework.Base
 					DataRow[] ArrDr_Parent = this.mObj_Base.pDt_List.Select(Sb_Condition.ToString());
 					if (ArrDr_Parent.Length > 0) { TmpKey = Do_Methods.Convert_Int64(ArrDr_Parent[0]["TmpKey"]); }
 					else { throw new Exception("TmpKey not found."); }
-
-					//ClsBase Inner_Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mTemplate_Obj_Constructors.ToArray());
 
                     ClsBase Inner_Obj = null;
 

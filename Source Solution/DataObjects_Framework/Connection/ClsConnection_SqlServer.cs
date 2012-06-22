@@ -32,7 +32,7 @@ namespace DataObjects_Framework.Connection
         #region _Methods
 
         #region _Connection
-        
+
         /// <summary>
         /// Opens a new connection with the specified connection string in Do_Globals.gSettings.pConnectionString.
         /// </summary>
@@ -59,11 +59,16 @@ namespace DataObjects_Framework.Connection
             ConnectionString = Sb_ConnectionString.ToString();
             */
 
-			ConnectionString = Do_Globals.gSettings.pConnectionString;
+            //[-]
 
+			ConnectionString = Do_Globals.gSettings.pConnectionString;
+            return this.Connect(ConnectionString);
+        }
+
+        public bool Connect(string ConnectionString)
+        {
             this.mConnection = new SqlConnection(ConnectionString);
             this.mConnection.Open();
-
             return true;
         }
 
