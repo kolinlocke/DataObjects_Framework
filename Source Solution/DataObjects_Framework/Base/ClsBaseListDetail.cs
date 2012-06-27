@@ -14,7 +14,7 @@ using DataObjects_Framework.Base;
 
 namespace DataObjects_Framework.Base
 {
-    public class ClsBaseListDetail
+    internal class ClsBaseListDetail
     {
         #region _Variables
 

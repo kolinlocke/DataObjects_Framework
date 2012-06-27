@@ -32,7 +32,13 @@ namespace DataObjects_Framework.Base
         /// </summary>
         protected DataTable mDt_List;
 
-		protected List<ClsBaseListObject> mBase_ListObject = new List<ClsBaseListObject>();
+		internal List<ClsBaseListObject> mBase_ListObject = new List<ClsBaseListObject>();
+
+        public struct Str_Desc
+        {
+            public string FieldName_Parent;
+            public string FieldName_Child;
+        }
 
         #endregion
 
@@ -377,7 +383,16 @@ namespace DataObjects_Framework.Base
             }
         }
 
-        public void Refresh_Desc(string Name, List<ClsBaseListObject.Str_Desc> List_Desc)
+        /// <summary>
+        /// Synchronizes data from the ListObject to the parent data row.
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the List Object to refresh.
+        /// </param>
+        /// <param name="List_Desc">
+        /// Field definition of the parent and child fields to synchronize.
+        /// </param>
+        public void Refresh_Desc(string Name, List<Str_Desc> List_Desc)
         {
             ClsBaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);
             if (Obj != null)
@@ -396,9 +411,26 @@ namespace DataObjects_Framework.Base
             get { return this.mDt_List; }
         }
 
+        /// <summary>
+        /// Gets the data table of the List Object.
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the List Object to get.
+        /// </param>
+        /// <returns></returns>
 		public DataTable pDt_ListObject_Get(string Name)
 		{ return this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name).pDt_Obj; }
 
+        /// <summary>
+        /// Gets the data object of the List Object with the specified TmpKey.
+        /// </summary>
+        /// <param name="Name">
+        /// The name of the List Object to get.
+        /// </param>
+        /// <param name="TmpKey">
+        /// The TmpKey of the data object within the List Object.
+        /// </param>
+        /// <returns></returns>
 		public ClsBase pObj_ListObject_Get(string Name, Int64 TmpKey)
 		{
 			ClsBaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);

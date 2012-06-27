@@ -53,14 +53,14 @@ namespace DataObjects_Framework.Base
         /// <summary>
         /// List of Table Detail objecs of the Data Object
         /// </summary>
-        protected List<ClsBaseTableDetail> mBase_TableDetail = new List<ClsBaseTableDetail>();
+        internal List<ClsBaseTableDetail> mBase_TableDetail = new List<ClsBaseTableDetail>();
 
         /// <summary>
         /// List of Row Detail objecs of the Data Object
         /// </summary>
-        protected List<ClsBaseRowDetail> mBase_RowDetail = new List<ClsBaseRowDetail>();
+        internal List<ClsBaseRowDetail> mBase_RowDetail = new List<ClsBaseRowDetail>();
 
-        protected List<ClsBaseListDetail> mBase_ListDetail = new List<ClsBaseListDetail>();
+        internal List<ClsBaseListDetail> mBase_ListDetail = new List<ClsBaseListDetail>();
 
         /// <summary>
         /// Current Data Access object

@@ -17,7 +17,7 @@ namespace DataObjects_Framework.Base
     /// <summary>
     /// Internal, manages the defined row detail
     /// </summary>
-    public class ClsBaseRowDetail
+    internal class ClsBaseRowDetail
     {
         #region _Variables
 

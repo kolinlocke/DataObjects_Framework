@@ -17,7 +17,7 @@ namespace DataObjects_Framework.Base
 	/// <summary>
 	/// Internal, manages the defined list object
 	/// </summary>
-	public class ClsBaseListObject
+	internal class ClsBaseListObject
 	{
 		#region _Variables
 
@@ -61,12 +61,6 @@ namespace DataObjects_Framework.Base
 				this.Obj = pObj;
 			}
 		}
-
-        public struct Str_Desc
-        {
-            public string FieldName_Parent;
-            public string FieldName_Child;
-        }
 
 		#endregion
 
@@ -190,14 +184,14 @@ namespace DataObjects_Framework.Base
 			return Obj;
 		}
 
-		public void Refresh_Desc(List<Str_Desc> List_Desc)
+		public void Refresh_Desc(List<ClsBase_List.Str_Desc> List_Desc)
 		{
 			foreach (DataRow Dr_Parent in this.mObj_Base.pDt_List.Rows)
 			{
 				DataRow[] ArrDr_Obj = this.mDt_Obj.Select("TmpKey = " + Dr_Parent["TmpKey"].ToString());
 				if (ArrDr_Obj.Length > 0)
 				{
-                    foreach (Str_Desc Desc in List_Desc)
+                    foreach (ClsBase_List.Str_Desc Desc in List_Desc)
                     {
                         if (this.mObj_Base.pDt_List.Columns.Contains(Desc.FieldName_Parent))
                         {
