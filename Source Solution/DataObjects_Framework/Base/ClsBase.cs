@@ -65,7 +65,7 @@ namespace DataObjects_Framework.Base
         /// <summary>
         /// Current Data Access object
         /// </summary>
-        protected Interface_DataAccess mDa = new ClsDataAccess_SqlServer();
+        protected Interface_DataAccess mDa;
 
         #endregion
 
@@ -75,7 +75,22 @@ namespace DataObjects_Framework.Base
         /// Default Constructor
         /// Mostly used to access Instance Methods such the DataAccess Object
         /// </summary>
-        public ClsBase() { }
+        public ClsBase() 
+        {
+            //this.mDa = new ClsDataAccess_SqlServer();
+
+            switch (Do_Globals.gSettings.pDataAccessType)
+            {
+                case Do_Constants.eDataAccessType.DataAccess_SqlServer:
+                    {
+                        this.mDa = new ClsDataAccess_SqlServer();
+                        break;
+                    }
+                case Do_Constants.eDataAccessType.DataAccess_WCF:
+                    { throw new NotImplementedException("DataAccess_WCF not implemented yet."); }
+            }
+
+        }
 
         #endregion
 

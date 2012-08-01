@@ -150,6 +150,22 @@ namespace DataObjects_Framework.DataAccess
             , string Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
+
+        Int32 ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+
+        Int32 ExecuteNonQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+
+        Int32 ExecuteNonQuery(Interface_Connection Connection, string Query);
+
+        Int32 ExecuteNonQuery(string Query);
+
+        DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+
+        DataSet ExecuteQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+
+        DataSet ExecuteQuery(Interface_Connection Connection, string Query);
+
+        DataSet ExecuteQuery(string Query);
         
         /// <summary>
         /// Gets the current using Connection Object used by this instance

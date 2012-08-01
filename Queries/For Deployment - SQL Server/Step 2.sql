@@ -1,8 +1,4 @@
-/*
-Note: Repeat this script until there are no more errors.
-*/
-
-/****** Object:  UserDefinedFunction [dbo].[udf_DataObjects_GetTableDef]    Script Date: 05/24/2012 17:33:32 ******/
+/****** Object:  UserDefinedFunction [dbo].[udf_DataObjects_GetTableDef]    Script Date: 07/02/2012 17:13:50 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -65,7 +61,7 @@ Return
 ' 
 END
 GO
-/****** Object:  Table [dbo].[DataObjects_Series]    Script Date: 05/24/2012 17:33:28 ******/
+/****** Object:  Table [dbo].[DataObjects_Series]    Script Date: 07/02/2012 17:13:45 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -82,7 +78,7 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DataObjects_Parameters]    Script Date: 05/24/2012 17:33:28 ******/
+/****** Object:  Table [dbo].[DataObjects_Parameters]    Script Date: 07/02/2012 17:13:44 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,7 +95,7 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  StoredProcedure [dbo].[usp_DataObjects_GetTableDef]    Script Date: 05/24/2012 17:33:31 ******/
+/****** Object:  StoredProcedure [dbo].[usp_DataObjects_GetTableDef]    Script Date: 07/02/2012 17:13:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -126,7 +122,7 @@ End
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[usp_DataObjects_GetNextID]    Script Date: 05/24/2012 17:33:31 ******/
+/****** Object:  StoredProcedure [dbo].[usp_DataObjects_GetNextID]    Script Date: 07/02/2012 17:13:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -166,7 +162,44 @@ End
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Set]    Script Date: 05/24/2012 17:33:31 ******/
+/****** Object:  UserDefinedFunction [dbo].[udf_DataObjects_Parameter_Get]    Script Date: 07/02/2012 17:13:50 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[udf_DataObjects_Parameter_Get]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+execute dbo.sp_executesql @statement = N'Create Function [dbo].[udf_DataObjects_Parameter_Get]
+(@ParameterName VarChar(Max))
+Returns VarChar(Max)
+As
+Begin
+	Declare @ParameterValue As VarChar(Max)		
+	Set @ParameterValue = ''''
+	
+	Declare @Ct As Int	
+	Select @Ct = Count(1)
+	From DataObjects_Parameters
+	Where ParameterName = @ParameterName
+	
+	If @Ct = 0
+	Begin
+		Return ''''
+	End
+	Else
+	Begin
+		Select @ParameterValue = ParameterValue
+		From DataObjects_Parameters
+		Where ParameterName = @ParameterName
+	End
+	
+	Return @ParameterValue
+End
+
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Set]    Script Date: 07/02/2012 17:13:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -201,7 +234,7 @@ End
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Require]    Script Date: 05/24/2012 17:33:31 ******/
+/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Require]    Script Date: 07/02/2012 17:13:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -230,7 +263,7 @@ End
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Get]    Script Date: 05/24/2012 17:33:31 ******/
+/****** Object:  StoredProcedure [dbo].[usp_DataObjects_Parameter_Get]    Script Date: 07/02/2012 17:13:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

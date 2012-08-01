@@ -53,78 +53,36 @@ namespace DataObjects_Framework.Common
 
         public static Int32 ExecuteNonQuery(string ProcedureName, Do_Constants.Str_Parameters[] ProcedureParameters)
         {
-            ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
-            try
-            {
-                Da.Connect();
-                return Da.ExecuteNonQuery(ProcedureName, ProcedureParameters);
-            }
-            catch (Exception ex) { throw ex; }
-            finally { Da.Close(); }
+            return Do_Methods_Query.ExecuteNonQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
         public static Int32 ExecuteNonQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters)
         {
-            return ExecuteNonQuery(ProcedureName, ProcedureParameters.ToArray());
+            Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            return Da.ExecuteNonQuery(ProcedureName, ProcedureParameters);
         }
 
         public static Int32 ExecuteNonQuery(string Query)
         {
-            ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
-            try
-            {
-                Da.Connect();
-                return Da.ExecuteNonQuery(Query);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Da.Close();
-            }
+            Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            return Da.ExecuteNonQuery(Query);
         }
 
         public static DataSet ExecuteQuery(string ProcedureName, Do_Constants.Str_Parameters[] ProcedureParameters)
         {
-            ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
-            try
-            {
-                Da.Connect();
-                return Da.ExecuteQuery(ProcedureName, ProcedureParameters);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Da.Close();
-            }
+            return Do_Methods_Query.ExecuteQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
         public static DataSet ExecuteQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters)
         {
-            return ExecuteQuery(ProcedureName, ProcedureParameters.ToArray());
+            Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            return Da.ExecuteQuery(ProcedureName, ProcedureParameters);
         }
 
         public static DataSet ExecuteQuery(string Query)
         {
-            ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
-            try
-            {
-                Da.Connect();
-                return Da.ExecuteQuery(Query);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Da.Close();
-            }
+            Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            return Da.ExecuteQuery(Query);
         }
 
         public static DataTable GetTableDef(string TableName)
@@ -139,7 +97,7 @@ namespace DataObjects_Framework.Common
             string Rv = "";
             List<Do_Constants.Str_Parameters> Sp = new List<Do_Constants.Str_Parameters>();
             Sp.Add(new Do_Constants.Str_Parameters("ParameterName", ParameterName));
-            DataTable Dt = ExecuteQuery("usp_Get_System_Parameter", Sp).Tables[0];
+            DataTable Dt = Do_Methods_Query.ExecuteQuery("usp_Get_System_Parameter", Sp).Tables[0];
             if (Dt.Rows.Count > 0)
             { Rv = (string)Dt.Rows[0][0]; }
 
@@ -148,7 +106,7 @@ namespace DataObjects_Framework.Common
 
         public static DataRow GetSystemBindDefinition(string Name)
         {
-            DataTable Dt_Bind = GetQuery(@"System_BindDefinition", @"", @"Name = '" + Name + "'");
+            DataTable Dt_Bind = Do_Methods_Query.GetQuery(@"System_BindDefinition", @"", @"Name = '" + Name + "'");
             DataRow Dr_Bind;
             if (Dt_Bind.Rows.Count > 0)
             { Dr_Bind = Dt_Bind.Rows[0]; }
@@ -160,13 +118,13 @@ namespace DataObjects_Framework.Common
 
         public static DataTable GetSystemLookup(string LookupName)
         {
-            DataTable Dt = GetQuery(@"udf_System_Lookup('" + LookupName + @"')");
+            DataTable Dt = Do_Methods_Query.GetQuery(@"udf_System_Lookup('" + LookupName + @"')");
             return Dt;
         }
 
         public static DataTable GetLookup(string LookupName)
         {
-            DataTable Dt = GetQuery(@"udf_Lookup('" + LookupName + @"')");
+            DataTable Dt = Do_Methods_Query.GetQuery(@"udf_Lookup('" + LookupName + @"')");
             return Dt;
         }
     }

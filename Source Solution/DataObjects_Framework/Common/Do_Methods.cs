@@ -294,9 +294,11 @@ namespace DataObjects_Framework.Common
         public static double Convert_Double(object Value, double DefaultValue = 0)
         {
             string ValueString = string.Empty;
-            try
-            { ValueString = Value.ToString(); }
-            catch { }
+            if (Value != null)
+            {
+                try { ValueString = Value.ToString(); }
+                catch { }
+            }
 
             double ReturnValue;
             if (!double.TryParse(ValueString, out ReturnValue))
@@ -318,9 +320,11 @@ namespace DataObjects_Framework.Common
         public static Int32 Convert_Int32(object Value, Int32 DefaultValue = 0)
         {
             string ValueString = string.Empty;
-            try
-            { ValueString = Value.ToString(); }
-            catch { }
+            if (Value != null)
+            {
+                try { ValueString = Value.ToString(); }
+                catch { }
+            }
 
             Int32 ReturnValue;
             if (!Int32.TryParse(ValueString, out ReturnValue))
@@ -341,10 +345,12 @@ namespace DataObjects_Framework.Common
         public static Int64 Convert_Int64(object Value, Int64 DefaultValue = 0)
         {
             string ValueString = string.Empty;
-            try
-            { ValueString = Value.ToString(); }
-            catch { }
-
+            if (Value != null)
+            {
+                try { ValueString = Value.ToString(); }
+                catch { }
+            }
+            
             Int64 ReturnValue;
             if (!Int64.TryParse(ValueString, out ReturnValue))
             { ReturnValue = DefaultValue; }
@@ -364,10 +370,12 @@ namespace DataObjects_Framework.Common
         public static DateTime? Convert_DateTime(object Value, DateTime? DefaultValue = null)
         {
             string ValueString = string.Empty;
-            try
-            { ValueString = Value.ToString(); }
-            catch { }
-
+            if (Value != null)
+            {
+                try { ValueString = Value.ToString(); }
+                catch { }
+            }
+            
             DateTime ReturnValue_Ex;
             DateTime? ReturnValue;
             if (DateTime.TryParse(ValueString, out ReturnValue_Ex))

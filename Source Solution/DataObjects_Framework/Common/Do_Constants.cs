@@ -10,7 +10,6 @@ namespace DataObjects_Framework.Common
     /// </summary>
     public class Do_Constants
     {
-
         /// <summary>
         /// Struct Str_Parameters, used in various query execution methods.
         /// </summary>
@@ -78,5 +77,10 @@ namespace DataObjects_Framework.Common
             }
         }
 
+        public enum eDataAccessType : long
+        { 
+            DataAccess_SqlServer = 0
+            , DataAccess_WCF = 1
+        }
     }
 }

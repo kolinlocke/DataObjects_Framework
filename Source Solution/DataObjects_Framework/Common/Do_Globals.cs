@@ -22,13 +22,6 @@ namespace DataObjects_Framework.Common
         {
             get { return Global_Settings.Instance; }
         }
-
-        /*
-        public static string gConnection_Server, gConnection_Database, gConnection_Username, gConnection_Password;
-        public static string gConnection_SqlServerConnectionString;
-        public static string gConnection_SharePoint_Server, gConnection_SharePoint_UserName, gConnection_SharePoint_Password;
-        */
-
     }
 
     /// <summary>
@@ -44,7 +37,13 @@ namespace DataObjects_Framework.Common
 
         #region _Constructor
 
-        static readonly Global_Settings mInstance = new Global_Settings() { pConnectionString = "", pUseSoftDelete = false };
+        static readonly Global_Settings mInstance = 
+            new Global_Settings() 
+            { 
+                pConnectionString = ""
+                , pUseSoftDelete = false 
+                , pDataAccessType = Do_Constants.eDataAccessType.DataAccess_SqlServer
+            };
 
         static Global_Settings() { }
 
@@ -70,6 +69,8 @@ namespace DataObjects_Framework.Common
         /// will require the "IsDeleted As Bit" field on tables to use this feature.
         /// </summary>
         public bool pUseSoftDelete { get; set; }
+
+        public Do_Constants.eDataAccessType pDataAccessType { get; set; }
 
         /// <summary>
         /// Generic Dictionary of settings, fill it up as needed.
