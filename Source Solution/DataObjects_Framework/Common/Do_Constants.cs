@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DataObjects_Framework;
+using DataObjects_Framework.Objects;
 
 namespace DataObjects_Framework.Common
 {
@@ -81,6 +83,30 @@ namespace DataObjects_Framework.Common
         { 
             DataAccess_SqlServer = 0
             , DataAccess_WCF = 1
+        }
+
+        [Serializable()]
+        public struct Str_Request_List
+        {
+            public string ObjectName;
+            public string Fields;
+            public ClsQueryCondition Condition;
+            public string Condition_String;
+            public string Sort;
+            public Int32 Top;
+            public Int32 Page;
+            public string ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_Load
+        {
+            public string ObjectName;
+            public List<string> ObjectKeys;
+            public ClsKeys Key;
+            public string Condition;
+            public List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys;
+            public string ConnectionString;
         }
     }
 }

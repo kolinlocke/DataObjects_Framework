@@ -462,26 +462,15 @@ namespace DataObjects_Framework.DataAccess
         /// Returns a Empy List based on the supplied source data object Name
         /// Used for getting the definition of the data object
         /// </summary>
-        /// <param name="Connection">
-        /// An open connection object
-        /// </param>
-        /// <param name="ObjectName">
-        /// The source data object name
-        /// </param>
-        /// <returns></returns>
-        public DataTable List_Empty(Interface_Connection Connection, string ObjectName)
-        { return this.GetQuery(Connection, ObjectName, "*", "1 = 0"); }
-
-        /// <summary>
-        /// Returns a Empy List based on the supplied source data object Name
-        /// Used for getting the definition of the data object
-        /// </summary>
         /// <param name="ObjectName">
         /// The source data object name
         /// </param>
         /// <returns></returns>
         public DataTable List_Empty(string ObjectName)
-        { return this.List_Empty(this.mConnection, ObjectName); }
+        { 
+            //return this.List_Empty(this.mConnection, ObjectName);
+            return this.GetQuery(this.mConnection, ObjectName, "*", "1 = 0");
+        }
 
         /// <summary>
         /// Loads the Data Object with the supplied Key,

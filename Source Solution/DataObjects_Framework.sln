@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataObjects_Framework", "DataObjects_Framework\DataObjects_Framework.csproj", "{8AEAA79E-4839-4493-A467-8F2AD225B42A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataObjects_Wcf", "DataObjects_Wcf\DataObjects_Wcf.csproj", "{AD51051D-3F47-48EB-B8F9-F67ECE0720F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,8 @@ Global
 		{8AEAA79E-4839-4493-A467-8F2AD225B42A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AEAA79E-4839-4493-A467-8F2AD225B42A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AEAA79E-4839-4493-A467-8F2AD225B42A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD51051D-3F47-48EB-B8F9-F67ECE0720F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD51051D-3F47-48EB-B8F9-F67ECE0720F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

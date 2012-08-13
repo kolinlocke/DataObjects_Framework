@@ -87,7 +87,10 @@ namespace DataObjects_Framework.Base
                         break;
                     }
                 case Do_Constants.eDataAccessType.DataAccess_WCF:
-                    { throw new NotImplementedException("DataAccess_WCF not implemented yet."); }
+                    { 
+                        this.mDa = new ClsDataAccess_Wcf();
+                        break;
+                    }
             }
 
         }
@@ -240,11 +243,26 @@ namespace DataObjects_Framework.Base
         /// <returns></returns>
         public virtual DataTable List(string Condition = "", string Sort = "")
         {
-            DataTable Dt = null;
-            this.mDa.Connect();
-            try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort); }
+            //DataTable Dt = null;
+            //this.mDa.Connect();
+            //try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort); }
+            //catch (Exception Ex) { throw Ex; }
+            //finally { this.mDa.Close(); }
+            //return Dt;
+
+            try
+            {
+                this.mDa.Connect();
+                return this.List(this.mDa, Condition, Sort);
+            }
             catch (Exception Ex) { throw Ex; }
             finally { this.mDa.Close(); }
+        }
+
+        public virtual DataTable List(Interface_DataAccess Da, string Condition = "", string Sort = "")
+        {
+            DataTable Dt = null;
+            Dt = Da.List(this.mHeader_ViewName, Condition, Sort); 
             return Dt;
         }
 
@@ -266,11 +284,26 @@ namespace DataObjects_Framework.Base
         /// <returns></returns>
         public virtual DataTable List(ClsQueryCondition Condition, string Sort = "", Int32 Top = 0, Int32 Page = 0)
         {
-            DataTable Dt = null;
-            this.mDa.Connect();
-            try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort, Top, Page); }
+            //DataTable Dt = null;
+            //this.mDa.Connect();
+            //try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort, Top, Page); }
+            //catch (Exception Ex) { throw Ex; }
+            //finally { this.mDa.Close(); }
+            //return Dt;
+
+            try
+            {
+                this.mDa.Connect();
+                return this.List(this.mDa, Condition, Sort, Top, Page);
+            }
             catch (Exception Ex) { throw Ex; }
             finally { this.mDa.Close(); }
+        }
+
+        public virtual DataTable List(Interface_DataAccess Da, ClsQueryCondition Condition, string Sort = "", Int32 Top = 0, Int32 Page = 0)
+        {
+            DataTable Dt = null;
+            Dt = Da.List(this.mHeader_ViewName, Condition, Sort, Top, Page); 
             return Dt;
         }
 

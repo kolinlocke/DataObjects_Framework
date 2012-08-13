@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.IO;
+using System.Security.Cryptography;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using Microsoft;
 using Microsoft.VisualBasic;
 using DataObjects_Framework;
@@ -11,7 +14,10 @@ using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
 using DataObjects_Framework.Base;
-using System.Security.Cryptography;
+using DataObjects_Framework.DataAccess;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Serialization;
 
 namespace DataObjects_Framework.Common
 {
@@ -556,9 +562,65 @@ namespace DataObjects_Framework.Common
             { Da.Close(); }
         }
 
-        public static DataAccess.Interface_DataAccess CreateDataAccess()
+        public static Interface_DataAccess CreateDataAccess()
         {
             return new ClsBase().pDa;
+        }
+
+        public static string SerializeObject_Json(Type TargetObjectType, Object TargetObject)
+        {
+            //DataContractJsonSerializer Js = new DataContractJsonSerializer(TargetObjectType);
+            //MemoryStream Ms = new MemoryStream();
+            //Js.WriteObject(Ms, TargetObject);
+
+            //Ms.Position = 0;
+            //StreamReader Sr = new StreamReader(Ms);
+            //string SerializedData = Sr.ReadToEnd();
+            //return SerializedData;
+
+            String SerializedData = JsonConvert.SerializeObject(TargetObject);
+            return SerializedData;
+        }
+
+        public static Object DeserializeObject_Json(Type TargetObjectType, String SerializedData)
+        {
+            //DataContractJsonSerializer Js = new DataContractJsonSerializer(TargetObjectType);
+            //MemoryStream Ms = new MemoryStream();
+
+            //byte[] Bytes_SerializedData = System.Text.Encoding.Unicode.GetBytes(SerializedData);
+            //Ms.Write(Bytes_SerializedData, 0, Bytes_SerializedData.Length);
+
+            //return Js.ReadObject(Ms);
+
+            Object DeserializedObject = JsonConvert.DeserializeObject(SerializedData, TargetObjectType);
+            return DeserializedObject;
+        }
+
+        public static string SerializeObject(Object TargetObject)
+        {
+            IFormatter F = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            MemoryStream Ms = new MemoryStream();
+            F.Serialize(Ms, TargetObject);
+
+            Ms.Position = 0;
+            StreamReader Sr = new StreamReader(Ms);
+            string SerializedData = Sr.ReadToEnd();
+            return SerializedData;
+        }
+
+        public static Object DeserializeObject(String SerializedData)
+        {
+            Object Rv = null;
+            IFormatter F = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            using (MemoryStream Ms = new MemoryStream())
+            {
+                byte[] Bytes_SerializedData = System.Text.Encoding.UTF8.GetBytes(SerializedData);
+                Ms.Write(Bytes_SerializedData, 0, Bytes_SerializedData.Length);
+                Ms.Position = 0;
+                Rv = F.Deserialize(Ms);                
+            }
+
+            return Rv;            
         }
 
         //Removed

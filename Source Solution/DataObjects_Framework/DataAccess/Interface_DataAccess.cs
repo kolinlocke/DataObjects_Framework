@@ -290,19 +290,6 @@ namespace DataObjects_Framework.DataAccess
         /// Returns a Empy List based on the supplied source data object Name
         /// Used for getting the definition of the data object
         /// </summary>
-        /// <param name="Connection">
-        /// An open connection object
-        /// </param>
-        /// <param name="ObjectName">
-        /// The source data object name
-        /// </param>
-        /// <returns></returns>
-        DataTable List_Empty(Interface_Connection Connection, string ObjectName);
-
-        /// <summary>
-        /// Returns a Empy List based on the supplied source data object Name
-        /// Used for getting the definition of the data object
-        /// </summary>
         /// <param name="ObjectName">
         /// The source data object name
         /// </param>

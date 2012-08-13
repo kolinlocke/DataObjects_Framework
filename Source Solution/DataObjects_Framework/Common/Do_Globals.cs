@@ -64,6 +64,8 @@ namespace DataObjects_Framework.Common
         /// </summary>
         public string pConnectionString { get; set; }
 
+        public string pWcfAddress { get; set; }
+
         /// <summary>
         /// Sets if the framework will use the soft delete feature, 
         /// will require the "IsDeleted As Bit" field on tables to use this feature.

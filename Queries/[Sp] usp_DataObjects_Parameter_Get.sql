@@ -1,5 +1,6 @@
 Create Procedure [dbo].[usp_DataObjects_Parameter_Get]
 @ParameterName VarChar(Max)
+, @DefaultValue As VarChar(Max)
 As
 Begin
 	Declare @ParameterValue As VarChar(Max)		
@@ -12,7 +13,7 @@ Begin
 	
 	If @Ct = 0
 	Begin
-		Exec usp_DataObjects_Parameter_Require @ParameterName
+		Exec usp_DataObjects_Parameter_Require @ParameterName, @DefaultValue
 	End
 	Else
 	Begin
