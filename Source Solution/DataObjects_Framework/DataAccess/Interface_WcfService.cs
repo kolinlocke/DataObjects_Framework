@@ -18,7 +18,7 @@ namespace DataObjects_Framework.DataAccess
         [OperationContract]
         string GetData(int value);
 
-        [OperationContract]
+        [OperationContract]        
         [WebInvoke(
             Method = "POST"
             , ResponseFormat = WebMessageFormat.Json
@@ -64,6 +64,46 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "Load_RowDetails")]
-        String Load_RowDetails(Do_Constants.Str_Request_Load Request_Load);        
+        String Load_RowDetails(Do_Constants.Str_Request_Load Request_Load);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "SaveDataRow")]
+        Boolean SaveDataRow(Do_Constants.Str_Request_Save Request_Save);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "GetQuery")]
+        String GetQuery(Do_Constants.Str_Request_GetQuery Request_GetQuery);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "GetTableDef")]
+        String GetTableDef(Do_Constants.Str_Request_List Request_List);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "GetSystemParameter")]
+        String GetSystemParameter(Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "SetSystemParameter")]
+        void SetSystemParameter(Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
     }
 }

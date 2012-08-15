@@ -226,7 +226,12 @@ namespace DataObjects_Framework.DataAccess
         /// Custom Key definition.
         /// </param>
         /// <returns></returns>
-        bool SaveDataRow(DataRow ObjDataRow, string TableName, string SchemaName = "", bool IsDelete = false, List<string> CustomKeys = null);
+        bool SaveDataRow(
+            DataRow ObjDataRow
+            , string TableName
+            , string SchemaName = ""
+            , bool IsDelete = false
+            , List<string> CustomKeys = null);
         
         //[-]
 
@@ -271,7 +276,7 @@ namespace DataObjects_Framework.DataAccess
             string ObjectName
             , ClsQueryCondition Condition
             , string Sort = ""
-            , Int32 Top = 0
+            , Int64 Top = 0
             , Int32 Page = 0);
 
         /// <summary>
@@ -358,6 +363,8 @@ namespace DataObjects_Framework.DataAccess
             , List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys);
 
         //[-]
+
+        Interface_Connection CreateConnection();
 
         /// <summary>
         /// Creates a ClsQueryCondition based on the implementation of this interface

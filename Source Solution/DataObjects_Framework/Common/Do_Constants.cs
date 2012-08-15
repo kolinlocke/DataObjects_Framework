@@ -88,25 +88,57 @@ namespace DataObjects_Framework.Common
         [Serializable()]
         public struct Str_Request_List
         {
-            public string ObjectName;
-            public string Fields;
+            public String ObjectName;
+            public String Fields;
             public ClsQueryCondition Condition;
-            public string Condition_String;
-            public string Sort;
-            public Int32 Top;
+            public String Condition_String;
+            public String Sort;
+            public Int64 Top;
             public Int32 Page;
-            public string ConnectionString;
+            public String ConnectionString;
         }
 
         [Serializable()]
         public struct Str_Request_Load
         {
-            public string ObjectName;
+            public String ObjectName;
             public List<string> ObjectKeys;
             public ClsKeys Key;
-            public string Condition;
+            public String Condition;
             public List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys;
-            public string ConnectionString;
+            public String ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_Save
+        {
+            public String Serialized_ObjectDataRow;
+            public String TableName;
+            public String SchemaName;
+            public Boolean IsDelete;
+            public List<String> CustomKeys;
+            public String ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_GetQuery
+        {
+            public String ObjectName;
+            public String Fields;
+            public ClsQueryCondition Condition;
+            public String Condition_String;
+            public String Sort;
+            public Int64 Top;
+            public Int32 Page;
+            public String ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_SystemParameter
+        {
+            public String ParameterName;
+            public String ParameterValue;
+            public String ConnectionString;
         }
     }
 }

@@ -24,26 +24,39 @@ namespace DataObjects_Framework.DataAccess
         { return new Client_WcfService(); }
 
         public string GetData(int value)
-        { 
-            return this.mChannel.GetData(value); 
-        }
+        { return this.mChannel.GetData(value); }
 
-        public string List(Common.Do_Constants.Str_Request_List Request_List)
+        public string List(Do_Constants.Str_Request_List Request_List)
         { return this.mChannel.List(Request_List); }
 
-        public long List_Count(Common.Do_Constants.Str_Request_List Request_List)
+        public long List_Count(Do_Constants.Str_Request_List Request_List)
         { return this.mChannel.List_Count(Request_List); }
 
-        public string List_Empty(Common.Do_Constants.Str_Request_List Request_List)
+        public string List_Empty(Do_Constants.Str_Request_List Request_List)
         { return this.mChannel.List_Empty(Request_List); }
 
-        public string Load(Common.Do_Constants.Str_Request_Load Request_Load)
+        public string Load(Do_Constants.Str_Request_Load Request_Load)
         { return this.mChannel.Load(Request_Load); }
 
-        public string Load_TableDetails(Common.Do_Constants.Str_Request_Load Request_Load)
+        public string Load_TableDetails(Do_Constants.Str_Request_Load Request_Load)
         { return this.mChannel.Load_TableDetails(Request_Load); }
 
-        public string Load_RowDetails(Common.Do_Constants.Str_Request_Load Request_Load)
+        public string Load_RowDetails(Do_Constants.Str_Request_Load Request_Load)
         { return this.mChannel.Load_RowDetails(Request_Load); }
+
+        public bool SaveDataRow(Do_Constants.Str_Request_Save Request_Save)
+        { return this.mChannel.SaveDataRow(Request_Save); }
+
+        public string GetQuery(Do_Constants.Str_Request_GetQuery Request_GetQuery)
+        { return this.mChannel.GetQuery(Request_GetQuery); }
+
+        public string GetTableDef(Do_Constants.Str_Request_List Request_List)
+        { return this.mChannel.GetTableDef(Request_List); }
+
+        public string GetSystemParameter(Do_Constants.Str_Request_SystemParameter Request_SystemParameter)
+        { return this.mChannel.GetSystemParameter(Request_SystemParameter); }
+
+        public void SetSystemParameter(Do_Constants.Str_Request_SystemParameter Request_SystemParameter)
+        { this.mChannel.SetSystemParameter(Request_SystemParameter); }
     }
 }

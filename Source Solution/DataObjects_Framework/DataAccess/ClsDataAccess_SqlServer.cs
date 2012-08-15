@@ -431,8 +431,8 @@ namespace DataObjects_Framework.DataAccess
             string ObjectName
             , ClsQueryCondition Condition
             , string Sort = ""
-            , int Top = 0
-            , int Page = 0)
+            , Int64 Top = 0
+            , Int32 Page = 0)
         {
             DataTable Dt = this.GetQuery(this.mConnection, ObjectName, "*", Condition, Sort, Top, Page);
             return Dt;
@@ -677,6 +677,11 @@ namespace DataObjects_Framework.DataAccess
             return Dr;
         }
 
+        public Interface_Connection CreateConnection()
+        {
+            return new ClsConnection_SqlServer();
+        }
+
         /// <summary>
         /// Creates a ClsQueryCondition based on the SQL Server implementation
         /// </summary>
@@ -803,6 +808,6 @@ namespace DataObjects_Framework.DataAccess
             Cn.ExecuteNonQuery("usp_DataObjects_Parameter_Set", Sp);
         }
 
-        #endregion
+        #endregion        
     }
 }

@@ -58,6 +58,7 @@
     <Compile Include="Common\Do_Methods.cs" />
     <Compile Include="Common\Do_Methods_Query.cs" />
     <Compile Include="Connection\ClsConnection_SqlServer.cs" />
+    <Compile Include="Connection\ClsConnection_Wcf.cs" />
     <Compile Include="Connection\Interface_Connection.cs" />
     <Compile Include="DataAccess\Client_WcfService.cs" />
     <Compile Include="DataAccess\ClsDataAccess_SqlServer.cs" />
@@ -71,7 +72,7 @@
     <Compile Include="Objects\ClsCustomException.cs" />
     <Compile Include="Objects\ClsPreparedQuery.cs" />
     <Compile Include="Objects\ClsQueryCondition.cs" />
-    <Compile Include="Objects\ClsSimpleDataTable.cs" />
+    <Compile Include="Objects\ClsSimpleDataSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\ClsBaseObjs.cs" />
     <Compile Include="Objects\ClsKeys.cs" />

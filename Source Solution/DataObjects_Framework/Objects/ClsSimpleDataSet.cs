@@ -13,11 +13,74 @@ using DataObjects_Framework.Common;
 namespace DataObjects_Framework.Objects
 {
     [DataContract()]
+    public class ClsSimpleDataSet
+    {
+        #region _Variables
+
+        List<ClsSimpleDataTable> mList_DataTable = new List<ClsSimpleDataTable>();
+
+        #endregion
+
+        #region _Constructor
+
+        public ClsSimpleDataSet() { }
+
+        public ClsSimpleDataSet(DataSet Ds) 
+        {
+            foreach (DataTable Dt in Ds.Tables)
+            {
+                ClsSimpleDataTable Sdt = new ClsSimpleDataTable(Dt);
+                this.mList_DataTable.Add(Sdt);
+            }
+        }
+        
+        #endregion
+
+        #region _Methods
+
+        public string Serialize()
+        { return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataSet), this); }
+
+        public static ClsSimpleDataSet Deserialize(string SerializeData)
+        { return (ClsSimpleDataSet)Do_Methods.DeserializeObject_Json(typeof(ClsSimpleDataSet), SerializeData); }
+
+        public DataSet ToDataSet()
+        {
+            DataSet Ds = new DataSet();
+            foreach (ClsSimpleDataTable Sdt in this.mList_DataTable)
+            {
+                DataTable Dt = Sdt.ToDataTable();
+                Ds.Tables.Add(Dt);
+            }
+
+            return Ds;
+        }
+
+        #endregion
+
+        #region _Properties
+
+        [DataMember()]
+        public List<ClsSimpleDataTable> pList_DataTable
+        {
+            get { return this.mList_DataTable; }
+        }
+
+        #endregion
+    }
+
+    [DataContract()]
     public class ClsSimpleDataTable
     {
+        #region _Variables
+
         List<ClsSimpleDataColumn> mList_DataColumn = new List<ClsSimpleDataColumn>();
 
         List<ClsSimpleDataRow> mList_DataRow = new List<ClsSimpleDataRow>();
+
+        #endregion
+
+        #region _Constructor
 
         public ClsSimpleDataTable() { }
 
@@ -26,12 +89,7 @@ namespace DataObjects_Framework.Objects
             foreach (DataColumn Dc in Dt.Columns)
             {
                 this.mList_DataColumn.Add(
-                    new ClsSimpleDataColumn()
-                    {
-                        ColumnName = Dc.ColumnName
-                        ,
-                        DataType = Dc.DataType
-                    });
+                    new ClsSimpleDataColumn() { ColumnName = Dc.ColumnName, DataType = Dc.DataType });
             }
 
             foreach (DataRow Dr in Dt.Rows)
@@ -39,6 +97,13 @@ namespace DataObjects_Framework.Objects
                 this.mList_DataRow.Add(new ClsSimpleDataRow(this.mList_DataColumn, Dr));
             }
         }
+
+        #endregion
+
+        #region _Methods
+
+        public string Serialize()
+        { return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataTable), this); }
 
         public static ClsSimpleDataTable Deserialize(string SerializedData)
         { return (ClsSimpleDataTable)Do_Methods.DeserializeObject_Json(typeof(ClsSimpleDataTable), SerializedData); }
@@ -66,6 +131,10 @@ namespace DataObjects_Framework.Objects
             return Dt;
         }
 
+        #endregion
+
+        #region _Properties
+
         [DataMember()]
         public List<ClsSimpleDataColumn> pList_DataColumn
         {
@@ -78,25 +147,34 @@ namespace DataObjects_Framework.Objects
             get { return this.mList_DataRow; }
         }
 
-        public string Serialize()
-        { return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataTable), this); }
+        #endregion
     }
 
     [DataContract()]
     public class ClsSimpleDataColumn
     {
+        #region _Constructor
+
         public ClsSimpleDataColumn() { }
+
+        #endregion
+
+        #region _Variables
 
         [DataMember()]
         public string ColumnName;
 
         [DataMember()]
         public Type DataType;
+
+        #endregion
     }
 
     [DataContract()]
     public class ClsSimpleDataRow
     {
+        #region _Variables
+
         [DataContract]
         public struct Str_Item
         {
@@ -109,6 +187,10 @@ namespace DataObjects_Framework.Objects
 
         [DataMember()]
         List<Str_Item> mList_Item = new List<Str_Item>();
+
+        #endregion
+
+        #region _Constructor
 
         public ClsSimpleDataRow() { }
 
@@ -131,11 +213,49 @@ namespace DataObjects_Framework.Objects
                 this.mList_Item.Add(new Str_Item() { DataColumn = Sdc });
             }
         }
-        
+
+        internal ClsSimpleDataRow(DataRow Dr)
+        {
+            foreach (DataColumn Dc in Dr.Table.Columns)
+            {
+                ClsSimpleDataColumn Sdc = new ClsSimpleDataColumn();
+                Sdc.ColumnName = Dc.ColumnName;
+                Sdc.DataType = Dc.DataType;
+                this.mList_Item.Add(
+                    new Str_Item() { DataColumn = Sdc, Value = Dr[Dc.ColumnName] });
+            }
+        }
+
+        #endregion
+
+        #region _Methods
+
         public string Serialize()
         {
             return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataRow), this);
         }
+
+        public static ClsSimpleDataRow Deserialize(String SerializedData)
+        { return (ClsSimpleDataRow)Do_Methods.DeserializeObject_Json(typeof(ClsSimpleDataRow), SerializedData); }
+
+        public DataRow ToDataRow()
+        {
+            DataTable Dt = new DataTable();
+            foreach (ClsSimpleDataColumn Sdc in (from O in this.mList_Item select O.DataColumn))
+            { Dt.Columns.Add(Sdc.ColumnName, Sdc.DataType); }
+
+            DataRow Dr = Dt.NewRow();
+            Dt.Rows.Add(Dr);
+
+            foreach (Str_Item Item in this.mList_Item)
+            { Dr[Item.DataColumn.ColumnName] = Item.Value; }
+
+            return Dr;
+        }
+
+        #endregion
+
+        #region _Properties
 
         public Object this[string Name]
         {
@@ -146,5 +266,7 @@ namespace DataObjects_Framework.Objects
         {
             get { return this.mList_Item[Index].Value; }
         }
+
+        #endregion
     }
 }

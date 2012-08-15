@@ -20,6 +20,5 @@ namespace DataObjects_Framework.Connection
         /// The transaction object used by this connection
         /// </summary>
         System.Data.IDbTransaction pTransaction { get; }
-        
     }
 }

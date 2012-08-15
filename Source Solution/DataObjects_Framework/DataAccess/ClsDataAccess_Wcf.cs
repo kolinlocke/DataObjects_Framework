@@ -15,33 +15,74 @@ namespace DataObjects_Framework.DataAccess
     {
         #region _Variables
 
-        string mConnectionString = "";
+        //string mConnectionString = "";
+        ClsConnection_Wcf mConnection;
 
         #endregion
 
         #region _ImplementedMethods
 
-        public DataTable GetQuery(Connection.Interface_Connection Connection, string SourceObject, string Fields = "", string Condition = "", string Sort = "", long Top = 0, int Page = 0)
+        public DataTable GetQuery(Interface_Connection Connection, string SourceObject, string Fields = "", string Condition = "", string Sort = "", long Top = 0, int Page = 0)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_GetQuery Rgq = new Do_Constants.Str_Request_GetQuery();
+            Rgq.ObjectName = SourceObject;
+            Rgq.Condition_String = Condition;
+            Rgq.Sort = Sort;
+            Rgq.Top = Top;
+            Rgq.Page = Page;
+
+            Rgq.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            string ResponseData = Client.GetQuery(Rgq);
+
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
+            return Sdt.ToDataTable();
         }
 
         public DataTable GetQuery(string SourceObject, string Fields = "", string Condition = "", string Sort = "", long Top = 0, int Page = 0)
         {
-            throw new NotImplementedException();
+            ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+            try
+            {
+                Cn.Connect();
+                return this.GetQuery(Cn, SourceObject, Fields, Condition, Sort);
+            }
+            catch (Exception ex)
+            { throw ex; }
         }
 
-        public DataTable GetQuery(Connection.Interface_Connection Connection, string SourceObject, string Fields, Objects.ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        public DataTable GetQuery(Interface_Connection Connection, string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_GetQuery Rgq = new Do_Constants.Str_Request_GetQuery();
+            Rgq.ObjectName = SourceObject;
+            Rgq.Condition = Condition;
+            Rgq.Sort = Sort;
+            Rgq.Top = Do_Methods.Convert_Int32(Top);
+            Rgq.Page = Page;
+
+            Rgq.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            string ResponseData = Client.GetQuery(Rgq);
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
+
+            return Sdt.ToDataTable();
         }
 
-        public DataTable GetQuery(string SourceObject, string Fields, Objects.ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        public DataTable GetQuery(string SourceObject, string Fields, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
         {
-            throw new NotImplementedException();
+            ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+            try
+            {
+                Cn.Connect();
+                return this.GetQuery(Cn, SourceObject, Fields, Condition, Sort);
+            }
+            catch (Exception ex)
+            { throw ex; }
         }
 
-        public int ExecuteNonQuery(Connection.Interface_Connection Connection, string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
         {
             throw new NotImplementedException();
         }
@@ -87,32 +128,43 @@ namespace DataObjects_Framework.DataAccess
         }
 
         public void Connect()
-        { this.mConnectionString = Do_Globals.gSettings.pConnectionString; }
+        { 
+            this.mConnection = new ClsConnection_Wcf();
+            this.mConnection.Connect();            
+        }
 
         public void Connect(string ConnectionString)
-        { this.mConnectionString = ConnectionString; }
+        { 
+            this.mConnection = new ClsConnection_Wcf();
+            this.mConnection.Connect(ConnectionString);
+        }
 
         public void Close()
-        { this.mConnectionString = ""; }
-
-        public void BeginTransaction()
-        {
-            throw new NotImplementedException();
+        { 
+            this.mConnection = null;
         }
 
-        public void CommitTransaction()
-        {
-            throw new NotImplementedException();
-        }
+        public void BeginTransaction() { }
 
-        public void RollbackTransaction()
-        {
-            throw new NotImplementedException();
-        }
+        public void CommitTransaction() { }
+
+        public void RollbackTransaction() { }
 
         public bool SaveDataRow(DataRow ObjDataRow, string TableName, string SchemaName = "", bool IsDelete = false, List<string> CustomKeys = null)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_Save Rs = new Do_Constants.Str_Request_Save();
+            Rs.TableName = TableName;
+            Rs.SchemaName = SchemaName;
+            Rs.IsDelete = IsDelete;
+            Rs.CustomKeys = CustomKeys;
+
+            ClsSimpleDataRow Sdr = new ClsSimpleDataRow(ObjDataRow);
+            Rs.Serialized_ObjectDataRow = Sdr.Serialize();
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            Boolean ResponseData = Client.SaveDataRow(Rs);
+
+            return ResponseData;
         }
 
         public DataTable List(string ObjectName, string Condition = "", string Sort = "")
@@ -121,16 +173,16 @@ namespace DataObjects_Framework.DataAccess
             Rl.ObjectName = ObjectName;
             Rl.Condition_String = Condition;
             Rl.Sort = Sort;
-            Rl.ConnectionString = this.mConnectionString;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List(Rl);
-            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
 
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
         }
 
-        public DataTable List(string ObjectName, Objects.ClsQueryCondition Condition, string Sort = "", int Top = 0, int Page = 0)
+        public DataTable List(string ObjectName, ClsQueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
@@ -138,12 +190,12 @@ namespace DataObjects_Framework.DataAccess
             Rl.Sort = Sort;
             Rl.Top = Top;
             Rl.Page = Page;
-            Rl.ConnectionString = this.mConnectionString;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List(Rl);
-            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
 
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
         }
 
@@ -152,7 +204,7 @@ namespace DataObjects_Framework.DataAccess
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
             Rl.Condition = Condition;
-            Rl.ConnectionString = this.mConnectionString;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             Int64 ResponseData = Client.List_Count(Rl);
@@ -164,58 +216,131 @@ namespace DataObjects_Framework.DataAccess
         {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
-            Rl.ConnectionString = this.mConnectionString;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List_Empty(Rl);
-            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
 
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
         }
 
-        public DataRow Load(string ObjectName, List<string> List_Key, Objects.ClsKeys Keys)
+        public DataRow Load(string ObjectName, List<string> List_Key, ClsKeys Keys)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_Load Rl = new Do_Constants.Str_Request_Load();
+            Rl.ObjectName = ObjectName;
+            Rl.ObjectKeys = List_Key;
+            Rl.Key = Keys;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            String ResponseData = Client.Load(Rl);
+
+            ClsSimpleDataRow Sdr = ClsSimpleDataRow.Deserialize(ResponseData);
+            return Sdr.ToDataRow();
         }
 
-        public DataTable Load_TableDetails(string ObjectName, Objects.ClsKeys Keys, string Condition, List<Common.Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
+        public DataTable Load_TableDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_Load Rl = new Do_Constants.Str_Request_Load();
+            Rl.ObjectName = ObjectName;
+            Rl.ForeignKeys = ForeignKeys;
+            Rl.Condition = Condition;
+            Rl.Key = Keys;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            String ResponseData = Client.Load_TableDetails(Rl);
+
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
+            return Sdt.ToDataTable();
         }
 
-        public DataRow Load_RowDetails(string ObjectName, Objects.ClsKeys Keys, string Condition, List<Common.Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
+        public DataRow Load_RowDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_Load Rl = new Do_Constants.Str_Request_Load();
+            Rl.ObjectName = ObjectName;
+            Rl.ForeignKeys = ForeignKeys;
+            Rl.Condition = Condition;
+            Rl.Key = Keys;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            String ResponseData = Client.Load_RowDetails(Rl);
+
+            ClsSimpleDataRow Sdr = ClsSimpleDataRow.Deserialize(ResponseData);
+            return Sdr.ToDataRow();
         }
 
-        public Objects.ClsQueryCondition CreateQueryCondition()
+        public Interface_Connection CreateConnection()
         {
-            throw new NotImplementedException();
+            return new ClsConnection_Wcf();
+        }
+
+        public ClsQueryCondition CreateQueryCondition()
+        {
+            return new ClsQueryCondition();
         }
 
         public DataTable GetTableDef(string TableName)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
+            Rl.ObjectName = TableName;
+            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            string ResponseData = Client.GetTableDef(Rl);
+
+            ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
+            return Sdt.ToDataTable();
         }
 
         public string GetSystemParameter(string ParameterName, string DefaultValue = "")
         {
-            throw new NotImplementedException();
+            ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+            try
+            {
+                Cn.Connect();
+                return this.GetSystemParameter(Cn, ParameterName, DefaultValue);
+            }
+            catch (Exception ex)
+            { throw ex; }
         }
 
-        public string GetSystemParameter(Connection.Interface_Connection Connection, string ParameterName, string DefaultValue = "")
+        public string GetSystemParameter(Interface_Connection Connection, string ParameterName, string DefaultValue = "")
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_SystemParameter Rsp = new Do_Constants.Str_Request_SystemParameter();
+            Rsp.ParameterName = ParameterName;
+            Rsp.ParameterValue = DefaultValue;
+            Rsp.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            String ResponseData = Client.GetSystemParameter(Rsp);
+
+            return ResponseData;
         }
 
         public void SetSystemParameter(string ParameterName, string ParameterValue)
         {
-            throw new NotImplementedException();
+            Do_Constants.Str_Request_SystemParameter Rsp = new Do_Constants.Str_Request_SystemParameter();
+            Rsp.ParameterName = ParameterName;
+            Rsp.ParameterValue = ParameterValue;
+            Rsp.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
+
+            Client_WcfService Client = Client_WcfService.CreateObject();
+            Client.SetSystemParameter(Rsp);
         }
 
         public void SetSystemParameter(Connection.Interface_Connection Connection, string ParameterName, string ParameterValue)
         {
-            throw new NotImplementedException();
+            ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+            try
+            {
+                Cn.Connect();
+                this.SetSystemParameter(Cn, ParameterName, ParameterValue);
+            }
+            catch (Exception ex)
+            { throw ex; }
         }
 
         #endregion
