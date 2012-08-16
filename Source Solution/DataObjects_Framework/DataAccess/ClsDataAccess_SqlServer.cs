@@ -404,7 +404,26 @@ namespace DataObjects_Framework.DataAccess
             , string Condition = ""
             , string Sort = "")
         {
-            DataTable Dt = this.GetQuery(this.mConnection, ObjectName, "*", Condition, Sort);
+            if (this.mConnection == null)
+            {
+                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                try
+                {
+                    Cn.Connect();
+                    return this.List(Cn, ObjectName, Condition, Sort);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+                finally
+                { Cn.Close(); }
+            }
+            else
+            { return this.List(this.mConnection, ObjectName, Condition, Sort); }
+        }
+
+        public DataTable List(Interface_Connection Cn, string ObjectName, string Condition = "", string Sort = "")
+        {
+            DataTable Dt = this.GetQuery(Cn, ObjectName, "*", Condition, Sort);
             return Dt;
         }
 
@@ -434,7 +453,26 @@ namespace DataObjects_Framework.DataAccess
             , Int64 Top = 0
             , Int32 Page = 0)
         {
-            DataTable Dt = this.GetQuery(this.mConnection, ObjectName, "*", Condition, Sort, Top, Page);
+            if (this.mConnection == null)
+            {
+                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                try
+                {
+                    Cn.Connect();
+                    return this.List(Cn, ObjectName, Condition, Sort, Top, Page);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+                finally
+                { Cn.Close(); }
+            }
+            else
+            { return this.List(this.mConnection, ObjectName, Condition, Sort, Top, Page); }
+        }
+
+        public DataTable List(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        {
+            DataTable Dt = this.GetQuery(Cn, ObjectName, "*", Condition, Sort, Top, Page);
             return Dt;
         }
 
@@ -450,10 +488,28 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         public long List_Count(string ObjectName, ClsQueryCondition Condition = null)
         {
-            DataTable Dt = this.GetQuery(ObjectName, "Count(1) As [Ct]", Condition);
+            if (this.mConnection == null)
+            {
+                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                try
+                {
+                    Cn.Connect();
+                    return this.List_Count(Cn, ObjectName, Condition);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+                finally
+                { Cn.Close(); }
+            }
+            else
+            { return this.List_Count(this.mConnection, ObjectName, Condition); }
+        }
+
+        public long List_Count(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition = null)
+        {
+            DataTable Dt = this.GetQuery(Cn, ObjectName, "Count(1) As [Ct]", Condition);
             Int64 ReturnValue = 0;
-            try
-            { ReturnValue =  Do_Methods.Convert_Int64(Dt.Rows[0]["Ct"], 0); }
+            try { ReturnValue = Do_Methods.Convert_Int64(Dt.Rows[0]["Ct"], 0); }
             catch { }
             return ReturnValue;
         }
@@ -467,9 +523,27 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         public DataTable List_Empty(string ObjectName)
-        { 
-            //return this.List_Empty(this.mConnection, ObjectName);
-            return this.GetQuery(this.mConnection, ObjectName, "*", "1 = 0");
+        {
+            if (this.mConnection == null)
+            {
+                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                try
+                {
+                    Cn.Connect();
+                    return this.List_Empty(Cn, ObjectName);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+                finally
+                { Cn.Close(); }
+            }
+            else
+            { return this.List_Empty(this.mConnection, ObjectName); }            
+        }
+
+        public DataTable List_Empty(Interface_Connection Cn, string ObjectName)
+        {
+            return this.GetQuery(Cn, ObjectName, "*", "1 = 0");
         }
 
         /// <summary>
@@ -808,6 +882,6 @@ namespace DataObjects_Framework.DataAccess
             Cn.ExecuteNonQuery("usp_DataObjects_Parameter_Set", Sp);
         }
 
-        #endregion        
+        #endregion
     }
 }

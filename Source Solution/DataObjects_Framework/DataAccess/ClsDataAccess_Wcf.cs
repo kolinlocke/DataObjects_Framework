@@ -169,11 +169,40 @@ namespace DataObjects_Framework.DataAccess
 
         public DataTable List(string ObjectName, string Condition = "", string Sort = "")
         {
+            //Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
+            //Rl.ObjectName = ObjectName;
+            //Rl.Condition_String = Condition;
+            //Rl.Sort = Sort;
+            //Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            //Client_WcfService Client = Client_WcfService.CreateObject();
+            //string ResponseData = Client.List(Rl);
+
+            //ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
+            //return Sdt.ToDataTable();
+
+            if (this.mConnection == null)
+            {
+                ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+                try
+                {
+                    Cn.Connect();
+                    return this.List(Cn, ObjectName, Condition, Sort);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+            }
+            else
+            { return this.List(this.mConnection, ObjectName, Condition, Sort); }
+        }
+
+        public DataTable List(Interface_Connection Cn, string ObjectName, string Condition = "", string Sort = "")
+        {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
             Rl.Condition_String = Condition;
             Rl.Sort = Sort;
-            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+            Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List(Rl);
@@ -184,13 +213,30 @@ namespace DataObjects_Framework.DataAccess
 
         public DataTable List(string ObjectName, ClsQueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
+            if (this.mConnection == null)
+            {
+                ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+                try
+                {
+                    Cn.Connect();
+                    return this.List(Cn, ObjectName, Condition, Sort, Top, Page);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+            }
+            else
+            { return this.List(this.mConnection, ObjectName, Condition, Sort, Top, Page); }
+        }
+
+        public DataTable List(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
             Rl.Condition = Condition;
             Rl.Sort = Sort;
             Rl.Top = Top;
             Rl.Page = Page;
-            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+            Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List(Rl);
@@ -201,22 +247,65 @@ namespace DataObjects_Framework.DataAccess
 
         public long List_Count(string ObjectName, Objects.ClsQueryCondition Condition = null)
         {
+            //Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
+            //Rl.ObjectName = ObjectName;
+            //Rl.Condition = Condition;
+            //Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+
+            //Client_WcfService Client = Client_WcfService.CreateObject();
+            //Int64 ResponseData = Client.List_Count(Rl);
+
+            //return ResponseData;
+
+            if (this.mConnection == null)
+            {
+                ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+                try
+                {
+                    Cn.Connect();
+                    return this.List_Count(Cn, ObjectName, Condition);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+            }
+            else
+            { return this.List_Count(this.mConnection, ObjectName, Condition); }
+        }
+
+        public long List_Count(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition = null)
+        {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
             Rl.Condition = Condition;
-            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+            Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             Int64 ResponseData = Client.List_Count(Rl);
-
             return ResponseData;
         }
 
         public DataTable List_Empty(string ObjectName)
         {
+            if (this.mConnection == null)
+            {
+                ClsConnection_Wcf Cn = new ClsConnection_Wcf();
+                try
+                {
+                    Cn.Connect();
+                    return this.List_Empty(Cn, ObjectName);
+                }
+                catch (Exception Ex)
+                { throw Ex; }
+            }
+            else
+            { return this.List_Empty(this.mConnection, ObjectName); }
+        }
+
+        public DataTable List_Empty(Interface_Connection Cn, string ObjectName)
+        {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = ObjectName;
-            Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
+            Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
             Client_WcfService Client = Client_WcfService.CreateObject();
             string ResponseData = Client.List_Empty(Rl);

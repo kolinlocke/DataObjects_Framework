@@ -252,7 +252,29 @@ namespace DataObjects_Framework.DataAccess
             string ObjectName
             , string Condition = ""
             , string Sort = "");
-        
+
+        /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="Cn">
+        /// An open connection object
+        /// </param>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// Additional conditions to be used in fetching the data
+        /// </param>
+        /// <param name="Sort">
+        /// Additional sorting to be used in fetching the data
+        /// </param>
+        /// <returns></returns>
+        DataTable List(
+            Interface_Connection Cn
+            , string ObjectName
+            , string Condition = ""
+            , string Sort = "");
+
         /// <summary>
         /// Returns a List based on the supplied Table/View Name
         /// </summary>
@@ -280,6 +302,36 @@ namespace DataObjects_Framework.DataAccess
             , Int32 Page = 0);
 
         /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="Cn">
+        /// An open connection object
+        /// </param>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to be used in fetching the data
+        /// </param>
+        /// <param name="Sort">
+        /// Additional sorting to be used in fetching the data
+        /// </param>
+        /// <param name="Top">
+        /// Limits the result set, mainly used for pagination
+        /// </param>
+        /// <param name="Page">
+        /// Fetch a section of the result set based on the supplied Top, mainly used for pagination
+        /// </param>
+        /// <returns></returns>
+        DataTable List(
+            Interface_Connection Cn
+            , string ObjectName
+            , ClsQueryCondition Condition
+            , string Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0);
+
+        /// <summary>
         /// Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
         /// </summary>
         /// <param name="ObjectName">
@@ -292,6 +344,21 @@ namespace DataObjects_Framework.DataAccess
         Int64 List_Count(string ObjectName, ClsQueryCondition Condition = null);
 
         /// <summary>
+        /// Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
+        /// </summary>
+        /// <param name="Cn">
+        /// An open connection object
+        /// </param>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <param name="Condition">
+        /// ClsQueryCondition Object to be used in fetching the data
+        /// </param>
+        /// <returns></returns>
+        Int64 List_Count(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition = null);
+
+        /// <summary>
         /// Returns a Empy List based on the supplied source data object Name
         /// Used for getting the definition of the data object
         /// </summary>
@@ -300,6 +367,19 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         DataTable List_Empty(string ObjectName);
+
+        /// <summary>
+        /// Returns a Empy List based on the supplied source data object Name
+        /// Used for getting the definition of the data object
+        /// </summary>
+        /// <param name="Cn">
+        /// An open connection object
+        /// </param>
+        /// <param name="ObjectName">
+        /// The source data object name
+        /// </param>
+        /// <returns></returns>
+        DataTable List_Empty(Interface_Connection Cn, string ObjectName);
 
         /// <summary>
         /// Loads the Data Object with the supplied Key,
@@ -364,6 +444,10 @@ namespace DataObjects_Framework.DataAccess
 
         //[-]
 
+        /// <summary>
+        /// Creates a connection object based on the implementation of this interface
+        /// </summary>
+        /// <returns></returns>
         Interface_Connection CreateConnection();
 
         /// <summary>
