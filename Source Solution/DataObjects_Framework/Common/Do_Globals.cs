@@ -10,10 +10,7 @@ namespace DataObjects_Framework.Common
     /// </summary>
     public static class Do_Globals
     {
-        static Do_Globals()
-        { 
-
-        }
+		static Do_Globals() { }
 
         /// <summary>
         /// Global Settings for the framework can be set here.

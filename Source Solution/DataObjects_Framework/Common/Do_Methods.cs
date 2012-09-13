@@ -18,6 +18,7 @@ using DataObjects_Framework.DataAccess;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Serialization;
+using DataObjects_Framework.PreparedQuery;
 
 namespace DataObjects_Framework.Common
 {
@@ -85,10 +86,10 @@ namespace DataObjects_Framework.Common
         /// <param name="Sp">
         /// Contains the data to add
         /// </param>
-        public static void AddDataRow(ref DataTable Dt, List<Common.Do_Constants.Str_Parameters> Sp)
+        public static void AddDataRow(ref DataTable Dt, List<ClsParameter> Sp)
         {
             DataRow Nr = Dt.NewRow();
-            foreach (Common.Do_Constants.Str_Parameters Obj in Sp)
+            foreach (ClsParameter Obj in Sp)
             { Nr[Obj.Name] = Obj.Value; }
             Dt.Rows.Add(Nr);
         }
@@ -428,6 +429,19 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        public static Byte Convert_Byte(Object Value, Byte DefaultValue = 0)
+        {
+            string ValueString = string.Empty;
+            try
+            { ValueString = Value.ToString(); }
+            catch { }
+
+            Byte ReturnValue;
+            if (!Byte.TryParse(ValueString, out ReturnValue))
+            { ReturnValue = DefaultValue; }
+            return ReturnValue;
+        }
+
         public static string TextFiller(string TextInput , string Filler, Int32 TextLength)
         {
             string Rv = Strings.Right(Strings.StrDup(TextLength, Filler) + Strings.LTrim(Strings.Left(TextInput, TextLength)), TextLength);
@@ -452,7 +466,7 @@ namespace DataObjects_Framework.Common
             return Rv;
         }
 
-        public static bool ParseFilterText(ref string FilterText, string DataType = "String")
+        public static bool ParseFilterText(ref String FilterText, String DataType = "String")
         {
             string ParsedTextToken = "";
             string[] ArrParsedText = FilterText.Split(' ');
@@ -567,6 +581,11 @@ namespace DataObjects_Framework.Common
             return new ClsBase().pDa;
         }
 
+        public static Interface_Connection CreateConnection()
+        {
+            return CreateDataAccess().CreateConnection();
+        }
+
         public static string SerializeObject_Json(Type TargetObjectType, Object TargetObject)
         {
             //DataContractJsonSerializer Js = new DataContractJsonSerializer(TargetObjectType);
@@ -621,6 +640,23 @@ namespace DataObjects_Framework.Common
             }
 
             return Rv;            
+        }
+
+        public static String GenerateGuid(List<String> List)
+        {
+            String NewGuid = null;
+            Boolean IsValid = false;
+
+            while (!IsValid)
+            {
+                NewGuid = Guid.NewGuid().ToString();
+                if (!List.Exists(X => X == NewGuid))
+                {
+                    IsValid = true;
+                }
+            }
+
+            return NewGuid;
         }
 
         //Removed

@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
+using System.Data.Common;
+using System.Linq;
 using System.Net;
+using System.Text;
 using DataObjects_Framework;
-using DataObjects_Framework.Connection;
 using DataObjects_Framework.Common;
+using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
+using DataObjects_Framework.PreparedQuery;
 
 namespace DataObjects_Framework.DataAccess
 {
+	/// <summary>
+	/// The WCF implementation of Interface_DataAccess
+	/// Connects to a WCF Server App provided for DataObjects_Framework
+	/// Requires explicit setting to Do_Globals.gSettings.pWcfAddress
+	/// </summary>
     public class ClsDataAccess_Wcf : Interface_DataAccess
     {
         #region _Variables
@@ -33,8 +40,11 @@ namespace DataObjects_Framework.DataAccess
 
             Rgq.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.GetQuery(Rgq);
+			string ResponseData = Client.GetQuery(Rs, Rgq);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -63,8 +73,11 @@ namespace DataObjects_Framework.DataAccess
 
             Rgq.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.GetQuery(Rgq);
+			string ResponseData = Client.GetQuery(Rs, Rgq);
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
 
             return Sdt.ToDataTable();
@@ -82,17 +95,17 @@ namespace DataObjects_Framework.DataAccess
             { throw ex; }
         }
 
-        public int ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters)
         {
             throw new NotImplementedException();
         }
 
-        public int ExecuteNonQuery(string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
         {
             throw new NotImplementedException();
         }
 
-        public int ExecuteNonQuery(Connection.Interface_Connection Connection, string Query)
+        public int ExecuteNonQuery(Interface_Connection Connection, string Query)
         {
             throw new NotImplementedException();
         }
@@ -102,17 +115,27 @@ namespace DataObjects_Framework.DataAccess
             throw new NotImplementedException();
         }
 
-        public DataSet ExecuteQuery(Connection.Interface_Connection Connection, string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(Interface_Connection Cn, DbCommand Cmd)
         {
             throw new NotImplementedException();
         }
 
-        public DataSet ExecuteQuery(string ProcedureName, List<Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(DbCommand Cmd)
         {
             throw new NotImplementedException();
         }
 
-        public DataSet ExecuteQuery(Connection.Interface_Connection Connection, string Query)
+        public DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataSet ExecuteQuery(Interface_Connection Connection, string Query)
         {
             throw new NotImplementedException();
         }
@@ -122,9 +145,19 @@ namespace DataObjects_Framework.DataAccess
             throw new NotImplementedException();
         }
 
+        public DataSet ExecuteQuery(Interface_Connection Cn, DbCommand Cmd)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataSet ExecuteQuery(DbCommand Cmd)
+        {
+            throw new NotImplementedException();
+        }
+
         public Interface_Connection Connection
         {
-            get { throw new NotImplementedException(); }
+			get { return this.mConnection; }
         }
 
         public void Connect()
@@ -161,8 +194,11 @@ namespace DataObjects_Framework.DataAccess
             ClsSimpleDataRow Sdr = new ClsSimpleDataRow(ObjDataRow);
             Rs.Serialized_ObjectDataRow = Sdr.Serialize();
 
+			Do_Constants.Str_Request_Session Rss = new Do_Constants.Str_Request_Session();
+			Rss.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            Boolean ResponseData = Client.SaveDataRow(Rs);
+			Boolean ResponseData = Client.SaveDataRow(Rss, Rs);
 
             return ResponseData;
         }
@@ -204,8 +240,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Sort = Sort;
             Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.List(Rl);
+			string ResponseData = Client.List(Rs, Rl);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -238,8 +277,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Page = Page;
             Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.List(Rl);
+			string ResponseData = Client.List(Rs, Rl);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -279,8 +321,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Condition = Condition;
             Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            Int64 ResponseData = Client.List_Count(Rl);
+			Int64 ResponseData = Client.List_Count(Rs, Rl);
             return ResponseData;
         }
 
@@ -307,8 +352,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.ObjectName = ObjectName;
             Rl.ConnectionString = (Cn as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.List_Empty(Rl);
+			string ResponseData = Client.List_Empty(Rs, Rl);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -322,8 +370,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Key = Keys;
             Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            String ResponseData = Client.Load(Rl);
+			String ResponseData = Client.Load(Rs, Rl);
 
             ClsSimpleDataRow Sdr = ClsSimpleDataRow.Deserialize(ResponseData);
             return Sdr.ToDataRow();
@@ -338,8 +389,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Key = Keys;
             Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            String ResponseData = Client.Load_TableDetails(Rl);
+			String ResponseData = Client.Load_TableDetails(Rs, Rl);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -354,8 +408,11 @@ namespace DataObjects_Framework.DataAccess
             Rl.Key = Keys;
             Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            String ResponseData = Client.Load_RowDetails(Rl);
+			String ResponseData = Client.Load_RowDetails(Rs, Rl);
 
             ClsSimpleDataRow Sdr = ClsSimpleDataRow.Deserialize(ResponseData);
             return Sdr.ToDataRow();
@@ -371,14 +428,34 @@ namespace DataObjects_Framework.DataAccess
             return new ClsQueryCondition();
         }
 
+        public ClsPreparedQuery CreatePreparedQuery(Interface_Connection Cn, string Query = "", List<ClsParameter> Parameters = null)
+        {
+            return new ClsPreparedQuery_Wcf(Cn, Query, Parameters);
+        }
+
+        public ClsPreparedQuery CreatePreparedQuery(string Query = "", List<ClsParameter> Parameters = null)
+        {
+            ClsConnection_Wcf Cn = this.mConnection;
+            if (Cn == null)
+            {
+                Cn = new ClsConnection_Wcf();
+                Cn.Connect();                
+            }
+
+            return new ClsPreparedQuery_Wcf(Cn, Query, Parameters);
+        }
+
         public DataTable GetTableDef(string TableName)
         {
             Do_Constants.Str_Request_List Rl = new Do_Constants.Str_Request_List();
             Rl.ObjectName = TableName;
             Rl.ConnectionString = (this.mConnection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            string ResponseData = Client.GetTableDef(Rl);
+			string ResponseData = Client.GetTableDef(Rs, Rl);
 
             ClsSimpleDataTable Sdt = ClsSimpleDataTable.Deserialize(ResponseData);
             return Sdt.ToDataTable();
@@ -403,8 +480,11 @@ namespace DataObjects_Framework.DataAccess
             Rsp.ParameterValue = DefaultValue;
             Rsp.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            String ResponseData = Client.GetSystemParameter(Rsp);
+			String ResponseData = Client.GetSystemParameter(Rs, Rsp);
 
             return ResponseData;
         }
@@ -416,11 +496,14 @@ namespace DataObjects_Framework.DataAccess
             Rsp.ParameterValue = ParameterValue;
             Rsp.ConnectionString = (Connection as ClsConnection_Wcf).pConnectionString;
 
+			Do_Constants.Str_Request_Session Rs = new Do_Constants.Str_Request_Session();
+			Rs.SessionID = ClsDataAccess_Wcf_Session.Instance.pSessionID;
+
             Client_WcfService Client = Client_WcfService.CreateObject();
-            Client.SetSystemParameter(Rsp);
+			Client.SetSystemParameter(Rs, Rsp);
         }
 
-        public void SetSystemParameter(Connection.Interface_Connection Connection, string ParameterName, string ParameterValue)
+        public void SetSystemParameter(Interface_Connection Connection, string ParameterName, string ParameterValue)
         {
             ClsConnection_Wcf Cn = new ClsConnection_Wcf();
             try
@@ -432,6 +515,38 @@ namespace DataObjects_Framework.DataAccess
             { throw ex; }
         }
 
+        public void Dispose()
+        {
+            if (this.mConnection != null)
+            { this.mConnection = null; }
+        }
+
         #endregion
     }
+
+	public sealed class ClsDataAccess_Wcf_Session
+	{
+		#region _Constructor
+
+		static ClsDataAccess_Wcf_Session() 
+		{
+			Client_WcfService Client = Client_WcfService.CreateObject();
+			Instance.pSessionID = Client.NewSession();
+		}
+
+		static readonly ClsDataAccess_Wcf_Session mInstance = new ClsDataAccess_Wcf_Session();
+
+		public static ClsDataAccess_Wcf_Session Instance
+		{
+			get { return mInstance; }
+		}
+
+		#endregion
+
+		#region _Properties
+
+		public String pSessionID { get; set; }
+
+		#endregion
+	}
 }

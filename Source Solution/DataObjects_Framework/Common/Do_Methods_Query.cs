@@ -51,12 +51,12 @@ namespace DataObjects_Framework.Common
             return Dt;
         }
 
-        public static Int32 ExecuteNonQuery(string ProcedureName, Do_Constants.Str_Parameters[] ProcedureParameters)
+        public static Int32 ExecuteNonQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
         {
             return Do_Methods_Query.ExecuteNonQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
-        public static Int32 ExecuteNonQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters)
+        public static Int32 ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             return Da.ExecuteNonQuery(ProcedureName, ProcedureParameters);
@@ -68,12 +68,12 @@ namespace DataObjects_Framework.Common
             return Da.ExecuteNonQuery(Query);
         }
 
-        public static DataSet ExecuteQuery(string ProcedureName, Do_Constants.Str_Parameters[] ProcedureParameters)
+        public static DataSet ExecuteQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
         {
             return Do_Methods_Query.ExecuteQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
-        public static DataSet ExecuteQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters)
+        public static DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             return Da.ExecuteQuery(ProcedureName, ProcedureParameters);
@@ -87,16 +87,16 @@ namespace DataObjects_Framework.Common
 
         public static DataTable GetTableDef(string TableName)
         {
-            List<Do_Constants.Str_Parameters> Sp = new List<Do_Constants.Str_Parameters>();
-            Sp.Add(new Do_Constants.Str_Parameters("@TableName",TableName));
+            List<ClsParameter> Sp = new List<ClsParameter>();
+            Sp.Add(new ClsParameter("@TableName",TableName));
             return ExecuteQuery("usp_GetTableDef", Sp).Tables[0];
         }
 
         public static string GetSystemParameter(string ParameterName)
         {
             string Rv = "";
-            List<Do_Constants.Str_Parameters> Sp = new List<Do_Constants.Str_Parameters>();
-            Sp.Add(new Do_Constants.Str_Parameters("ParameterName", ParameterName));
+            List<ClsParameter> Sp = new List<ClsParameter>();
+            Sp.Add(new ClsParameter("ParameterName", ParameterName));
             DataTable Dt = Do_Methods_Query.ExecuteQuery("usp_Get_System_Parameter", Sp).Tables[0];
             if (Dt.Rows.Count > 0)
             { Rv = (string)Dt.Rows[0][0]; }

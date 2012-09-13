@@ -280,7 +280,7 @@ namespace DataObjects_Framework.Objects
         /// Returns the SqlParameter Collection associated in the conditions in this instance.
         /// </summary>
         /// <returns></returns>
-        public SqlParameter[] GetParameters()
+        public SqlParameter[] GetSqlParameters()
         {
             List<SqlParameter> List_Sp = new List<SqlParameter>();
             foreach (Str_QueryCondition Obj in this.mQc)
@@ -377,6 +377,87 @@ namespace DataObjects_Framework.Objects
                 List_Sp.Add(Sp);
             }
             return List_Sp.ToArray();
+        }
+
+        public List<ClsParameter> GetParameters()
+        {
+            List<ClsParameter> List_Sp = new List<ClsParameter>();
+            foreach (Str_QueryCondition Obj in this.mQc)
+            {
+                string Name = Obj.Name;
+                string FieldName = Obj.FieldName;
+                object Value = Obj.Value;
+                string DataType = Obj.DataType.ToUpper();
+
+                ClsParameter Sp = new ClsParameter();
+                Sp.Name = "Condition_" + Name;
+
+                if (
+                    DataType == typeof(string).Name.ToUpper()
+                    || DataType == typeof(string).ToString().ToUpper()
+                    )
+                {
+                    Sp.Type = Do_Constants.eParameterType.VarChar;
+                    Sp.Size = 8000;
+                }
+                else if (
+                    DataType == typeof(Int16).Name.ToUpper()
+                    || DataType == typeof(Int16).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_Int32(Value);
+                    Sp.Type = Do_Constants.eParameterType.Int;
+                }
+                else if (
+                    DataType == typeof(Int32).Name.ToUpper()
+                    || DataType == typeof(Int32).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_Int32(Value);
+                    Sp.Type = Do_Constants.eParameterType.Int;
+                }
+                else if (
+                    DataType == typeof(Int64).Name.ToUpper()
+                    || DataType == typeof(Int64).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_Int64(Value);
+                    Sp.Type = Do_Constants.eParameterType.Long;
+                }
+                else if (
+                    DataType == typeof(decimal).Name.ToUpper()
+                    || DataType == typeof(decimal).ToString().ToUpper()
+                    || DataType == typeof(double).Name.ToUpper()
+                    || DataType == typeof(double).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_Double(Value);
+                    Sp.Type = Do_Constants.eParameterType.Numeric;
+                    Sp.Precision = 18;
+                    Sp.Scale = 4;
+                }
+                else if (
+                    DataType == typeof(bool).Name.ToUpper()
+                    || DataType == typeof(bool).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_Boolean(Value);
+                    Sp.Type = Do_Constants.eParameterType.Boolean;
+                }
+                else if (
+                    DataType == typeof(DateTime).Name.ToUpper()
+                    || DataType == typeof(DateTime).ToString().ToUpper()
+                    )
+                {
+                    Value = Do_Methods.Convert_DateTime(Value);
+                    Sp.Type = Do_Constants.eParameterType.DateTime;
+                }
+
+                Sp.Value = Value;
+
+                List_Sp.Add(Sp);
+            }
+            return List_Sp;
         }
 
         /// <summary>

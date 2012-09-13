@@ -231,6 +231,12 @@ namespace DataObjects_Framework.Base
 
         //[-]
 
+        public DataTable List()
+        { return this.List("", ""); }
+
+        public DataTable List(String Condition)
+        { return this.List(Condition, ""); }
+
         /// <summary>
         /// Returns a List based on the supplied Table/View Name
         /// </summary>
@@ -241,15 +247,8 @@ namespace DataObjects_Framework.Base
         /// Additional sorting to be used in fetching the data
         /// </param>
         /// <returns></returns>
-        public virtual DataTable List(string Condition = "", string Sort = "")
+        public virtual DataTable List(String Condition, String Sort)
         {
-            //DataTable Dt = null;
-            //this.mDa.Connect();
-            //try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort); }
-            //catch (Exception Ex) { throw Ex; }
-            //finally { this.mDa.Close(); }
-            //return Dt;
-
             try
             {
                 this.mDa.Connect();
@@ -259,12 +258,31 @@ namespace DataObjects_Framework.Base
             finally { this.mDa.Close(); }
         }
 
-        public virtual DataTable List(Interface_DataAccess Da, string Condition = "", string Sort = "")
+        public DataTable List(Interface_DataAccess Da)
+        { return this.List(Da, "", ""); }
+
+        public DataTable List(Interface_DataAccess Da, String Condition)
+        { return this.List(Da, Condition, ""); }
+
+        /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="Da"></param>
+        /// <param name="Condition"></param>
+        /// <param name="Sort"></param>
+        /// <returns></returns>
+        public virtual DataTable List(Interface_DataAccess Da, String Condition , String Sort)
         {
             DataTable Dt = null;
             Dt = Da.List(this.mHeader_ViewName, Condition, Sort); 
             return Dt;
         }
+
+        public DataTable List(ClsQueryCondition Condition)
+        { return this.List(Condition, "", 0, 0); }
+
+        public DataTable List(ClsQueryCondition Condition, String Sort)
+        { return this.List(Condition, Sort, 0, 0); }
 
         /// <summary>
         /// Returns a List based on the supplied Table/View Name
@@ -282,15 +300,8 @@ namespace DataObjects_Framework.Base
         /// Fetch a section of the result set based on the supplied Top, mainly used for pagination
         /// </param>
         /// <returns></returns>
-        public virtual DataTable List(ClsQueryCondition Condition, string Sort = "", Int32 Top = 0, Int32 Page = 0)
+        public virtual DataTable List(ClsQueryCondition Condition, String Sort, Int32 Top, Int32 Page)
         {
-            //DataTable Dt = null;
-            //this.mDa.Connect();
-            //try { Dt = this.mDa.List(this.mHeader_ViewName, Condition, Sort, Top, Page); }
-            //catch (Exception Ex) { throw Ex; }
-            //finally { this.mDa.Close(); }
-            //return Dt;
-
             try
             {
                 this.mDa.Connect();
@@ -300,10 +311,25 @@ namespace DataObjects_Framework.Base
             finally { this.mDa.Close(); }
         }
 
-        public virtual DataTable List(Interface_DataAccess Da, ClsQueryCondition Condition, string Sort = "", Int32 Top = 0, Int32 Page = 0)
+        public DataTable List(Interface_DataAccess Da, ClsQueryCondition Condition)
+        { return this.List(Da, Condition, "", 0, 0); }
+
+        public DataTable List(Interface_DataAccess Da, ClsQueryCondition Condition, String Sort)
+        { return this.List(Da, Condition, Sort, 0, 0); }
+
+        /// <summary>
+        /// Returns a List based on the supplied Table/View Name
+        /// </summary>
+        /// <param name="Da"></param>
+        /// <param name="Condition"></param>
+        /// <param name="Sort"></param>
+        /// <param name="Top"></param>
+        /// <param name="Page"></param>
+        /// <returns></returns>
+        public virtual DataTable List(Interface_DataAccess Da, ClsQueryCondition Condition, String Sort, Int32 Top, Int32 Page)
         {
             DataTable Dt = null;
-            Dt = Da.List(this.mHeader_ViewName, Condition, Sort, Top, Page); 
+            Dt = Da.List(this.mHeader_ViewName, Condition, Sort, Top, Page);
             return Dt;
         }
 
@@ -343,6 +369,12 @@ namespace DataObjects_Framework.Base
         //[-]
 
         /// <summary>
+        /// Loads an empty Data Object.
+        /// </summary>
+        public virtual void Load()
+        { this.Load((ClsKeys)null); }
+
+        /// <summary>
         /// Loads the Data Object with the supplied Key,
         /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
         /// if not supplied by an explicit foreign key definition
@@ -350,7 +382,7 @@ namespace DataObjects_Framework.Base
         /// <param name="Keys">
         /// Key object to use, if null, it implies to create a new data object.
         /// </param>
-        public virtual void Load(ClsKeys Keys = null)
+        public virtual void Load(ClsKeys Keys)
         { this.Load(Keys, null); }
 
         /// <summary>
@@ -364,7 +396,7 @@ namespace DataObjects_Framework.Base
         /// <param name="Obj_Parent">
         /// The Parent Data Object.
         /// </param>
-        public virtual void Load(ClsKeys Keys, ClsBase Obj_Parent = null)
+        public virtual void Load(ClsKeys Keys, ClsBase Obj_Parent)
         {
             try
             {
@@ -386,10 +418,24 @@ namespace DataObjects_Framework.Base
         /// <param name="Keys">
         /// Key object to use, if null, it implies to create a new data object.
         /// </param>
+        public virtual void Load(Interface_DataAccess Da, ClsKeys Keys)
+        { this.Load(Da, Keys, (ClsBase)null); }
+
+        /// <summary>
+        /// Loads the Data Object with the supplied Key,
+        /// when loading table details, the framework assumes the foreign key field of the table detail is the same the parent table
+        /// if not supplied by an explicit foreign key definition
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess Object to be used.
+        /// </param>
+        /// <param name="Keys">
+        /// Key object to use, if null, it implies to create a new data object.
+        /// </param>
         /// <param name="Obj_Parent">
         /// The Parent Data Object.
         /// </param>
-        public virtual void Load(Interface_DataAccess Da, ClsKeys Keys, ClsBase Obj_Parent = null)
+        public virtual void Load(Interface_DataAccess Da, ClsKeys Keys, ClsBase Obj_Parent)
         {
             this.mObj_Parent = Obj_Parent;
             this.mHeader_Dr = Da.Load(this.mHeader_ViewName, this.mHeader_Key, Keys);
@@ -434,23 +480,23 @@ namespace DataObjects_Framework.Base
             if (this.mBase_TableDetail != null)
             {
                 foreach (ClsBaseTableDetail Inner_Obj in this.mBase_TableDetail)
-                { Inner_Obj.Load(this.mDa, Keys); }
+                { Inner_Obj.Load(Da, Keys); }
             }
 
             //[-]
 
             if (this.mBase_RowDetail != null)
             {
-                foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
-                { Inner_Obj.Load(this.mDa, Keys); }
+				foreach (ClsBaseRowDetail Inner_Obj in this.mBase_RowDetail)
+				{ Inner_Obj.Load(Da, Keys); }
             }
 
             //[-]
 
             if (this.mBase_ListDetail != null)
             {
-                foreach (ClsBaseListDetail Inner_Obj in this.mBase_ListDetail)
-                { Inner_Obj.Load(this.mDa, Keys); }
+				foreach (ClsBaseListDetail Inner_Obj in this.mBase_ListDetail)
+				{ Inner_Obj.Load(Da, Keys); }
             }
         }
 

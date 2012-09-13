@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Data;
-using System.Data.SqlClient;
 using DataObjects_Framework.Common;
+using DataObjects_Framework.DataAccess;
+using DataObjects_Framework.PreparedQuery;
 using Microsoft.VisualBasic;
+using DataObjects_Framework.Objects;
 
 namespace DataObjects_Framework.Connection
 {
@@ -39,29 +43,7 @@ namespace DataObjects_Framework.Connection
         /// <returns></returns>
         public bool Connect()
         {
-            string ConnectionString = "";
-
-            /*
-            StringBuilder Sb_ConnectionString = new StringBuilder();                
-            string Server, Database, Username, Password;
-
-            Server = Global_Variables.gConnection_Server;
-            Database = Global_Variables.gConnection_Database;
-            Username = Global_Variables.gConnection_Username;
-            Password = Global_Variables.gConnection_Password;
-
-            Sb_ConnectionString.Append("Server=" + Server + ";");
-            Sb_ConnectionString.Append("Database=" + Database + ";");
-            Sb_ConnectionString.Append("User ID=" + Username + ";");
-            Sb_ConnectionString.Append("Password=" + Password + ";");
-            Sb_ConnectionString.Append("Trusted_Connection=False;");
-                
-            ConnectionString = Sb_ConnectionString.ToString();
-            */
-
-            //[-]
-
-			ConnectionString = Do_Globals.gSettings.pConnectionString;
+            string ConnectionString = Do_Globals.gSettings.pConnectionString;
             return this.Connect(ConnectionString);
         }
 
@@ -132,7 +114,7 @@ namespace DataObjects_Framework.Connection
         /// A list of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public int ExecuteNonQuery(string ProcedureName, List<DataObjects_Framework.Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public int ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
         { return this.ExecuteNonQuery(ProcedureName, ProcedureParameters.ToArray()); }
 
         /// <summary>
@@ -145,7 +127,7 @@ namespace DataObjects_Framework.Connection
         /// An array of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public int ExecuteNonQuery(string ProcedureName, DataObjects_Framework.Common.Do_Constants.Str_Parameters[] ProcedureParameters)
+        public int ExecuteNonQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
         {
             bool IsConnection = false;
 
@@ -169,7 +151,7 @@ namespace DataObjects_Framework.Connection
 
                 if (!Information.IsNothing(ProcedureParameters))
                 {
-                    foreach (DataObjects_Framework.Common.Do_Constants.Str_Parameters Inner_Obj in ProcedureParameters)
+                    foreach (ClsParameter Inner_Obj in ProcedureParameters)
                     { Cmd.Parameters.AddWithValue(Inner_Obj.Name, Inner_Obj.Value); }
                 }
 
@@ -227,6 +209,39 @@ namespace DataObjects_Framework.Connection
             return ReturnValue;
         }
 
+        public int ExecuteNonQuery(SqlCommand Cmd)
+        {
+            bool IsConnection = false;
+
+            if (this.mConnection != null)
+            {
+                if (this.mConnection.State == ConnectionState.Open)
+                { IsConnection = true; }
+            }
+
+            if (!IsConnection) { this.Connect(); }
+
+            //[-]
+
+            int ReturnValue = 0;
+            try
+            {
+                Cmd.Transaction = this.mTransaction;
+                Cmd.Connection = this.mConnection;
+                ReturnValue = Cmd.ExecuteNonQuery();
+            }
+            catch { }
+            finally
+            {
+                Cmd.Dispose();
+                Cmd = null;
+
+                if (!IsConnection)
+                { this.Close(); }
+            }
+            return ReturnValue;
+        }
+
         /// <summary>
         /// Executes a SQL Server stored procedure and returns the resulting data set.
         /// </summary>
@@ -237,7 +252,7 @@ namespace DataObjects_Framework.Connection
         /// A list of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public DataSet ExecuteQuery(string ProcedureName, List<DataObjects_Framework.Common.Do_Constants.Str_Parameters> ProcedureParameters)
+        public DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
         {
             return this.ExecuteQuery(ProcedureName, ProcedureParameters.ToArray());
         }
@@ -252,7 +267,7 @@ namespace DataObjects_Framework.Connection
         /// An array of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public DataSet ExecuteQuery(string ProcedureName, DataObjects_Framework.Common.Do_Constants.Str_Parameters[] ProcedureParameters)
+        public DataSet ExecuteQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
         {
             bool IsConnection = false;
 
@@ -278,7 +293,7 @@ namespace DataObjects_Framework.Connection
 
                 if (!Information.IsNothing(ProcedureParameters))
                 {
-                    foreach (DataObjects_Framework.Common.Do_Constants.Str_Parameters Inner_Obj in ProcedureParameters)
+                    foreach (ClsParameter Inner_Obj in ProcedureParameters)
                     { Cmd.Parameters.AddWithValue(Inner_Obj.Name, Inner_Obj.Value); }
                 }
 
@@ -352,6 +367,46 @@ namespace DataObjects_Framework.Connection
             return Ds;
         }
 
+        public DataSet ExecuteQuery(SqlCommand Cmd)
+        {
+            bool IsConnection = false;
+
+            if (this.mConnection != null)
+            {
+                if (this.mConnection.State == ConnectionState.Open)
+                { IsConnection = true; }
+            }
+
+            if (!IsConnection)
+            { this.Connect(); }
+
+            //[-]
+
+            SqlDataAdapter Adp = new SqlDataAdapter();
+            DataSet Ds = new DataSet();
+            try
+            {
+                Cmd.Transaction = this.mTransaction;
+                Cmd.Connection = this.mConnection;
+                Adp.SelectCommand = Cmd;
+                Adp.Fill(Ds);
+            }
+            catch (Exception Ex)
+            { throw Ex; }
+            finally
+            {
+                Cmd.Dispose();
+                Cmd = null;
+                Adp.Dispose();
+                Adp = null;
+
+                if (!IsConnection)
+                { this.Close(); }
+            }
+
+            return Ds;
+        }
+
         #endregion
 
         #region _Save
@@ -392,12 +447,12 @@ namespace DataObjects_Framework.Connection
             eProcess cProcess = eProcess.Process_Insert;
             DataTable Dt_TableDef = new DataTable(TableName);
             DataTable Dt_Def;
-            List<DataObjects_Framework.Common.Do_Constants.Str_Parameters> List_Param;
+            List<ClsParameter> List_Param;
 
             //[Get Table Definition]
-            List_Param = new List<DataObjects_Framework.Common.Do_Constants.Str_Parameters>();
-            List_Param.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters(@"@TableName", TableName));
-            List_Param.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters(@"@SchemaName", SchemaName));
+            List_Param = new List<ClsParameter>();
+            List_Param.Add(new ClsParameter(@"@TableName", TableName));
+            List_Param.Add(new ClsParameter(@"@SchemaName", SchemaName));
 
             Dt_Def = this.ExecuteQuery("usp_DataObjects_GetTableDef", List_Param).Tables[0];
             foreach (DataRow Inner_Dr in Dt_Def.Rows)
@@ -504,8 +559,8 @@ namespace DataObjects_Framework.Connection
                         Da.BeginTransaction();
 
                         Int64 NewID;
-                        List_Param = new List<DataObjects_Framework.Common.Do_Constants.Str_Parameters>();
-                        List_Param.Add(new DataObjects_Framework.Common.Do_Constants.Str_Parameters(@"@TableName", TableName + "." + Inner_ColumnName));
+                        List_Param = new List<ClsParameter>();
+                        List_Param.Add(new ClsParameter(@"@TableName", TableName + "." + Inner_ColumnName));
                         NewID = Do_Methods.Convert_Int64(Da.ExecuteQuery("usp_DataObjects_GetNextID", List_Param).Tables[0].Rows[0][0]);
                         ObjDataRow[Inner_ColumnName] = NewID;
 
@@ -546,7 +601,7 @@ namespace DataObjects_Framework.Connection
             }
                 
             //Prepare SQL Statement
-            ClsPreparedQuery Pq = new ClsPreparedQuery(this);
+            ClsPreparedQuery Pq = new ClsDataAccess_SqlServer().CreatePreparedQuery();
 
             string Query_InsertFields = "";
             string Query_InsertFieldsValues = "";
@@ -592,11 +647,20 @@ namespace DataObjects_Framework.Connection
 
                     Query_Comma = ",";
 
-                    SqlParameter Inner_Sp = new SqlParameter(@"@" + Dc_ObjDataRow.ColumnName.Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_ArrDr_Def[0]["DataType"]), Convert.ToInt32(Inner_ArrDr_Def[0]["Length"]));
-                    Inner_Sp.Direction = ParameterDirection.Input;
-                    Inner_Sp.Precision = (byte)Inner_ArrDr_Def[0]["Precision"];
-                    Inner_Sp.Scale = (byte)Inner_ArrDr_Def[0]["Scale"];
-                    Pq.pParameters.Add(Inner_Sp);
+                    //SqlParameter Inner_Sp = new SqlParameter(@"@" + Dc_ObjDataRow.ColumnName.Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_ArrDr_Def[0]["DataType"]), Convert.ToInt32(Inner_ArrDr_Def[0]["Length"]));
+                    //Inner_Sp.Direction = ParameterDirection.Input;
+                    //Inner_Sp.Precision = (byte)Inner_ArrDr_Def[0]["Precision"];
+                    //Inner_Sp.Scale = (byte)Inner_ArrDr_Def[0]["Scale"];
+                    //Pq.pParameters.Add(Inner_Sp);
+
+                    Pq.Add_Parameter(new ClsParameter()
+                    {
+                        Name = Dc_ObjDataRow.ColumnName.Replace(" ", "_"),
+                        Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_ArrDr_Def[0]["DataType"])),
+                        Size = Do_Methods.Convert_Int32(Inner_ArrDr_Def[0]["Length"]),
+                        Precision = Do_Methods.Convert_Byte(Inner_ArrDr_Def[0]["Precision"]),
+                        Scale = Do_Methods.Convert_Byte(Inner_ArrDr_Def[0]["Scale"])
+                    });
                 }
             }
 
@@ -654,11 +718,20 @@ namespace DataObjects_Framework.Connection
                         Query_UpdateCriteria += " " + Query_Comma + " [" + Inner_Dr["ColumnName"] + "] = @" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_") + " ";
                         Query_Comma = "And";
 
-                        SqlParameter Inner_Sp = new SqlParameter("@" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_Dr["DataType"]), Convert.ToInt32(Inner_Dr["Length"]));
-                        Inner_Sp.Direction = ParameterDirection.Input;
-                        Inner_Sp.Precision = (byte)Inner_Dr["Precision"];
-                        Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
-                        Pq.pParameters.Add(Inner_Sp);
+                        //SqlParameter Inner_Sp = new SqlParameter("@" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_Dr["DataType"]), Convert.ToInt32(Inner_Dr["Length"]));
+                        //Inner_Sp.Direction = ParameterDirection.Input;
+                        //Inner_Sp.Precision = (byte)Inner_Dr["Precision"];
+                        //Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
+                        //Pq.pParameters.Add(Inner_Sp);
+                        
+                        Pq.Add_Parameter(new ClsParameter()
+                        {
+                            Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ","_") ,
+                            Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_Dr["DataType"])),
+                            Size = Do_Methods.Convert_Int32(Inner_Dr["Length"]),
+                            Precision = Do_Methods.Convert_Byte(Inner_Dr["Precision"]),
+                            Scale = Do_Methods.Convert_Byte(Inner_Dr["Scale"])
+                        });
                     }
 
                     Pq.pQuery = "Update [" + SchemaName + "].[" + TableName + "] Set " + Query_UpdateFields + " Where " + Query_UpdateCriteria;
@@ -674,11 +747,20 @@ namespace DataObjects_Framework.Connection
                         Query_DeleteCriteria += " " + Query_Comma + " [" + Inner_Dr["ColumnName"] + "] = @" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_") + " ";
                         Query_Comma = "And";
 
-                        SqlParameter Inner_Sp = new SqlParameter("@" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_Dr["DataType"]), Convert.ToInt32(Inner_Dr["Length"]));
-                        Inner_Sp.Direction = ParameterDirection.Input;
-                        Inner_Sp.Precision = (byte)Inner_Dr["Precision"];
-                        Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
-                        Pq.pParameters.Add(Inner_Sp);
+                        //SqlParameter Inner_Sp = new SqlParameter("@" + ((string)Inner_Dr["ColumnName"]).Replace(" ", "_"), this.SqlDataTypeLib((string)Inner_Dr["DataType"]), Convert.ToInt32(Inner_Dr["Length"]));
+                        //Inner_Sp.Direction = ParameterDirection.Input;
+                        //Inner_Sp.Precision = (byte)Inner_Dr["Precision"];
+                        //Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
+                        //Pq.pParameters.Add(Inner_Sp);
+
+                        Pq.Add_Parameter(new ClsParameter()
+                        {
+                            Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ", "_"),
+                            Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_Dr["DataType"])),
+                            Size = Do_Methods.Convert_Int32(Inner_Dr["Length"]),
+                            Precision = Do_Methods.Convert_Byte(Inner_Dr["Precision"]),
+                            Scale = Do_Methods.Convert_Byte(Inner_Dr["Scale"])
+                        });
                     }
 
                     Pq.pQuery = "Delete [" + SchemaName + "].[" + TableName + "] Where " + Query_DeleteCriteria;
@@ -689,12 +771,24 @@ namespace DataObjects_Framework.Connection
 
             foreach (DataColumn Dc_ObjDataRow in ObjDataRow.Table.Columns)
             {
-                foreach (SqlParameter Inner_Sp in Pq.pParameters)
+                //foreach (SqlParameter Inner_Sp in Pq.pParameters)
+                //{
+                //    if ("@" + Dc_ObjDataRow.ColumnName.Replace(" ", "_") == Inner_Sp.ParameterName)
+                //    {
+                //        if (Information.IsDBNull(Dc_ObjDataRow)) Inner_Sp.Value = DBNull.Value;
+                //        else Inner_Sp.Value = this.SqlConvertDataType(ObjDataRow[Dc_ObjDataRow], Inner_Sp.SqlDbType.ToString());
+                //        continue;
+                //    }
+                //}
+
+                foreach (ClsParameter Inner_Sp in Pq.pParameters)
                 {
-                    if ("@" + Dc_ObjDataRow.ColumnName.Replace(" ", "_") == Inner_Sp.ParameterName)
+                    if (Dc_ObjDataRow.ColumnName.Replace(" ", "_") == Inner_Sp.Name)
                     {
-                        if (Information.IsDBNull(Dc_ObjDataRow)) Inner_Sp.Value = DBNull.Value;
-                        else Inner_Sp.Value = this.SqlConvertDataType(ObjDataRow[Dc_ObjDataRow], Inner_Sp.SqlDbType.ToString());
+                        if (Information.IsDBNull(Dc_ObjDataRow))
+                        { Inner_Sp.Value = DBNull.Value; }
+                        else
+                        { Inner_Sp.Value = ObjDataRow[Dc_ObjDataRow]; }
                         continue;
                     }
                 }
@@ -721,13 +815,14 @@ namespace DataObjects_Framework.Connection
 
         SqlDbType SqlDataTypeLib(string DataType)
         {
-
             foreach (var Value in Enum.GetValues(typeof(SqlDbType)))
-            { 
-                if (Value.ToString().ToLower() == DataType.ToLower()) return (SqlDbType)Value;
+            {
+                if (Value.ToString().ToLower() == DataType.ToLower())
+                { return (SqlDbType)Value; }
             }
 
-            if ("numeric" == DataType) return SqlDbType.Decimal;
+            if ("numeric" == DataType)
+            { return SqlDbType.Decimal; }
 
             return SqlDbType.Variant;
         }
@@ -828,28 +923,91 @@ namespace DataObjects_Framework.Connection
             { return InputObj; }
         }
 
+        Do_Constants.eParameterType ParameterTypeLib(String DataType)
+        {
+            Do_Constants.eParameterType Rv = Do_Constants.eParameterType.None;
+            SqlDbType SqlDataType = this.SqlDataTypeLib(DataType);
+            switch (SqlDataType)
+            { 
+                case SqlDbType.BigInt:
+                    Rv = Do_Constants.eParameterType.Long;
+                    break;
+                case SqlDbType.Binary:
+                case SqlDbType.VarBinary:
+                    Rv = Do_Constants.eParameterType.Binary;
+                    break;
+                case SqlDbType.Bit:
+                    Rv = Do_Constants.eParameterType.Boolean;
+                    break;
+                case SqlDbType.Char:
+                case SqlDbType.VarChar:
+                case SqlDbType.NChar:
+                case SqlDbType.NVarChar:
+                case SqlDbType.Text:
+                case SqlDbType.NText:
+                    Rv = Do_Constants.eParameterType.VarChar;
+                    break;
+                case SqlDbType.Float:
+                case SqlDbType.Decimal:
+                case SqlDbType.Money:
+                case SqlDbType.SmallMoney:
+                    Rv = Do_Constants.eParameterType.Numeric;
+                    break;
+                case SqlDbType.Int:
+                case SqlDbType.SmallInt:
+                    Rv = Do_Constants.eParameterType.Int;
+                    break;
+                case SqlDbType.Date:
+                case SqlDbType.DateTime:
+                case SqlDbType.DateTime2:
+                case SqlDbType.SmallDateTime:
+                    Rv = Do_Constants.eParameterType.DateTime;
+                    break;
+                case SqlDbType.UniqueIdentifier:
+                    Rv = Do_Constants.eParameterType.Guid;
+                    break;
+            }
+
+            return Rv;
+        }
+
         #endregion
 
         #endregion
 
-        #region _Properties
-        
-        /// <summary>
-        /// Gets the current connection object
-        /// </summary>
-        public Object pConnection 
+        #region _InterfaceImplementations
+
+		/// <summary>
+		/// Gets the current connection object
+		/// </summary>
+		public DbConnection pConnection
+		{
+			get { return this.mConnection; }
+		}
+
+		/// <summary>
+		/// Gets the current transaction object
+		/// </summary>
+		public DbTransaction pTransaction
+		{
+			get { return this.mTransaction; }
+		}
+
+		public DbCommand CreateCommand()
+		{ return new SqlCommand(); }
+
+        public DbParameter CreateParameter()
+        { return new SqlParameter(); }
+
+        public string pConnectionString
         {
-            get { return this.mConnection; }
+            get { return this.mConnection.ConnectionString; }
         }
 
-        /// <summary>
-        /// Gets the current transaction object
-        /// </summary>
-        public IDbTransaction pTransaction
-        {
-            get { return this.mTransaction; }
-        }
-        
-        #endregion    
+        public void Dispose()
+        { this.Close(); }
+
+		#endregion
+
     }
 }

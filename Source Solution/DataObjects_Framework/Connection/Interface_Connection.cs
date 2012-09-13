@@ -1,24 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Data.SqlClient;
 
 namespace DataObjects_Framework.Connection
 {
     /// <summary>
     /// Interface for the connection object used
     /// </summary>
-    public interface Interface_Connection 
+    public interface Interface_Connection : IDisposable
     {
         /// <summary>
         /// The connection object
         /// </summary>
-        Object pConnection { get; }
+        DbConnection pConnection { get; }
 
         /// <summary>
         /// The transaction object used by this connection
         /// </summary>
-        System.Data.IDbTransaction pTransaction { get; }
+        DbTransaction pTransaction { get; }
+
+        String pConnectionString { get; }
+
+		Boolean Connect();
+
+		Boolean Connect(String ConnectionString);
+
+		DbCommand CreateCommand();
+
+        DbParameter CreateParameter();
     }
 }

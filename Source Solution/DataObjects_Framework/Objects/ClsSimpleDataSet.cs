@@ -12,6 +12,9 @@ using DataObjects_Framework.Common;
 
 namespace DataObjects_Framework.Objects
 {
+	/// <summary>
+	/// A simplified Data Set Object
+	/// </summary>
     [DataContract()]
     public class ClsSimpleDataSet
     {
@@ -23,8 +26,18 @@ namespace DataObjects_Framework.Objects
 
         #region _Constructor
 
+		/// <summary>
+		/// Constructor for ClsSimpleDataSet object
+		/// </summary>
         public ClsSimpleDataSet() { }
 
+		/// <summary>
+		/// Constructor for ClsSimpleDataSet object with the supplied DataSet
+		/// Creates a new ClsSimpleDataSet with data populated from the dataset
+		/// </summary>
+		/// <param name="Ds">
+		/// The data set to be used
+		/// </param>
         public ClsSimpleDataSet(DataSet Ds) 
         {
             foreach (DataTable Dt in Ds.Tables)
@@ -38,12 +51,27 @@ namespace DataObjects_Framework.Objects
 
         #region _Methods
 
+		/// <summary>
+		/// Returns the serialized format for this object
+		/// </summary>
+		/// <returns></returns>
         public string Serialize()
         { return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataSet), this); }
 
+		/// <summary>
+		/// Returns a new ClsSimpleDataSet object from a serialized data
+		/// </summary>
+		/// <param name="SerializeData">
+		/// The data to be deserialized
+		/// </param>
+		/// <returns></returns>
         public static ClsSimpleDataSet Deserialize(string SerializeData)
         { return (ClsSimpleDataSet)Do_Methods.DeserializeObject_Json(typeof(ClsSimpleDataSet), SerializeData); }
 
+		/// <summary>
+		/// Returns a data set converted from this object
+		/// </summary>
+		/// <returns></returns>
         public DataSet ToDataSet()
         {
             DataSet Ds = new DataSet();
@@ -60,6 +88,9 @@ namespace DataObjects_Framework.Objects
 
         #region _Properties
 
+		/// <summary>
+		/// List of ClsSimpleDataTable objects contained in this object
+		/// </summary>
         [DataMember()]
         public List<ClsSimpleDataTable> pList_DataTable
         {
@@ -69,6 +100,9 @@ namespace DataObjects_Framework.Objects
         #endregion
     }
 
+	/// <summary>
+	/// A simplified Data Table object
+	/// </summary>
     [DataContract()]
     public class ClsSimpleDataTable
     {
@@ -82,8 +116,16 @@ namespace DataObjects_Framework.Objects
 
         #region _Constructor
 
+		/// <summary>
+		/// Constructor for ClsSimpleDataTable
+		/// </summary>
         public ClsSimpleDataTable() { }
 
+		/// <summary>
+		/// Constructor for ClsSimpleDataTable
+		/// Populates data from the supplied data table
+		/// </summary>
+		/// <param name="Dt"></param>
         public ClsSimpleDataTable(DataTable Dt)
         {
             foreach (DataColumn Dc in Dt.Columns)
@@ -102,18 +144,44 @@ namespace DataObjects_Framework.Objects
 
         #region _Methods
 
+		/// <summary>
+		/// Returns the serialized format for this object
+		/// </summary>
+		/// <returns></returns>
         public string Serialize()
         { return Do_Methods.SerializeObject_Json(typeof(ClsSimpleDataTable), this); }
 
+		/// <summary>
+		/// Returns a new ClsSimpleDataTable object from a serialized data
+		/// </summary>
+		/// <param name="SerializedData">
+		/// The data to be deserialized
+		/// </param>
+		/// <returns></returns>
         public static ClsSimpleDataTable Deserialize(string SerializedData)
         { return (ClsSimpleDataTable)Do_Methods.DeserializeObject_Json(typeof(ClsSimpleDataTable), SerializedData); }
 
+		/// <summary>
+		/// Returns a new ClsSimpleDataRow object based on the columns defined in this object
+		/// </summary>
+		/// <returns></returns>
         public ClsSimpleDataRow NewRow()
         { return new ClsSimpleDataRow(this.mList_DataColumn); }
 
+		/// <summary>
+		/// Returns a new ClsSimpleDataRow object with data populated from the supplied data row
+		/// </summary>
+		/// <param name="Dr">
+		/// The data row source 
+		/// </param>
+		/// <returns></returns>
         public ClsSimpleDataRow NewRow(DataRow Dr)
         { return new ClsSimpleDataRow(this.mList_DataColumn, Dr); }
 
+		/// <summary>
+		/// Returns a data table converted from this object
+		/// </summary>
+		/// <returns></returns>
         public DataTable ToDataTable()
         {
             DataTable Dt = new DataTable();
@@ -135,12 +203,18 @@ namespace DataObjects_Framework.Objects
 
         #region _Properties
 
+		/// <summary>
+		/// A list of ClsSimpleDataColumn defined in this object
+		/// </summary>
         [DataMember()]
         public List<ClsSimpleDataColumn> pList_DataColumn
         {
             get { return this.mList_DataColumn; }
         }
 
+		/// <summary>
+		/// A list of ClsSimpleDataRow contained in this object
+		/// </summary>
         [DataMember()]
         public List<ClsSimpleDataRow> pList_DataRow
         {
@@ -149,7 +223,7 @@ namespace DataObjects_Framework.Objects
 
         #endregion
     }
-
+	
     [DataContract()]
     public class ClsSimpleDataColumn
     {
@@ -175,13 +249,13 @@ namespace DataObjects_Framework.Objects
     {
         #region _Variables
 
-        [DataContract]
+        [DataContract()]
         public struct Str_Item
         {
-            [DataMember]
+            [DataMember()]
             public ClsSimpleDataColumn DataColumn;
 
-            [DataMember]
+            [DataMember()]
             public Object Value;
         }
 

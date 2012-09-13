@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
-using DataObjects_Framework;
+using System.Data.Common;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
+using DataObjects_Framework.PreparedQuery;
 
 namespace DataObjects_Framework.DataAccess
 {
     /// <summary>
     /// Interface for Data Access Methods
     /// </summary>
-    public interface Interface_DataAccess
+    public interface Interface_DataAccess : IDisposable
     {
         /// <summary>
         /// Fetches a result set from a data source object
@@ -151,22 +150,30 @@ namespace DataObjects_Framework.DataAccess
             , Int64 Top = 0
             , Int32 Page = 0);
 
-        Int32 ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+        Int32 ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters);
 
-        Int32 ExecuteNonQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+        Int32 ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters);
 
         Int32 ExecuteNonQuery(Interface_Connection Connection, string Query);
 
         Int32 ExecuteNonQuery(string Query);
 
-        DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+        Int32 ExecuteNonQuery(Interface_Connection Cn, DbCommand Cmd);
 
-        DataSet ExecuteQuery(string ProcedureName, List<Do_Constants.Str_Parameters> ProcedureParameters);
+        Int32 ExecuteNonQuery(DbCommand Cmd);
+
+        DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters);
+
+        DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters);
 
         DataSet ExecuteQuery(Interface_Connection Connection, string Query);
 
         DataSet ExecuteQuery(string Query);
-        
+
+        DataSet ExecuteQuery(Interface_Connection Cn, DbCommand Cmd);
+
+        DataSet ExecuteQuery(DbCommand Cmd);
+
         /// <summary>
         /// Gets the current using Connection Object used by this instance
         /// </summary>
@@ -455,6 +462,10 @@ namespace DataObjects_Framework.DataAccess
         /// </summary>
         /// <returns></returns>
         ClsQueryCondition CreateQueryCondition();
+
+        ClsPreparedQuery CreatePreparedQuery(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null);
+
+        ClsPreparedQuery CreatePreparedQuery(String Query = "", List<ClsParameter> Parameters = null);
 
         //[-]
 

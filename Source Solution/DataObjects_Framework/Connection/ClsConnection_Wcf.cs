@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using DataObjects_Framework;
@@ -9,26 +11,45 @@ namespace DataObjects_Framework.Connection
 {
     public class ClsConnection_Wcf : Interface_Connection
     {
-        public void Connect()
+        String mConnectionString = "";
+
+        public Boolean Connect()
         {
-            this.pConnectionString = Do_Globals.gSettings.pConnectionString;
+            this.mConnectionString = Do_Globals.gSettings.pConnectionString;
+			return true;
         }
 
-        public void Connect(String ConnectionString)
+        public Boolean Connect(String ConnectionString)
         {
-            this.pConnectionString = ConnectionString;
+            this.mConnectionString = ConnectionString;
+			return true;
         }
 
-        public object pConnection
+		public DbConnection pConnection
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public DbTransaction pTransaction
         {
             get { throw new NotImplementedException(); }
         }
 
-        public System.Data.IDbTransaction pTransaction
+		public DbCommand CreateCommand()
+		{
+			throw new NotImplementedException();
+		}
+
+        public DbParameter CreateParameter()
         {
-            get { throw new NotImplementedException(); }
+            throw new NotImplementedException();
         }
 
-        public string pConnectionString { get; set; }
+        public string pConnectionString 
+        {
+            get { return this.mConnectionString; }
+        }
+
+        public void Dispose() { }
     }
 }

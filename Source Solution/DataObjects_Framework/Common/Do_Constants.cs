@@ -15,11 +15,16 @@ namespace DataObjects_Framework.Common
         /// <summary>
         /// Struct Str_Parameters, used in various query execution methods.
         /// </summary>
+        [Serializable()]
         public struct Str_Parameters
         {
             public string Name;
             public object Value;
-
+            public Int32 Size;
+            public Byte Scale;
+            public Byte Precision;
+            public eParameterType Type;
+            
             /// <summary>
             /// Constructor for Str_Parameters
             /// </summary>
@@ -29,6 +34,10 @@ namespace DataObjects_Framework.Common
             {
                 Name = pName;
                 Value = pValue;
+                Size = 0;
+                Scale = 0;
+                Precision = 0;
+                Type = eParameterType.None;
             }
         }
 
@@ -79,10 +88,34 @@ namespace DataObjects_Framework.Common
             }
         }
 
+		/// <summary>
+		/// Data Access Type settings enum for DataObjects_Framework
+		/// </summary>
         public enum eDataAccessType : long
         { 
-            DataAccess_SqlServer = 0
-            , DataAccess_WCF = 1
+			/// <summary>
+			/// connect to a SQL Server with the provided connection string in the Do_Globals.gSettings.pConnectionString
+			/// </summary>
+            DataAccess_SqlServer = 0, 
+
+			/// <summary>
+			/// connect to a WCF Server with the provided server address in the Do_Globals.gSettings.pWcfAddress
+			/// </summary>
+			DataAccess_WCF = 1
+        }
+
+        [Serializable()]
+        public enum eParameterType : long
+        { 
+            None,
+            VarChar,
+            Numeric,
+            Int,
+            Long,
+            DateTime,
+            Guid,
+            Boolean,
+            Binary
         }
 
         [Serializable()]
@@ -134,11 +167,40 @@ namespace DataObjects_Framework.Common
         }
 
         [Serializable()]
+        public struct Str_Request_Execute
+        {
+            public String Query;
+            public String ProcedureName;
+            public List<ClsParameter> ProcedureParameters;
+            public String ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_PreparedQuery_Prepare
+        {
+            public String Query;
+            public List<ClsParameter> Parameters;
+            public String ConnectionString;
+        }
+
+        [Serializable()]
+        public struct Str_Request_PreparedQuery_Parameters
+        {
+            public List<ClsParameter> Parameters;
+        }
+
+        [Serializable()]
         public struct Str_Request_SystemParameter
         {
             public String ParameterName;
             public String ParameterValue;
             public String ConnectionString;
         }
+
+		[Serializable()]
+		public struct Str_Request_Session
+		{
+			public String SessionID;
+		}
     }
 }

@@ -70,15 +70,16 @@
     <Compile Include="Base\ClsBaseTableDetail.cs" />
     <Compile Include="DataAccess\Interface_WcfService.cs" />
     <Compile Include="Objects\ClsCustomException.cs" />
-    <Compile Include="Objects\ClsPreparedQuery.cs" />
+    <Compile Include="Objects\ClsParameter.cs" />
     <Compile Include="Objects\ClsQueryCondition.cs" />
     <Compile Include="Objects\ClsSimpleDataSet.cs" />
+    <Compile Include="Objects\ClsThreadStarter.cs" />
+    <Compile Include="PreparedQuery\ClsPreparedQuery.cs" />
+    <Compile Include="PreparedQuery\ClsPreparedQuery_SqlServer.cs" />
+    <Compile Include="PreparedQuery\ClsPreparedQuery_Wcf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\ClsBaseObjs.cs" />
     <Compile Include="Objects\ClsKeys.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
