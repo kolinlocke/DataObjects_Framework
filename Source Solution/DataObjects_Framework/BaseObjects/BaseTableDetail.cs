@@ -10,14 +10,14 @@ using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
 using DataObjects_Framework.DataAccess;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
-namespace DataObjects_Framework.Base
+namespace DataObjects_Framework.BaseObjects
 {
 	/// <summary>
 	/// Internal, manages the defined table detail
 	/// </summary>
-	internal class ClsBaseTableDetail
+	internal class BaseTableDetail
 	{
 		#region _Variables
 
@@ -26,7 +26,7 @@ namespace DataObjects_Framework.Base
 		string mViewName;
 		List<string> mList_Key = new List<string>();
         List<Do_Constants.Str_ForeignKeyRelation> mList_ForeignKey = new List<Do_Constants.Str_ForeignKeyRelation>();
-		ClsBase mObj_Base;
+		Base mObj_Base;
         bool mIsCustomKeys = false;
 
 		string mOtherLoadCondition;
@@ -38,7 +38,7 @@ namespace DataObjects_Framework.Base
 
 		#region _Constructor
 
-		private ClsBaseTableDetail() { }
+		private BaseTableDetail() { }
 
 		/// <summary>
 		/// Constructor for this class
@@ -64,8 +64,8 @@ namespace DataObjects_Framework.Base
         /// <param name="CustomForeignKeys">
         /// Custom Foreign Key definition
         /// </param>
-        public ClsBaseTableDetail(
-            ClsBase Obj_Base
+        public BaseTableDetail(
+            Base Obj_Base
             , string HeaderName
             , string TableName
             , string ViewName = ""
@@ -108,7 +108,7 @@ namespace DataObjects_Framework.Base
 		/// <param name="Keys">
 		/// Key Object to use
 		/// </param>
-        public void Load(Interface_DataAccess Da, ClsKeys Keys)
+        public void Load(Interface_DataAccess Da, Keys Keys)
         { this.mDt = Da.Load_TableDetails(this.mViewName, Keys, this.mOtherLoadCondition, this.mList_ForeignKey); }
 
         /// <summary>

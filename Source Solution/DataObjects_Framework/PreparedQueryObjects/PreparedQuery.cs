@@ -11,13 +11,13 @@ using DataObjects_Framework.Connection;
 using DataObjects_Framework.DataAccess;
 using DataObjects_Framework.Objects;
 
-namespace DataObjects_Framework.PreparedQuery
+namespace DataObjects_Framework.PreparedQueryObjects
 {
     /// <summary>
     /// Abstract class ClsPreparedQuery
     /// Wrapper for using prepared statements
     /// </summary>
-    public abstract class ClsPreparedQuery
+    public abstract class PreparedQuery
     {
         #region _Variables
 
@@ -25,23 +25,23 @@ namespace DataObjects_Framework.PreparedQuery
         protected Interface_Connection mCn = null;
         protected DbCommand mCmd = null;
         protected String mQuery = "";
-        protected List<ClsParameter> mParameters = new List<ClsParameter>();
+        protected List<QueryParameter> mParameters = new List<QueryParameter>();
 
         #endregion
 
         #region _Constructors
 
-        public ClsPreparedQuery(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null)
+        public PreparedQuery(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null)
         { this.Setup(Cn, Query, Parameters); }
 
-        public ClsPreparedQuery(String Query = "", List<ClsParameter> Parameters = null)
+        public PreparedQuery(String Query = "", List<QueryParameter> Parameters = null)
         {
             Interface_Connection Cn = Do_Methods.CreateDataAccess().CreateConnection();
             Cn.Connect();
             this.Setup(Cn, Query, Parameters);
         }
 
-        void Setup(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null)
+        void Setup(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null)
         {
             this.mCn = Cn;
             this.mCmd = this.mCn.CreateCommand();
@@ -60,7 +60,7 @@ namespace DataObjects_Framework.PreparedQuery
 
         #region _Methods
 
-        public void Add_Parameter(ClsParameter Parameter)
+        public void Add_Parameter(QueryParameter Parameter)
         { 
             DbParameter Dbp = this.ConvertParameter(Parameter);
             if (Dbp != null) { this.mCmd.Parameters.Add(Dbp); }
@@ -68,16 +68,16 @@ namespace DataObjects_Framework.PreparedQuery
             this.mParameters.Add(Parameter);
         }
 
-        public void Add_Parameter(List<ClsParameter> Parameters)
+        public void Add_Parameter(List<QueryParameter> Parameters)
         {
-            foreach (ClsParameter Inner_Parameter in Parameters)
+            foreach (QueryParameter Inner_Parameter in Parameters)
             { this.Add_Parameter(Inner_Parameter); }
         }
 
 		public void Add_Parameter(String Name, Do_Constants.eParameterType Type, Object Value = null, Int32 Size = 0, Byte Scale = 0, Byte Precision = 0)
 		{
-			ClsParameter Parameter =
-				new ClsParameter()
+			QueryParameter Parameter =
+				new QueryParameter()
 				{
 					Name = Name,
 					Value = Value,
@@ -92,7 +92,7 @@ namespace DataObjects_Framework.PreparedQuery
 
         public void UpdateParameterValue()
         {
-            foreach (ClsParameter Sp in this.mParameters)
+            foreach (QueryParameter Sp in this.mParameters)
             { this.mCmd.Parameters[Sp.Name].Value = Sp.Value; }
         }
 
@@ -108,7 +108,7 @@ namespace DataObjects_Framework.PreparedQuery
         //    { this.UpdateParameterValue(Inner_Parameter); }
         //}
 
-        protected virtual DbParameter ConvertParameter(ClsParameter Parameter)
+        protected virtual DbParameter ConvertParameter(QueryParameter Parameter)
         { return null; }
 
         public virtual void Prepare()
@@ -116,9 +116,9 @@ namespace DataObjects_Framework.PreparedQuery
 
         void CheckParameterValues()
         {
-            foreach (ClsParameter Sp in this.mParameters)
+            foreach (QueryParameter Sp in this.mParameters)
             {
-                ClsParameter Inner_Sp = Sp;
+                QueryParameter Inner_Sp = Sp;
                 Inner_Sp.Value = this.ConvertParameterValues(Inner_Sp.Value, Inner_Sp.Type);
                 this.mCmd.Parameters[Inner_Sp.Name].Value = Inner_Sp.Value;
             }
@@ -206,14 +206,14 @@ namespace DataObjects_Framework.PreparedQuery
             }
         }
 
-        public List<ClsParameter> pParameters
+        public List<QueryParameter> pParameters
         {
             get { return this.mParameters; }
         }
 
         public Object pParameter_Get(String Name)
         {
-            ClsParameter P = this.mParameters.FirstOrDefault(O => O.Name == Name);
+            QueryParameter P = this.mParameters.FirstOrDefault(O => O.Name == Name);
             if (P != null)
             {
                 return P.Value;
@@ -224,7 +224,7 @@ namespace DataObjects_Framework.PreparedQuery
 
         public void pParameter_Set(String Name, Object Value)
         {
-            ClsParameter P = this.mParameters.FirstOrDefault(O => O.Name == Name);
+            QueryParameter P = this.mParameters.FirstOrDefault(O => O.Name == Name);
             if (P != null)
             {
                 P.Value = Value;

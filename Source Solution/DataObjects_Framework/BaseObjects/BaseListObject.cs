@@ -10,25 +10,25 @@ using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
 using DataObjects_Framework.DataAccess;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
-namespace DataObjects_Framework.Base
+namespace DataObjects_Framework.BaseObjects
 {
 	/// <summary>
 	/// Internal, manages the defined list object
 	/// </summary>
-	internal class ClsBaseListObject
+	internal class BaseListObject
 	{
 		#region _Variables
 
-		ClsBase_List mObj_Base;
+		Base_List mObj_Base;
 		Interface_DataAccess mDa;
 
 		string mName;
-		ClsBase mTemplate_Obj;
+		Base mTemplate_Obj;
 		List<Object> mTemplate_Obj_Constructors = new List<Object>();
 		string mTemplate_ViewName;
-		ClsQueryCondition mTemplate_LoadCondition;
+		QueryCondition mTemplate_LoadCondition;
         List<Do_Constants.Str_ForeignKeyRelation> mTemplate_FetchKeys;
 		List<Do_Constants.Str_ForeignKeyRelation> mTemplate_ForeignKeys;
 
@@ -48,14 +48,14 @@ namespace DataObjects_Framework.Base
 			/// <summary>
 			/// The ClsBase object
 			/// </summary>
-			public ClsBase Obj;
+			public Base Obj;
 
 			/// <summary>
 			/// Constructor for Str_Obj
 			/// </summary>
 			/// <param name="pName"></param>
 			/// <param name="pObj"></param>
-			public Str_Obj(string pName, ClsBase pObj)
+			public Str_Obj(string pName, Base pObj)
 			{
 				this.Name = pName;
 				this.Obj = pObj;
@@ -66,19 +66,19 @@ namespace DataObjects_Framework.Base
 
 		#region _Constructor
 
-		private ClsBaseListObject() { }
+		private BaseListObject() { }
 
-		public ClsBaseListObject(
-			ClsBase_List Obj_Base
+		public BaseListObject(
+			Base_List Obj_Base
 			, string Name
-			, ClsBase Template_Obj
+			, Base Template_Obj
 			, List<Object> Template_Obj_Constructors
 			, string Template_ViewName
             , List<Do_Constants.Str_ForeignKeyRelation> Template_FetchKeys
 			, List<Do_Constants.Str_ForeignKeyRelation> Template_ForeignKeys
-			, ClsQueryCondition Template_LoadCondition = null)
+			, QueryCondition Template_LoadCondition = null)
 		{
-			if (!(Template_Obj is ClsBase)) { throw new Exception("Template_Obj must be derived from ClsBase."); }
+			if (!(Template_Obj is Base)) { throw new Exception("Template_Obj must be derived from ClsBase."); }
 
 			this.mObj_Base = Obj_Base;
 			this.mDa = Obj_Base.pDa;
@@ -96,13 +96,13 @@ namespace DataObjects_Framework.Base
 
 		#region _Methods
 
-		public void Load(Interface_DataAccess Da, ClsKeys Keys)
+		public void Load(Interface_DataAccess Da, Keys Keys)
 		{
 			if (Keys == null)
 			{ this.mDt_Obj = Da.List_Empty(this.mTemplate_ViewName); }
 			else
 			{
-				ClsQueryCondition Qc = Da.CreateQueryCondition();
+				QueryCondition Qc = Da.CreateQueryCondition();
 				foreach (string KeyName in Keys.pName)
 				{
                     Do_Constants.Str_ForeignKeyRelation Fk = this.mTemplate_FetchKeys.FirstOrDefault(Item => Item.Parent_Key == KeyName);
@@ -111,7 +111,7 @@ namespace DataObjects_Framework.Base
 
 				if (this.mTemplate_LoadCondition != null)
 				{
-					foreach (ClsQueryCondition.Str_QueryCondition Str_Qc in this.mTemplate_LoadCondition.pList)
+					foreach (QueryCondition.Str_QueryCondition Str_Qc in this.mTemplate_LoadCondition.pList)
 					{ Qc.pList.Add(Str_Qc); }
 				}
 
@@ -130,12 +130,12 @@ namespace DataObjects_Framework.Base
 					if (ArrDr_Parent.Length > 0) { TmpKey = Do_Methods.Convert_Int64(ArrDr_Parent[0]["TmpKey"]); }
 					else { throw new Exception("TmpKey not found."); }
 
-                    ClsBase Inner_Obj = null;
+                    Base Inner_Obj = null;
 
                     if (this.mTemplate_Obj_Constructors != null)
-                    { Inner_Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mTemplate_Obj_Constructors.ToArray()); }
+                    { Inner_Obj = (Base)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mTemplate_Obj_Constructors.ToArray()); }
                     else
-                    { Inner_Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType()); }
+                    { Inner_Obj = (Base)Activator.CreateInstance(this.mTemplate_Obj.GetType()); }
                     
                     Inner_Obj.Load(Dr);
 					this.mList_Obj.Add(new Str_Obj(TmpKey.ToString(), Inner_Obj));
@@ -166,17 +166,17 @@ namespace DataObjects_Framework.Base
             }
 		}
 
-		public ClsBase Add_Object(Int64 TmpKey)
+		public Base Add_Object(Int64 TmpKey)
 		{
 			DataRow Dr = this.mDt_Obj.NewRow();
 			this.mDt_Obj.Rows.Add(Dr);
 
-            ClsBase Obj = null;
+            Base Obj = null;
 
             if (this.mTemplate_Obj_Constructors != null) 
-            { Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mTemplate_Obj_Constructors.ToArray()); }
+            { Obj = (Base)Activator.CreateInstance(this.mTemplate_Obj.GetType(), this.mTemplate_Obj_Constructors.ToArray()); }
             else 
-            { Obj = (ClsBase)Activator.CreateInstance(this.mTemplate_Obj.GetType()); }
+            { Obj = (Base)Activator.CreateInstance(this.mTemplate_Obj.GetType()); }
 
             Obj.Load(Dr);
             this.mList_Obj.Add(new Str_Obj(TmpKey.ToString(), Obj));
@@ -184,14 +184,14 @@ namespace DataObjects_Framework.Base
 			return Obj;
 		}
 
-		public void Refresh_Desc(List<ClsBase_List.Str_Desc> List_Desc)
+		public void Refresh_Desc(List<Base_List.Str_Desc> List_Desc)
 		{
 			foreach (DataRow Dr_Parent in this.mObj_Base.pDt_List.Rows)
 			{
 				DataRow[] ArrDr_Obj = this.mDt_Obj.Select("TmpKey = " + Dr_Parent["TmpKey"].ToString());
 				if (ArrDr_Obj.Length > 0)
 				{
-                    foreach (ClsBase_List.Str_Desc Desc in List_Desc)
+                    foreach (Base_List.Str_Desc Desc in List_Desc)
                     {
                         if (this.mObj_Base.pDt_List.Columns.Contains(Desc.FieldName_Parent))
                         {

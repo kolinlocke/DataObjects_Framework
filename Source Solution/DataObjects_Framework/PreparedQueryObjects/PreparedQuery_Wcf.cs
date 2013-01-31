@@ -11,11 +11,11 @@ using DataObjects_Framework.Connection;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Objects;
 
-namespace DataObjects_Framework.PreparedQuery
+namespace DataObjects_Framework.PreparedQueryObjects
 {
     //Continue Here
 
-    public class ClsPreparedQuery_Wcf : ClsPreparedQuery
+    public class PreparedQuery_Wcf : PreparedQuery
     {
         #region _Variables
 
@@ -25,14 +25,14 @@ namespace DataObjects_Framework.PreparedQuery
 
         #region _Constructors
 
-        public ClsPreparedQuery_Wcf(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null)
+        public PreparedQuery_Wcf(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null)
         { 
             this.mCn = Cn;
             this.mQuery = Query;
             this.mParameters = Parameters;
         }
 
-        public ClsPreparedQuery_Wcf(String Query = "", List<ClsParameter> Parameters = null)
+        public PreparedQuery_Wcf(String Query = "", List<QueryParameter> Parameters = null)
         { 
             this.mCn = Do_Methods.CreateDataAccess().CreateConnection();
             this.mQuery = Query;
@@ -70,7 +70,7 @@ namespace DataObjects_Framework.PreparedQuery
             Client_WcfService Client = Client_WcfService.CreateObject();
             String ResponseData = Client.PreparedQuery_ExecuteQuery(Rs, this.mPreparedQuerySessionID, Rpqp);
 
-            ClsSimpleDataSet Sds = ClsSimpleDataSet.Deserialize(ResponseData);
+            SimpleDataSet Sds = SimpleDataSet.Deserialize(ResponseData);
             return Sds.ToDataSet();
         }
 

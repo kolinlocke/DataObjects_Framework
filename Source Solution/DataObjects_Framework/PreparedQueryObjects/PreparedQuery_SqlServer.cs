@@ -11,21 +11,21 @@ using DataObjects_Framework.Connection;
 using DataObjects_Framework.DataAccess;
 using DataObjects_Framework.Objects;
 
-namespace DataObjects_Framework.PreparedQuery
+namespace DataObjects_Framework.PreparedQueryObjects
 {
-    public class ClsPreparedQuery_SqlServer : ClsPreparedQuery
+    public class PreparedQuery_SqlServer : PreparedQuery
     {
         #region _Constructors
 
-        public ClsPreparedQuery_SqlServer(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null) : base(Cn, Query, Parameters) { }
+        public PreparedQuery_SqlServer(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null) : base(Cn, Query, Parameters) { }
 
-        public ClsPreparedQuery_SqlServer(String Query = "", List<ClsParameter> Parameters = null) : base(Query, Parameters) { }
+        public PreparedQuery_SqlServer(String Query = "", List<QueryParameter> Parameters = null) : base(Query, Parameters) { }
 
         #endregion
 
         #region _Methods
 
-        protected override DbParameter ConvertParameter(ClsParameter Parameter)
+        protected override DbParameter ConvertParameter(QueryParameter Parameter)
         {
             SqlParameter Rv_Parameter = new SqlParameter();
             Rv_Parameter.ParameterName = Parameter.Name;

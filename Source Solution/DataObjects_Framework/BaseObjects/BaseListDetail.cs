@@ -10,29 +10,29 @@ using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
 using DataObjects_Framework.DataAccess;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
-namespace DataObjects_Framework.Base
+namespace DataObjects_Framework.BaseObjects
 {
-    internal class ClsBaseListDetail
+    internal class BaseListDetail
     {
         #region _Variables
 
         string mName;
-        ClsBase mObj_Base;
-        ClsBase_List mObj_List;
+        Base mObj_Base;
+        Base_List mObj_List;
         List<Do_Constants.Str_ForeignKeyRelation> mList_ForeignKey = new List<Do_Constants.Str_ForeignKeyRelation>();
 
         #endregion
 
         #region _Constructor
 
-        private ClsBaseListDetail() { }
+        private BaseListDetail() { }
 
-        public ClsBaseListDetail(
-            ClsBase Obj_Base
+        public BaseListDetail(
+            Base Obj_Base
             , string Name
-            , ClsBase_List Obj_List
+            , Base_List Obj_List
             , List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
         {
             this.mName = Name;
@@ -45,10 +45,10 @@ namespace DataObjects_Framework.Base
 
         #region _Methods
 
-        public void Load(Interface_DataAccess Da, ClsKeys Keys)
+        public void Load(Interface_DataAccess Da, Keys Keys)
         {
             StringBuilder Sb_Condition = new StringBuilder();
-            ClsKeys Load_Keys = null;
+            Keys Load_Keys = null;
 
             if (this.mList_ForeignKey != null)
             {
@@ -85,7 +85,7 @@ namespace DataObjects_Framework.Base
             get { return this.mName; }
         }
 
-        public ClsBase_List pObj_List
+        public Base_List pObj_List
         {
             get { return this.mObj_List; }
         }
