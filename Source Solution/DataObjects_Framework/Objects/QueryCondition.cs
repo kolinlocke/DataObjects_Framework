@@ -16,7 +16,7 @@ namespace DataObjects_Framework.Objects
     /// generally used to avoid Sql Injection attacks
     /// </summary>
     [Serializable]
-    public class ClsQueryCondition
+    public class QueryCondition
     {
         #region _Variables
 
@@ -111,7 +111,8 @@ namespace DataObjects_Framework.Objects
         /// <param name="DefaultValue">
         /// Default value to use with ISNULL function
         /// </param>
-        public void Add(string Name, string Operator, object Value, string DataType = "", string DefaultValue = "")
+        /// <returns></returns>
+        public Str_QueryCondition Add(string Name, string Operator, object Value, string DataType = "", string DefaultValue = "")
         {
             if (Operator.Trim() == "")
             {
@@ -164,7 +165,9 @@ namespace DataObjects_Framework.Objects
                 catch { }
             }
 
-            this.mQc.Add(new Str_QueryCondition(Name, FieldName, Operator, Value, DataType, DefaultValue));
+            Str_QueryCondition NewQc = new Str_QueryCondition(Name, FieldName, Operator, Value, DataType, DefaultValue);
+            this.mQc.Add(NewQc);
+            return NewQc;
         }
 
         /// <summary>
@@ -182,7 +185,8 @@ namespace DataObjects_Framework.Objects
         /// <param name="DefaultValue">
         /// Default value to use with ISNULL function
         /// </param>
-        public void Add(string Name, string Condition, string DataType, string DefaultValue = "")
+        /// <returns></returns>
+        public Str_QueryCondition Add(string Name, string Condition, string DataType, string DefaultValue = "")
         {
             string Condition_Operator ="";
             string Condition_Value = "";
@@ -225,7 +229,7 @@ namespace DataObjects_Framework.Objects
                 { Condition_Value = Condition; }
 
             }
-            this.Add(Name, Condition_Operator, Condition_Value, DataType, DefaultValue);
+            return this.Add(Name, Condition_Operator, Condition_Value, DataType, DefaultValue);
         }
 
         /// <summary>
@@ -250,8 +254,8 @@ namespace DataObjects_Framework.Objects
 
                 if (Obj.DataType.ToUpper() == typeof(DateTime).ToString().ToUpper() || Obj.DataType.ToUpper() == typeof(DateTime).Name.ToUpper())
                 {
-                    Field = @"dbo.udf_ConvertDate([" + Obj.FieldName + @"])";
-                    Condition = @"dbo.udf_ConvertDate(@Condition_" + Obj.Name + @")";
+                    Field = @"dbo.udf_DataObjects_ConvertDate([" + Obj.FieldName + @"])";
+                    Condition = @"dbo.udf_DataObjects_ConvertDate(@Condition_" + Obj.Name + @")";
                 }
                 else
                 {
@@ -379,9 +383,9 @@ namespace DataObjects_Framework.Objects
             return List_Sp.ToArray();
         }
 
-        public List<ClsParameter> GetParameters()
+        public List<QueryParameter> GetParameters()
         {
-            List<ClsParameter> List_Sp = new List<ClsParameter>();
+            List<QueryParameter> List_Sp = new List<QueryParameter>();
             foreach (Str_QueryCondition Obj in this.mQc)
             {
                 string Name = Obj.Name;
@@ -389,7 +393,7 @@ namespace DataObjects_Framework.Objects
                 object Value = Obj.Value;
                 string DataType = Obj.DataType.ToUpper();
 
-                ClsParameter Sp = new ClsParameter();
+                QueryParameter Sp = new QueryParameter();
                 Sp.Name = "Condition_" + Name;
 
                 if (
@@ -466,7 +470,8 @@ namespace DataObjects_Framework.Objects
         /// <returns></returns>
         public string GetQueryCondition_String()
         {
-            string Query_Condition = " 1 = 1 ";
+            StringBuilder Sb_QueryCondition = new StringBuilder();
+            Sb_QueryCondition.Append(" 1 = 1 ");
             foreach (Str_QueryCondition Obj in this.mQc)
             {
                 string Field;
@@ -498,9 +503,9 @@ namespace DataObjects_Framework.Objects
                     { DefaultValue = Obj.DefaultValue; }
                     Field = @"ISNULL(" + Field + @"," + DefaultValue + @")";
                 }
-                Query_Condition += " And " + Field + " " + Obj.Operator + " " + Condition;
+                Sb_QueryCondition.Append(" And " + Field + " " + Obj.Operator + " " + Condition);
             }
-            return Query_Condition;
+            return Sb_QueryCondition.ToString();
         }
 
         #endregion

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
@@ -11,7 +15,7 @@ using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.DataAccess;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.PreparedQuery;
+using DataObjects_Framework.PreparedQueryObjects;
 using DataObjects_Wcf;
 using Microsoft.VisualBasic;
 
@@ -19,7 +23,7 @@ namespace DataObjects_Wcf
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in code, svc and config file together.
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class WcfService : Interface_WcfService, IDisposable
+    public class WcfService : Interface_WcfService, IDisposable, IServiceBehavior, IErrorHandler
     {
         #region _Variables
 
@@ -36,7 +40,7 @@ namespace DataObjects_Wcf
         {
             public String SessionID;
             public String PreparedQuerySessionID;
-            public ClsPreparedQuery Obj;
+            public PreparedQuery Obj;
             public DateTime SessionDate;
         }
 
@@ -47,6 +51,7 @@ namespace DataObjects_Wcf
         public WcfService()
         {
             Do_Globals.gSettings.pDataAccessType = Do_Constants.eDataAccessType.DataAccess_SqlServer;
+            Do_Globals.gSettings.pConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
             this.PreparedQuerySessionChecker_Start();
         }
 
@@ -75,7 +80,7 @@ namespace DataObjects_Wcf
 
         public String List(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List)
         {
-            ClsSimpleDataTable Rv = null;
+            SimpleDataTable Rv = new SimpleDataTable();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -86,13 +91,13 @@ namespace DataObjects_Wcf
 
                 DataTable Dt = null;
 
-                if (Do_Methods.Convert_String(Request_List.Condition_String) == "")
+                if (Do_Methods.Convert_String(Request_List.Condition_String) != "")
                 {
                     Dt = Da.List(
                     Request_List.ObjectName
                     , Request_List.Condition_String
                     , Request_List.Sort);
-                    Rv = new ClsSimpleDataTable(Dt);
+                    Rv = new SimpleDataTable(Dt);
                 }
                 else
                 {
@@ -102,11 +107,11 @@ namespace DataObjects_Wcf
                     , Request_List.Sort
                     , Request_List.Top
                     , Request_List.Page);
-                    Rv = new ClsSimpleDataTable(Dt);
+                    Rv = new SimpleDataTable(Dt);
                 }
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: List"); }
             finally
             { Da.Close(); }
 
@@ -127,7 +132,7 @@ namespace DataObjects_Wcf
                 Rv = Da.List_Count(Request_List.ObjectName, Request_List.Condition);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: List_Count"); }
             finally
             { Da.Close(); }
 
@@ -136,7 +141,7 @@ namespace DataObjects_Wcf
 
         public String List_Empty(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List)
         {
-            ClsSimpleDataTable Rv = null;
+            SimpleDataTable Rv = new SimpleDataTable();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -145,12 +150,11 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_List.ConnectionString); }
 
-                DataTable Dt = Da.List_Empty(
-                Request_List.ObjectName);
-                Rv = new ClsSimpleDataTable(Dt);
+                DataTable Dt = Da.List_Empty(Request_List.ObjectName);
+                Rv = new SimpleDataTable(Dt);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: List_Empty"); }
             finally
             { Da.Close(); }
 
@@ -159,7 +163,7 @@ namespace DataObjects_Wcf
 
         public String Load(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load)
         {
-            ClsSimpleDataRow Rv = null;
+            SimpleDataRow Rv = new SimpleDataRow();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -169,11 +173,11 @@ namespace DataObjects_Wcf
                 { Da.Connect(Request_Load.ConnectionString); }
 
                 DataRow Dr = Da.Load(Request_Load.ObjectName, Request_Load.ObjectKeys, Request_Load.Key);
-                ClsSimpleDataTable Sds = new ClsSimpleDataTable(Dr.Table.Clone());
+                SimpleDataTable Sds = new SimpleDataTable(Dr.Table.Clone());
                 Rv = Sds.NewRow(Dr);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: Load"); }
             finally
             { Da.Close(); }
 
@@ -182,7 +186,7 @@ namespace DataObjects_Wcf
 
         public String Load_TableDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load)
         {
-            ClsSimpleDataTable Rv = null;
+            SimpleDataTable Rv = new SimpleDataTable();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -191,10 +195,10 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_Load.ConnectionString); }
 
-                Rv = new ClsSimpleDataTable(Da.Load_TableDetails(Request_Load.ObjectName, Request_Load.Key, Request_Load.Condition, Request_Load.ForeignKeys));
+                Rv = new SimpleDataTable(Da.Load_TableDetails(Request_Load.ObjectName, Request_Load.Key, Request_Load.Condition, Request_Load.ForeignKeys));
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: Load_TableDetails"); }
             finally
             { Da.Close(); }
 
@@ -203,7 +207,7 @@ namespace DataObjects_Wcf
 
         public String Load_RowDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load)
         {
-            ClsSimpleDataRow Rv = null;
+            SimpleDataRow Rv = new SimpleDataRow();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -213,22 +217,23 @@ namespace DataObjects_Wcf
                 { Da.Connect(Request_Load.ConnectionString); }
 
                 DataRow Dr = Da.Load_RowDetails(Request_Load.ObjectName, Request_Load.Key, Request_Load.Condition, Request_Load.ForeignKeys);
-                ClsSimpleDataTable Sdt = new ClsSimpleDataTable(Dr.Table.Clone());
+                SimpleDataTable Sdt = new SimpleDataTable(Dr.Table.Clone());
                 Rv = Sdt.NewRow(Dr);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: Load_RowDetails"); }
             finally
             { Da.Close(); }
 
             return Rv.Serialize();
         }
 
-        public bool SaveDataRow(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Save Request_Save)
+        public String SaveDataRow(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Save Request_Save)
         {
-            Boolean Rv = false;
-            ClsSimpleDataRow Sdr_Obj = ClsSimpleDataRow.Deserialize(Request_Save.Serialized_ObjectDataRow);
+            Do_Constants.Str_Response_Save Rv = new Do_Constants.Str_Response_Save();
+            SimpleDataRow Sdr_Obj = SimpleDataRow.Deserialize(Request_Save.Serialized_ObjectDataRow);
             DataRow Dr_Obj = Sdr_Obj.ToDataRow();
+            Boolean SaveResult = false;
 
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
@@ -238,19 +243,28 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_Save.ConnectionString); }
 
-                Rv = Da.SaveDataRow(Dr_Obj, Request_Save.TableName, Request_Save.SchemaName, Request_Save.IsDelete, Request_Save.CustomKeys);
+                SaveResult =
+                    Da.SaveDataRow(
+                        Dr_Obj
+                        , Request_Save.TableName
+                        , Request_Save.SchemaName
+                        , Request_Save.IsDelete
+                        , Request_Save.CustomKeys);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: SaveDataRow"); }
             finally
             { Da.Close(); }
 
-            return Rv;
+            Rv.SaveResult = SaveResult;
+            Rv.Sdr = new SimpleDataRow(Dr_Obj);
+
+            return Do_Methods.SerializeObject_Json(Rv);
         }
 
-        public string GetQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_GetQuery Request_GetQuery)
+        public String GetQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_GetQuery Request_GetQuery)
         {
-            ClsSimpleDataTable Rv = null;
+            SimpleDataTable Rv = new SimpleDataTable();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -261,14 +275,14 @@ namespace DataObjects_Wcf
 
                 DataTable Dt = null;
 
-                if (Do_Methods.Convert_String(Request_GetQuery.Condition_String) == "")
+                if (Do_Methods.Convert_String(Request_GetQuery.Condition_String) != "")
                 {
                     Dt = Da.GetQuery(
                     Request_GetQuery.ObjectName
                     , Request_GetQuery.Fields
                     , Request_GetQuery.Condition_String
                     , Request_GetQuery.Sort);
-                    Rv = new ClsSimpleDataTable(Dt);
+                    Rv = new SimpleDataTable(Dt);
                 }
                 else
                 {
@@ -279,20 +293,22 @@ namespace DataObjects_Wcf
                     , Request_GetQuery.Sort
                     , Request_GetQuery.Top
                     , Request_GetQuery.Page);
-                    Rv = new ClsSimpleDataTable(Dt);
+                    Rv = new SimpleDataTable(Dt);
                 }
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: GetQuery"); }
             finally
             { Da.Close(); }
 
             return Rv.Serialize();
         }
 
-        public void ExecuteNonQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Execute Request_Execute)
+        public String ExecuteNonQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Execute Request_Execute)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            Int32 Result = 0;
+
             try
             {
                 if (Do_Methods.Convert_String(Request_Execute.ConnectionString) == "")
@@ -300,20 +316,23 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_Execute.ConnectionString); }
 
-                if (Do_Methods.Convert_String(Request_Execute.Query) == "")
-                { Da.ExecuteNonQuery(Request_Execute.Query); }
+                if (Do_Methods.Convert_String(Request_Execute.Query) != "")
+                { Result = Da.ExecuteNonQuery(Request_Execute.Query); }
                 else
-                { Da.ExecuteNonQuery(Request_Execute.ProcedureName, Request_Execute.ProcedureParameters); }
+                { Result = Da.ExecuteNonQuery(Request_Execute.ProcedureName, Request_Execute.ProcedureParameters); }
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: ExecuteNonQuery"); }
             finally
             { Da.Close(); }
+
+            return Do_Methods.SerializeObject_Json(typeof(Int32), Result);
         }
 
         public string ExecuteQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Execute Request_Execute)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
+            String Rv = "";
             try
             {
                 if (Do_Methods.Convert_String(Request_Execute.ConnectionString) == "")
@@ -321,23 +340,25 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_Execute.ConnectionString); }
 
-                if (Do_Methods.Convert_String(Request_Execute.Query) == "")
+                if (Do_Methods.Convert_String(Request_Execute.Query) != "")
                 {
                     DataSet Ds = Da.ExecuteQuery(Request_Execute.Query);
-                    ClsSimpleDataSet Sds = new ClsSimpleDataSet(Ds);
-                    return Sds.Serialize();
+                    SimpleDataSet Sds = new SimpleDataSet(Ds);
+                    Rv = Sds.Serialize();
                 }
                 else
                 {
                     DataSet Ds = Da.ExecuteQuery(Request_Execute.ProcedureName, Request_Execute.ProcedureParameters);
-                    ClsSimpleDataSet Sds = new ClsSimpleDataSet(Ds);
-                    return Sds.Serialize();
+                    SimpleDataSet Sds = new SimpleDataSet(Ds);
+                    Rv = Sds.Serialize();
                 }
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: ExecuteQuery"); }
             finally
             { Da.Close(); }
+
+            return Rv;
         }
 
         public string PreparedQuery_Prepare(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_PreparedQuery_Prepare Request_Command)
@@ -351,7 +372,7 @@ namespace DataObjects_Wcf
                 else
                 { Da.Connect(Request_Command.ConnectionString); }
 
-                ClsPreparedQuery Obj_Pq = Da.CreatePreparedQuery(Request_Command.Query, Request_Command.Parameters);
+                PreparedQuery Obj_Pq = Da.CreatePreparedQuery(Request_Command.Query, Request_Command.Parameters);
                 PreparedQuerySessionID = Do_Methods.GenerateGuid(
                     (
                     from O in this.mPreparedQuerySessions
@@ -370,57 +391,68 @@ namespace DataObjects_Wcf
                 Obj_Pq.Prepare();
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: PreparedQuery_Prepare"); }
 
             return PreparedQuerySessionID;
         }
 
         public void PreparedQuery_ExecuteNonQuery(Do_Constants.Str_Request_Session Request_Session, string PreparedQuerySessionID, Do_Constants.Str_Request_PreparedQuery_Parameters Request_Parameters)
         {
-            Str_PreparedQuerySession? Obj_Pqs = this.mPreparedQuerySessions.FirstOrDefault(X => X.Value.PreparedQuerySessionID == PreparedQuerySessionID && X.Value.SessionID == Request_Session.SessionID);
-            if (Obj_Pqs != null)
+            try
             {
-                Str_PreparedQuerySession Inner_Obj_Pqs = Obj_Pqs.Value;
-                Inner_Obj_Pqs.SessionDate = DateTime.Now;
+                Str_PreparedQuerySession? Obj_Pqs = this.mPreparedQuerySessions.FirstOrDefault(X => X.Value.PreparedQuerySessionID == PreparedQuerySessionID && X.Value.SessionID == Request_Session.SessionID);
+                if (Obj_Pqs != null)
+                {
+                    Str_PreparedQuerySession Inner_Obj_Pqs = Obj_Pqs.Value;
+                    Inner_Obj_Pqs.SessionDate = DateTime.Now;
 
-                ClsPreparedQuery Obj_Pq = Obj_Pqs.Value.Obj;
-                if (Request_Parameters.Parameters != null)
-                { 
-                    foreach (ClsParameter Sp in Request_Parameters.Parameters)
-                    { Obj_Pq.pParameter_Set(Sp.Name, Sp.Value); }
+                    PreparedQuery Obj_Pq = Obj_Pqs.Value.Obj;
+                    if (Request_Parameters.Parameters != null)
+                    {
+                        foreach (QueryParameter Sp in Request_Parameters.Parameters)
+                        { Obj_Pq.pParameter_Set(Sp.Name, Sp.Value); }
+                    }
+
+                    Obj_Pq.ExecuteNonQuery();
                 }
-
-                Obj_Pq.ExecuteNonQuery();
             }
+            catch (Exception Ex)
+            { this.ErrorHandler(Ex, "WcfService.Method: PreparedQuery_ExecuteNonQuery"); }
         }
 
         public string PreparedQuery_ExecuteQuery(Do_Constants.Str_Request_Session Request_Session, string PreparedQuerySessionID, Do_Constants.Str_Request_PreparedQuery_Parameters Request_Parameters)
         {
-            String Rv = "";
-            Str_PreparedQuerySession? Obj_Pqs = this.mPreparedQuerySessions.FirstOrDefault(X => X.Value.PreparedQuerySessionID == PreparedQuerySessionID && X.Value.SessionID == Request_Session.SessionID);
-            if (Obj_Pqs != null)
+            SimpleDataSet Rv = new SimpleDataSet();
+
+            try
             {
-                Str_PreparedQuerySession Inner_Obj_Pqs = Obj_Pqs.Value;
-                Inner_Obj_Pqs.SessionDate = DateTime.Now;
+                Str_PreparedQuerySession? Obj_Pqs = this.mPreparedQuerySessions.FirstOrDefault(X => X.Value.PreparedQuerySessionID == PreparedQuerySessionID && X.Value.SessionID == Request_Session.SessionID);
+                if (Obj_Pqs != null)
+                {
+                    Str_PreparedQuerySession Inner_Obj_Pqs = Obj_Pqs.Value;
+                    Inner_Obj_Pqs.SessionDate = DateTime.Now;
 
-                ClsPreparedQuery Obj_Pq = Obj_Pqs.Value.Obj;
-                if (Request_Parameters.Parameters != null)
-                { 
-                    foreach (ClsParameter Sp in Request_Parameters.Parameters)
-                    { Obj_Pq.pParameter_Set(Sp.Name, Sp.Value); }
+                    PreparedQuery Obj_Pq = Obj_Pqs.Value.Obj;
+                    if (Request_Parameters.Parameters != null)
+                    {
+                        foreach (QueryParameter Sp in Request_Parameters.Parameters)
+                        { Obj_Pq.pParameter_Set(Sp.Name, Sp.Value); }
+                    }
+
+                    DataSet Ds = Obj_Pq.ExecuteQuery();
+                    SimpleDataSet Sds = new SimpleDataSet(Ds);
+                    Rv = Sds;
                 }
-
-                DataSet Ds = Obj_Pq.ExecuteQuery();
-                ClsSimpleDataSet Sds = new ClsSimpleDataSet(Ds);
-                Rv = Sds.Serialize();
             }
+            catch (Exception Ex)
+            { this.ErrorHandler(Ex, "WcfService.Method: PreparedQuery_ExecuteQuery"); }
 
-            return Rv;
+            return Rv.Serialize();
         }
 
         public string GetTableDef(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List)
         {
-            ClsSimpleDataTable Rv = null;
+            SimpleDataTable Rv = new SimpleDataTable();
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             try
             {
@@ -430,10 +462,10 @@ namespace DataObjects_Wcf
                 { Da.Connect(Request_List.ConnectionString); }
 
                 DataTable Dt = Da.GetTableDef(Request_List.ObjectName);
-                Rv = new ClsSimpleDataTable(Dt);
+                Rv = new SimpleDataTable(Dt);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: GetTableDef"); }
             finally
             { Da.Close(); }
 
@@ -454,7 +486,7 @@ namespace DataObjects_Wcf
                 Rv = Da.GetSystemParameter(Request_SystemParameter.ParameterName, Request_SystemParameter.ParameterValue);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: GetSystemParameter"); }
             finally
             { Da.Close(); }
 
@@ -474,9 +506,17 @@ namespace DataObjects_Wcf
                 Da.SetSystemParameter(Request_SystemParameter.ParameterName, Request_SystemParameter.ParameterValue);
             }
             catch (Exception Ex)
-            { throw Ex; }
+            { this.ErrorHandler(Ex, "WcfService.Method: SetSystemParameter"); }
             finally
             { Da.Close(); }
+        }
+
+        public void InvokeError()
+        {
+            try
+            { throw new CustomException("InvokeError method has been invoked!"); }
+            catch (Exception Ex)
+            { this.ErrorHandler(Ex, "WcfService.Method: InvokeError"); }
         }
 
         #endregion
@@ -485,7 +525,7 @@ namespace DataObjects_Wcf
 
         void PreparedQuerySessionChecker_Start()
         {
-            ClsThreadStarter Ts = new ClsThreadStarter();
+            ThreadStarter Ts = new ThreadStarter();
             Ds_Generic D = new Ds_Generic(this.PreparedQuerySessionChecker);
             Ts.Setup(D, null, this);
             this.mThread_PreparedQuerySessionChecker = Ts.pThread;
@@ -504,6 +544,49 @@ namespace DataObjects_Wcf
         public void Dispose()
         {
             this.mThread_PreparedQuerySessionChecker_IsExit = true;
+        }
+
+        public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+        {
+            IErrorHandler errorHandler = new WcfService();
+
+            foreach (ChannelDispatcherBase channelDispatcherBase in serviceHostBase.ChannelDispatchers)
+            {
+                ChannelDispatcher channelDispatcher = channelDispatcherBase as ChannelDispatcher;
+                channelDispatcher.ErrorHandlers.Add(errorHandler);
+            }
+        }
+
+        public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection<ServiceEndpoint> endpoints, System.ServiceModel.Channels.BindingParameterCollection bindingParameters)
+        { }
+
+        public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+        { }
+
+        public bool HandleError(Exception error)
+        {
+            this.ErrorHandler(error, this.GetType().Name);
+            return true;
+        }
+
+        public void ProvideFault(Exception error, System.ServiceModel.Channels.MessageVersion version, ref System.ServiceModel.Channels.Message fault)
+        {
+            FaultException faultException = new FaultException(error.Message);
+            MessageFault messageFault = faultException.CreateMessageFault();
+            fault = Message.CreateMessage(version, messageFault, faultException.Action);
+        }
+
+        public void ErrorHandler(Exception Ex, string ModuleName)
+        {
+            String Msg = @"Error Log: " + ModuleName + ": " + Ex.Message + " : " + Ex.Source + " : " + (Ex.TargetSite != null ? Ex.TargetSite.Name : "");
+            this.LogWrite(Msg);
+        }
+
+        public void LogWrite(String Msg)
+        {
+            Msg = @"[" + DateTime.Now.ToString() + @"] " + Msg;
+            String FileName = @"System Logs [" + string.Format("{0:yyyy.MM.dd}", DateTime.Now.ToString()) + @"].log";
+            Do_Methods.LogWrite(Msg, Do_Methods.SetFolderPath(ConfigurationManager.AppSettings["SystemLogPath"]) + "System Logs");
         }
 
         #endregion

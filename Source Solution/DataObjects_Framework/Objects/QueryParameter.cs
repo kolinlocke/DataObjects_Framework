@@ -6,7 +6,8 @@ using DataObjects_Framework.Common;
 
 namespace DataObjects_Framework.Objects
 {
-    public class ClsParameter
+    [Serializable()]
+    public class QueryParameter
     {
         public string Name { get; set; }
         public object Value { get; set; }
@@ -15,9 +16,9 @@ namespace DataObjects_Framework.Objects
         public Byte Precision { get; set; }
         public Do_Constants.eParameterType Type { get; set; }
 
-        public ClsParameter() { }
+        public QueryParameter() { }
 
-        public ClsParameter(String Name, Object Value)
+        public QueryParameter(String Name, Object Value)
         {
             this.Name = Name;
             this.Value = Value;

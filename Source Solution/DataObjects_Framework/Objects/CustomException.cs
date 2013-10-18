@@ -9,22 +9,22 @@ namespace DataObjects_Framework.Objects
     /// <summary>
     /// A custom exception object
     /// </summary>
-    public class ClsCustomException : System.Exception
+    public class CustomException : System.Exception
     {
         #region _Constructor
 
         /// <summary>
-        /// Constructor for ClsCustomException
+        /// Constructor for CustomException
         /// </summary>
-        public ClsCustomException() : base() { }
+        public CustomException() : base() { }
 
         /// <summary>
-        /// Constructor for ClsCustomException
+        /// Constructor for CustomException
         /// </summary>
         /// <param name="Message">
         /// The error message that explains the reason for the exception.
         /// </param>
-        public ClsCustomException(string Message) : base(Message) { }
+        public CustomException(string Message) : base(Message) { }
 
         /// <summary>
         /// Constructor for ClsCustomException
@@ -36,7 +36,7 @@ namespace DataObjects_Framework.Objects
         /// The exception that is the cause of the current exception, or a null reference
         /// (Nothing in Visual Basic) if no inner exception is specified. - from System.Exception        
         /// </param>
-        public ClsCustomException(string Message, Exception InnerException) : base(Message, InnerException) { }
+        public CustomException(string Message, Exception InnerException) : base(Message, InnerException) { }
 
         #endregion
     }

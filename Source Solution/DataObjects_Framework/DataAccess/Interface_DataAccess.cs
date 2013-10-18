@@ -5,7 +5,7 @@ using System.Data.Common;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.PreparedQuery;
+using DataObjects_Framework.PreparedQueryObjects;
 
 namespace DataObjects_Framework.DataAccess
 {
@@ -43,13 +43,13 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataTable GetQuery(
             Interface_Connection Connection
-            , string SourceObject
-            , string Fields = ""
-            , string Condition = ""
-            , string Sort = ""
+            , String SourceObject
+            , String Fields = ""
+            , String Condition = ""
+            , String Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
-        
+
         /// <summary>
         /// Fetches a result set from a data source object
         /// </summary>
@@ -75,10 +75,10 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         DataTable GetQuery(
-            string SourceObject
-            , string Fields = ""
-            , string Condition = ""
-            , string Sort = ""
+            String SourceObject
+            , String Fields = ""
+            , String Condition = ""
+            , String Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
 
@@ -111,10 +111,10 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataTable GetQuery(
             Interface_Connection Connection
-            , string SourceObject
-            , string Fields
-            , ClsQueryCondition Condition
-            , string Sort = ""
+            , String SourceObject
+            , String Fields
+            , QueryCondition Condition
+            , String Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
 
@@ -143,16 +143,33 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         DataTable GetQuery(
-            string SourceObject
-            , string Fields
-            , ClsQueryCondition Condition
-            , string Sort = ""
+            String SourceObject
+            , String Fields
+            , QueryCondition Condition
+            , String Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
 
-        Int32 ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters);
+        DataTable GetQuery(
+            Interface_Connection Connection
+            , Do_Constants.Str_QuerySource SourceObject
+            , String Fields
+            , QueryCondition Condition
+            , String Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0);
 
-        Int32 ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters);
+        DataTable GetQuery(
+            Do_Constants.Str_QuerySource SourceObject
+            , String Fields
+            , QueryCondition Condition
+            , String Sort = ""
+            , Int64 Top = 0
+            , Int32 Page = 0);
+
+        Int32 ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<QueryParameter> ProcedureParameters);
+
+        Int32 ExecuteNonQuery(string ProcedureName, List<QueryParameter> ProcedureParameters);
 
         Int32 ExecuteNonQuery(Interface_Connection Connection, string Query);
 
@@ -162,9 +179,9 @@ namespace DataObjects_Framework.DataAccess
 
         Int32 ExecuteNonQuery(DbCommand Cmd);
 
-        DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters);
+        DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<QueryParameter> ProcedureParameters);
 
-        DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters);
+        DataSet ExecuteQuery(string ProcedureName, List<QueryParameter> ProcedureParameters);
 
         DataSet ExecuteQuery(Interface_Connection Connection, string Query);
 
@@ -213,7 +230,7 @@ namespace DataObjects_Framework.DataAccess
         /// Reverts the current transaction
         /// </summary>
         void RollbackTransaction();
-        
+
         /// <summary>
         /// Saves the datarow to the target table.
         /// </summary>
@@ -239,7 +256,7 @@ namespace DataObjects_Framework.DataAccess
             , string SchemaName = ""
             , bool IsDelete = false
             , List<string> CustomKeys = null);
-        
+
         //[-]
 
         /// <summary>
@@ -303,7 +320,7 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataTable List(
             string ObjectName
-            , ClsQueryCondition Condition
+            , QueryCondition Condition
             , string Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
@@ -333,7 +350,7 @@ namespace DataObjects_Framework.DataAccess
         DataTable List(
             Interface_Connection Cn
             , string ObjectName
-            , ClsQueryCondition Condition
+            , QueryCondition Condition
             , string Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0);
@@ -348,7 +365,7 @@ namespace DataObjects_Framework.DataAccess
         /// ClsQueryCondition Object to be used in fetching the data
         /// </param>
         /// <returns></returns>
-        Int64 List_Count(string ObjectName, ClsQueryCondition Condition = null);
+        Int64 List_Count(string ObjectName, QueryCondition Condition = null);
 
         /// <summary>
         /// Returns the Result Set Count with out actually fetching the result set, mainly used for pagination
@@ -363,7 +380,7 @@ namespace DataObjects_Framework.DataAccess
         /// ClsQueryCondition Object to be used in fetching the data
         /// </param>
         /// <returns></returns>
-        Int64 List_Count(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition = null);
+        Int64 List_Count(Interface_Connection Cn, string ObjectName, QueryCondition Condition = null);
 
         /// <summary>
         /// Returns a Empy List based on the supplied source data object Name
@@ -403,7 +420,7 @@ namespace DataObjects_Framework.DataAccess
         /// The ClsKey object to use
         /// </param>
         /// <returns></returns>
-        DataRow Load(string ObjectName, List<string> List_Key, ClsKeys Keys);
+        DataRow Load(string ObjectName, List<string> List_Key, Keys Keys);
 
         /// <summary>
         /// Loads the defined Data Object Table Detail
@@ -423,7 +440,7 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataTable Load_TableDetails(
             string ObjectName
-            , ClsKeys Keys
+            , Keys Keys
             , string Condition
             , List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys);
 
@@ -445,7 +462,7 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         DataRow Load_RowDetails(
             string ObjectName
-            , ClsKeys Keys
+            , Keys Keys
             , string Condition
             , List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys);
 
@@ -461,11 +478,11 @@ namespace DataObjects_Framework.DataAccess
         /// Creates a ClsQueryCondition based on the implementation of this interface
         /// </summary>
         /// <returns></returns>
-        ClsQueryCondition CreateQueryCondition();
+        QueryCondition CreateQueryCondition();
 
-        ClsPreparedQuery CreatePreparedQuery(Interface_Connection Cn, String Query = "", List<ClsParameter> Parameters = null);
+        PreparedQuery CreatePreparedQuery(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null);
 
-        ClsPreparedQuery CreatePreparedQuery(String Query = "", List<ClsParameter> Parameters = null);
+        PreparedQuery CreatePreparedQuery(String Query = "", List<QueryParameter> Parameters = null);
 
         //[-]
 
@@ -477,7 +494,7 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         /// <returns></returns>
         DataTable GetTableDef(string TableName);
-        
+
         /// <summary>
         /// Gets the specified system parameter value, or creates a new system parameter with the specified default value
         /// </summary>
@@ -529,6 +546,8 @@ namespace DataObjects_Framework.DataAccess
         /// The value to be set
         /// </param>
         void SetSystemParameter(Interface_Connection Connection, string ParameterName, string ParameterValue);
+
+        void InvokeError();
     }
 }
 

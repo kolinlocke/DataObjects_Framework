@@ -9,7 +9,7 @@ using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.DataAccess;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
 namespace DataObjects_Framework.Common
 {
@@ -33,10 +33,10 @@ namespace DataObjects_Framework.Common
             finally { Da.Close(); }
         }
 
-        public static DataTable GetQuery(Interface_DataAccess Da, string ViewObject, string Fields, ClsQueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
+        public static DataTable GetQuery(Interface_DataAccess Da, string ViewObject, string Fields, QueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
         { return Da.GetQuery(ViewObject, Fields, Condition, Sort, Top, Page); }
 
-        public static DataTable GetQuery(string ViewObject, string Fields, ClsQueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
+        public static DataTable GetQuery(string ViewObject, string Fields, QueryCondition Condition, string Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             DataTable Dt = null;
@@ -51,12 +51,12 @@ namespace DataObjects_Framework.Common
             return Dt;
         }
 
-        public static Int32 ExecuteNonQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
+        public static Int32 ExecuteNonQuery(string ProcedureName, QueryParameter[] ProcedureParameters)
         {
             return Do_Methods_Query.ExecuteNonQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
-        public static Int32 ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        public static Int32 ExecuteNonQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             return Da.ExecuteNonQuery(ProcedureName, ProcedureParameters);
@@ -68,12 +68,12 @@ namespace DataObjects_Framework.Common
             return Da.ExecuteNonQuery(Query);
         }
 
-        public static DataSet ExecuteQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
+        public static DataSet ExecuteQuery(string ProcedureName, QueryParameter[] ProcedureParameters)
         {
             return Do_Methods_Query.ExecuteQuery(ProcedureName, ProcedureParameters.ToList());
         }
 
-        public static DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        public static DataSet ExecuteQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
         {
             Interface_DataAccess Da = Do_Methods.CreateDataAccess();
             return Da.ExecuteQuery(ProcedureName, ProcedureParameters);
@@ -87,16 +87,16 @@ namespace DataObjects_Framework.Common
 
         public static DataTable GetTableDef(string TableName)
         {
-            List<ClsParameter> Sp = new List<ClsParameter>();
-            Sp.Add(new ClsParameter("@TableName",TableName));
+            List<QueryParameter> Sp = new List<QueryParameter>();
+            Sp.Add(new QueryParameter("@TableName",TableName));
             return ExecuteQuery("usp_GetTableDef", Sp).Tables[0];
         }
 
         public static string GetSystemParameter(string ParameterName)
         {
             string Rv = "";
-            List<ClsParameter> Sp = new List<ClsParameter>();
-            Sp.Add(new ClsParameter("ParameterName", ParameterName));
+            List<QueryParameter> Sp = new List<QueryParameter>();
+            Sp.Add(new QueryParameter("ParameterName", ParameterName));
             DataTable Dt = Do_Methods_Query.ExecuteQuery("usp_Get_System_Parameter", Sp).Tables[0];
             if (Dt.Rows.Count > 0)
             { Rv = (string)Dt.Rows[0][0]; }
@@ -116,16 +116,20 @@ namespace DataObjects_Framework.Common
             return Dr_Bind;
         }
 
-        public static DataTable GetSystemLookup(string LookupName)
-        {
-            DataTable Dt = Do_Methods_Query.GetQuery(@"udf_System_Lookup('" + LookupName + @"')");
-            return Dt;
-        }
+        #region _Removed
 
-        public static DataTable GetLookup(string LookupName)
-        {
-            DataTable Dt = Do_Methods_Query.GetQuery(@"udf_Lookup('" + LookupName + @"')");
-            return Dt;
-        }
+        //public static DataTable GetSystemLookup(string LookupName)
+        //{
+        //    DataTable Dt = Do_Methods_Query.GetQuery(@"udf_System_Lookup('" + LookupName + @"')");
+        //    return Dt;
+        //}
+
+        //public static DataTable GetLookup(string LookupName)
+        //{
+        //    DataTable Dt = Do_Methods_Query.GetQuery(@"udf_Lookup('" + LookupName + @"')");
+        //    return Dt;
+        //}
+
+        #endregion
     }
 }

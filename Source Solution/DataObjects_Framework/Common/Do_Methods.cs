@@ -13,12 +13,12 @@ using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 using DataObjects_Framework.DataAccess;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Serialization;
-using DataObjects_Framework.PreparedQuery;
+using DataObjects_Framework.PreparedQueryObjects;
 
 namespace DataObjects_Framework.Common
 {
@@ -86,10 +86,10 @@ namespace DataObjects_Framework.Common
         /// <param name="Sp">
         /// Contains the data to add
         /// </param>
-        public static void AddDataRow(ref DataTable Dt, List<ClsParameter> Sp)
+        public static void AddDataRow(ref DataTable Dt, List<QueryParameter> Sp)
         {
             DataRow Nr = Dt.NewRow();
-            foreach (ClsParameter Obj in Sp)
+            foreach (QueryParameter Obj in Sp)
             { Nr[Obj.Name] = Obj.Value; }
             Dt.Rows.Add(Nr);
         }
@@ -141,7 +141,7 @@ namespace DataObjects_Framework.Common
             if (Dt.Rows.Count == 0)
             { return null; }
 
-            Int32 i, ctr;            
+            Int32 i, ctr;
             Int32 RowCt = 0;
             Int32 RowCtEnd = 0;
 
@@ -168,7 +168,7 @@ namespace DataObjects_Framework.Common
             else
             { ColumnLength = Dt.Columns.Count; }
 
-            object[,] ReturnValue = new object[RowLength,ColumnLength];
+            object[,] ReturnValue = new object[RowLength, ColumnLength];
 
             while (RowCt <= RowCtEnd)
             {
@@ -244,10 +244,13 @@ namespace DataObjects_Framework.Common
         public static string SetFolderPath(string Path)
         {
             Path = Path.Trim();
-            if(Strings.Right(Path,1) != @"\")
+            if (Strings.Right(Path, 1) != @"\")
             { Path += @"\"; }
             return Path;
         }
+
+        public static void ConvertCaps(DataRow Dr)
+        { ConvertCaps(Dr, true); }
 
         /// <summary>
         /// Converts the capitalization of all the fields the specified datarow to the specified case if it is a string data type.
@@ -258,7 +261,7 @@ namespace DataObjects_Framework.Common
         /// <param name="IsUpperCase">
         /// If true, converts to Upper Case, else to Lower Case.
         /// </param>
-        public static void ConvertCaps(DataRow Dr, bool IsUpperCase = true)
+        public static void ConvertCaps(DataRow Dr, bool IsUpperCase)
         {
             foreach (DataColumn Dc in Dr.Table.Columns)
             {
@@ -270,6 +273,9 @@ namespace DataObjects_Framework.Common
             }
         }
 
+        public static void ConvertCaps(DataTable Dt)
+        { ConvertCaps(Dt, true); }
+
         /// <summary>
         /// Converts the capitalization of all the fields of all the data rows of the specified data table to the specified case if it is a string data type.
         /// </summary>
@@ -279,7 +285,7 @@ namespace DataObjects_Framework.Common
         /// <param name="IsUpperCase">
         /// If true, converts to Upper Case, else to Lower Case.
         /// </param>
-        public static void ConvertCaps(DataTable Dt, bool IsUpperCase = true)
+        public static void ConvertCaps(DataTable Dt, bool IsUpperCase)
         {
             foreach (DataRow Dr in Dt.Rows)
             {
@@ -290,6 +296,18 @@ namespace DataObjects_Framework.Common
 
         /// <summary>
         /// Converts an object to a double data type without exceptions.
+        /// If conversion fails, returns 0.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <returns></returns>
+        public static double Convert_Double(object Value)
+        { return Convert_Double(Value, 0); }
+
+        /// <summary>
+        /// Converts an object to a double data type without exceptions.
+        /// If conversion fails, returns the specified default value.
         /// </summary>
         /// <param name="Value">
         /// The value to be converted.
@@ -298,7 +316,7 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static double Convert_Double(object Value, double DefaultValue = 0)
+        public static double Convert_Double(Object Value, double DefaultValue)
         {
             string ValueString = string.Empty;
             if (Value != null)
@@ -314,6 +332,30 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
+        public static Int16 Convert_Int16(Object Value)
+        { return Convert_Int16(Value, 0); }
+
+        public static Int16 Convert_Int16(Object Value, Int16 DefaultValue)
+        {
+            String ValueString = Convert_String(Value);
+
+            Int16 ReturnValue;
+            if (!Int16.TryParse(ValueString, out ReturnValue))
+            { ReturnValue = DefaultValue; }
+            return ReturnValue;
+        }
+
+        /// <summary>
+        /// Converts an object to a Int32 data type without exceptions.
+        /// If conversion fails, returns 0.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <returns></returns>
+        public static Int32 Convert_Int32(Object Value)
+        { return Convert_Int32(Value, 0); }
+
         /// <summary>
         /// Converts an object to a Int32 data type without exceptions.
         /// </summary>
@@ -324,20 +366,26 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static Int32 Convert_Int32(object Value, Int32 DefaultValue = 0)
+        public static Int32 Convert_Int32(Object Value, Int32 DefaultValue)
         {
-            string ValueString = string.Empty;
-            if (Value != null)
-            {
-                try { ValueString = Value.ToString(); }
-                catch { }
-            }
+            String ValueString = Convert_String(Value);
 
             Int32 ReturnValue;
             if (!Int32.TryParse(ValueString, out ReturnValue))
-            { ReturnValue = DefaultValue; } 
+            { ReturnValue = DefaultValue; }
             return ReturnValue;
         }
+
+        /// <summary>
+        /// Converts an object to a Int64 data type without exceptions.
+        /// If conversion fails, returns 0.
+        /// </summary>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <returns></returns>
+        public static Int64 Convert_Int64(Object Value)
+        { return Convert_Int64(Value, 0); }
 
         /// <summary>
         /// Converts an object to a Int64 data type without exceptions.
@@ -349,20 +397,18 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static Int64 Convert_Int64(object Value, Int64 DefaultValue = 0)
+        public static Int64 Convert_Int64(Object Value, Int64 DefaultValue)
         {
-            string ValueString = string.Empty;
-            if (Value != null)
-            {
-                try { ValueString = Value.ToString(); }
-                catch { }
-            }
-            
+            String ValueString = Convert_String(Value);
+
             Int64 ReturnValue;
             if (!Int64.TryParse(ValueString, out ReturnValue))
             { ReturnValue = DefaultValue; }
             return ReturnValue;
         }
+
+        public static DateTime? Convert_DateTime(Object Value)
+        { return Convert_DateTime(Value, null); }
 
         /// <summary>
         /// Converts an object to a Nullable Date Time data type without exceptions.
@@ -374,7 +420,7 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static DateTime? Convert_DateTime(object Value, DateTime? DefaultValue = null)
+        public static DateTime? Convert_DateTime(Object Value, DateTime? DefaultValue)
         {
             string ValueString = string.Empty;
             if (Value != null)
@@ -382,16 +428,19 @@ namespace DataObjects_Framework.Common
                 try { ValueString = Value.ToString(); }
                 catch { }
             }
-            
+
             DateTime ReturnValue_Ex;
             DateTime? ReturnValue;
             if (DateTime.TryParse(ValueString, out ReturnValue_Ex))
             { ReturnValue = ReturnValue_Ex; }
             else
-            { ReturnValue = null; }
+            { ReturnValue = DefaultValue; }
 
             return ReturnValue;
         }
+
+        public static String Convert_String(Object Value)
+        { return Convert_String(Value, ""); }
 
         /// <summary>
         /// Converts an object to a string data type without exceptions.
@@ -403,11 +452,21 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static string Convert_String(object Value, string DefaultValue = "")
-        { return (string)IsNull(Value, DefaultValue); }
+        public static String Convert_String(Object Value, String DefaultValue)
+        { return Convert.ToString(IsNull(Value, DefaultValue)); }
 
         /// <summary>
         /// Converts an object to a boolean data type without exceptions.
+        /// If conversion fails, returns false.
+        /// </summary>
+        /// <param name="Value"></param>
+        /// <returns></returns>
+        public static Boolean Convert_Boolean(Object Value)
+        { return Convert_Boolean(Value, false); }
+
+        /// <summary>
+        /// Converts an object to a boolean data type without exceptions.
+        /// If conversion fails, returns the specified default value.
         /// </summary>
         /// <param name="Value">
         /// The value to be converted.
@@ -416,8 +475,8 @@ namespace DataObjects_Framework.Common
         /// The value to be used if the conversion fails.
         /// </param>
         /// <returns></returns>
-        public static bool Convert_Boolean(object Value, bool DefaultValue = false)
-        { 
+        public static bool Convert_Boolean(Object Value, bool DefaultValue)
+        {
             string ValueString = string.Empty;
             try
             { ValueString = Value.ToString(); }
@@ -429,7 +488,10 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
-        public static Byte Convert_Byte(Object Value, Byte DefaultValue = 0)
+        public static Byte Convert_Byte(Object Value)
+        { return Convert_Byte(Value, 0); }
+
+        public static Byte Convert_Byte(Object Value, Byte DefaultValue)
         {
             string ValueString = string.Empty;
             try
@@ -442,31 +504,244 @@ namespace DataObjects_Framework.Common
             return ReturnValue;
         }
 
-        public static string TextFiller(string TextInput , string Filler, Int32 TextLength)
+        /// <summary>
+        /// Converts an object to a specified data type.
+        /// If conversion fails, returns the default value.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Accepts Int16, Int32, Int64, Decimal, Float, Double, DateTime, Boolean, Byte.
+        /// </typeparam>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <returns>
+        /// Returns the converted value according to specified type.
+        /// </returns>
+        public static T Convert_Value<T>(Object Value)
+        {
+            dynamic Dynamic_DefaultValue;
+
+            if (
+                (typeof(T) == typeof(Int16) || typeof(T) == typeof(Int16?))
+                || (typeof(T) == typeof(Int32) || typeof(T) == typeof(Int32?))
+                || (typeof(T) == typeof(Int64) || typeof(T) == typeof(Int64?))
+                || (typeof(T) == typeof(Decimal) || typeof(T) == typeof(Decimal?))
+                || (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+                || (typeof(T) == typeof(Double) || typeof(T) == typeof(Double?))
+                || (typeof(T) == typeof(Byte) || typeof(T) == typeof(Byte?))
+                )
+            { Dynamic_DefaultValue = 0; }
+            else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+            { Dynamic_DefaultValue = 0; }
+            else if (typeof(T) == typeof(Boolean) || typeof(T) == typeof(Boolean?))
+            { Dynamic_DefaultValue = false; }
+            else if (typeof(T) == typeof(String))
+            { Dynamic_DefaultValue = String.Empty; }
+            else
+            { throw new Exception("Type is not included in the specified types."); }
+
+            return Convert_Value<T>(Value, Dynamic_DefaultValue);
+        }
+
+        /// <summary>
+        /// Converts an object to a specified data type.
+        /// If conversion fails, returns the specified default value.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Accepts Int16, Int32, Int64, Decimal, Float, Double, DateTime, Boolean, Byte.
+        /// </typeparam>
+        /// <param name="Value">
+        /// The value to be converted.
+        /// </param>
+        /// <param name="DefaultValue">
+        /// The value to be used if the conversion fails.
+        /// </param>
+        /// <returns>
+        /// Returns the converted value according to specified type.
+        /// </returns>
+        public static T Convert_Value<T>(Object Value, T DefaultValue)
+        {
+            T ReturnValue = default(T);
+            String ValueString = Convert_String(Value);
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            if (typeof(T) == typeof(Int16) || typeof(T) == typeof(Int16?))
+            { Pr = Convert_Value_ParseInt16(ValueString); }
+            else if (typeof(T) == typeof(Int32) || typeof(T) == typeof(Int32?))
+            { Pr = Convert_Value_ParseInt32(ValueString); }
+            else if (typeof(T) == typeof(Int64) || typeof(T) == typeof(Int64?))
+            { Pr = Convert_Value_ParseInt64(ValueString); }
+            else if (typeof(T) == typeof(Decimal) || typeof(T) == typeof(Decimal?))
+            { Pr = Convert_Value_ParseDecimal(ValueString); }
+            else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+            { Pr = Convert_Value_ParseFloat(ValueString); }
+            else if (typeof(T) == typeof(Double) || typeof(T) == typeof(Double?))
+            { Pr = Convert_Value_ParseDouble(ValueString); }
+            else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+            { Pr = Convert_Value_ParseDateTime(ValueString); }
+            else if (typeof(T) == typeof(Boolean) || typeof(T) == typeof(Boolean?))
+            { Pr = Convert_Value_ParseBoolean(ValueString); }
+            else if (typeof(T) == typeof(Byte) || typeof(T) == typeof(Byte?))
+            { Pr = Convert_Value_ParseByte(ValueString); }
+            else if (typeof(T) == typeof(String))
+            {
+                dynamic Dynamic_DefaultValue = DefaultValue;
+                Pr = new Str_ParseResult() { IsParsed = true, ParsedValue = Convert_String(Value, Dynamic_DefaultValue) };
+            }
+            else
+            { throw new Exception("Type is not included in the specified types."); }
+
+            if (Pr.IsParsed)
+            { ReturnValue = (T)Pr.ParsedValue; }
+            else
+            { ReturnValue = DefaultValue; }
+
+            return ReturnValue;
+        }
+
+        struct Str_ParseResult
+        {
+            public Boolean IsParsed;
+            public Object ParsedValue;
+        }
+
+        static Str_ParseResult Convert_Value_ParseInt16(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Int16 OutValue;
+            Pr.IsParsed = Int16.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseInt32(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Int32 OutValue;
+            Pr.IsParsed = Int32.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseInt64(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Int64 OutValue;
+            Pr.IsParsed = Int64.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseDecimal(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Decimal OutValue;
+            Pr.IsParsed = Decimal.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseDouble(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Double OutValue;
+            Pr.IsParsed = Double.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseFloat(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            float OutValue;
+            Pr.IsParsed = float.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseDateTime(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            DateTime OutValue;
+            Pr.IsParsed = DateTime.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseBoolean(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Boolean OutValue;
+            Pr.IsParsed = Boolean.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        static Str_ParseResult Convert_Value_ParseByte(String ValueString)
+        {
+            Str_ParseResult Pr = new Str_ParseResult();
+
+            Byte OutValue;
+            Pr.IsParsed = Byte.TryParse(ValueString, out OutValue);
+            Pr.ParsedValue = OutValue;
+
+            return Pr;
+        }
+
+        public static T ParseEnum<T>(String Value)
+            where T : struct, IComparable, IFormattable
+        { return ParseEnum<T>(Value, default(T)); }
+
+        public static T ParseEnum<T>(string Value, T DefaultValue)
+            where T : struct, IComparable, IFormattable
+        {
+            if (Enum.IsDefined(typeof(T), Value))
+            { return (T)Enum.Parse(typeof(T), Value, true); }
+            return DefaultValue;
+        }
+
+        public static string TextFiller(String TextInput, String Filler, Int32 TextLength)
         {
             string Rv = Strings.Right(Strings.StrDup(TextLength, Filler) + Strings.LTrim(Strings.Left(TextInput, TextLength)), TextLength);
             return Rv;
         }
 
-        public static string PrepareFilterText(string Field, string DataType, string Filter)
+        public static string PrepareFilterText(String Field, Type DataType, String Filter)
         {
-            string Rv = "";
-            switch (DataType)
-            { 
-                case "String":
-                    Rv = @"[" + Field + @"] LIKE '" + Filter + @"%'";
-                    break;
-                default:
-                    string Tmp_Str = Filter;
-                    if (ParseFilterText(ref Tmp_Str, DataType))
-                    { Rv = @"[" + Field + @"] " + Filter + @""; }
-                    break;
+            String Rv = "";
+
+            if (DataType.Name == typeof(String).Name)
+            { Rv = @"[" + Field + @"] LIKE '" + Filter + @"%'"; }
+            else
+            {
+                string Tmp_Str = Filter;
+                if (ParseFilterText(ref Tmp_Str, DataType))
+                { Rv = @"[" + Field + @"] " + Filter + @""; }
             }
 
             return Rv;
         }
 
-        public static bool ParseFilterText(ref String FilterText, String DataType = "String")
+        public static Boolean ParseFilterText(ref String FilterText)
+        { return ParseFilterText(ref FilterText, typeof(String)); }
+
+        public static Boolean ParseFilterText(ref String FilterText, Type DataType)
         {
             string ParsedTextToken = "";
             string[] ArrParsedText = FilterText.Split(' ');
@@ -476,7 +751,7 @@ namespace DataObjects_Framework.Common
                 String Str = ArrParsedText[Ct];
                 switch (Str)
                 {
-                    case ">": 
+                    case ">":
                     case "<":
                     case "=":
                     case "<=":
@@ -501,43 +776,43 @@ namespace DataObjects_Framework.Common
             FilterText = String.Join(" ", ArrParsedText);
 
             switch (ParsedTextToken)
-            { 
+            {
                 case "BooleanNumeric":
                     if (
-                        DataType == typeof(Int16).Name
-                        || DataType == typeof(Int32).Name
-                        || DataType == typeof(Int64).Name
-                        || DataType == typeof(decimal).Name
-                        || DataType == typeof(double).Name
-                        || DataType == typeof(Single).Name)
+                        DataType.Name == typeof(Int16).Name
+                        || DataType.Name == typeof(Int32).Name
+                        || DataType.Name == typeof(Int64).Name
+                        || DataType.Name == typeof(Decimal).Name
+                        || DataType.Name == typeof(Double).Name
+                        || DataType.Name == typeof(Single).Name)
                     { return true; }
                     break;
                 case "BooleanDateTime":
-                    if (DataType == typeof(DateTime).Name)
+                    if (DataType.Name == typeof(DateTime).Name)
                     { return true; }
                     break;
                 case "Numeric":
                     if (
-                        DataType == typeof(Int16).Name
-                        || DataType == typeof(Int32).Name
-                        || DataType == typeof(Int64).Name
-                        || DataType == typeof(decimal).Name
-                        || DataType == typeof(double).Name
-                        || DataType == typeof(Single).Name)
+                        DataType.Name == typeof(Int16).Name
+                        || DataType.Name == typeof(Int32).Name
+                        || DataType.Name == typeof(Int64).Name
+                        || DataType.Name == typeof(Decimal).Name
+                        || DataType.Name == typeof(Double).Name
+                        || DataType.Name == typeof(Single).Name)
                     { return true; }
                     break;
                 case "DateTime":
-                    if (DataType == typeof(DateTime).Name)
+                    if (DataType.Name == typeof(DateTime).Name)
                     {
                         FilterText = " = " + FilterText;
-                        return true; 
+                        return true;
                     }
                     break;
                 case "String":
-                    if (DataType == typeof(string).Name)
+                    if (DataType.Name == typeof(String).Name)
                     {
                         FilterText = " = " + FilterText;
-                        return true; 
+                        return true;
                     }
                     break;
                 default:
@@ -547,7 +822,7 @@ namespace DataObjects_Framework.Common
             return false;
         }
 
-        public static string GetMD5(string aString)
+        public static string GetMD5(String aString)
         {
             byte[] byteStr = Encoding.UTF8.GetBytes(aString);
             MD5 md5Provider = new MD5CryptoServiceProvider();
@@ -555,7 +830,7 @@ namespace DataObjects_Framework.Common
             return Encoding.UTF8.GetString(md5Provider.ComputeHash(byteStr));
         }
 
-        public static DateTime GetServerDate(ClsConnection_SqlServer Da)
+        public static DateTime GetServerDate(Connection_SqlServer Da)
         {
             DataTable Dt = Da.ExecuteQuery("Select GetDate() As ServerDate").Tables[0];
             if (Dt.Rows.Count > 0) return (DateTime)Dt.Rows[0][0];
@@ -564,7 +839,7 @@ namespace DataObjects_Framework.Common
 
         public static DateTime GetServerDate()
         {
-            ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
+            Connection_SqlServer Da = new Connection_SqlServer();
             try
             {
                 Da.Connect();
@@ -578,7 +853,7 @@ namespace DataObjects_Framework.Common
 
         public static Interface_DataAccess CreateDataAccess()
         {
-            return new ClsBase().pDa;
+            return new Base().pDa;
         }
 
         public static Interface_Connection CreateConnection()
@@ -597,6 +872,8 @@ namespace DataObjects_Framework.Common
             //string SerializedData = Sr.ReadToEnd();
             //return SerializedData;
 
+            //[-]
+
             String SerializedData = JsonConvert.SerializeObject(TargetObject);
             return SerializedData;
         }
@@ -611,7 +888,82 @@ namespace DataObjects_Framework.Common
 
             //return Js.ReadObject(Ms);
 
+            //[-]
+
             Object DeserializedObject = JsonConvert.DeserializeObject(SerializedData, TargetObjectType);
+            return DeserializedObject;
+        }
+
+        public static String SerializeObject_Json(Object TargetObject)
+        {
+            String SerializedData = JsonConvert.SerializeObject(TargetObject);
+            return SerializedData;
+        }
+
+        /// <summary>
+        /// Deserialize a JSON String into an object
+        /// </summary>
+        /// <typeparam name="T">The type of the object to be deserialized</typeparam>
+        /// <param name="SerializedData">The serialized string</param>
+        /// <returns></returns>
+        public static T DeserializeObject_Json<T>(String SerializedData)
+        {
+            T DeserializedObject = (T)JsonConvert.DeserializeObject(SerializedData, typeof(T));
+            return DeserializedObject;
+        }
+
+        public static void SerializeObjectToFile_Json(Object TargetObject, String FileName)
+        {
+            if (File.Exists(FileName))
+            { File.Delete(FileName); }
+
+            using (FileStream Fs = new FileStream(FileName, FileMode.Create))
+            using (StreamWriter Sw = new StreamWriter(Fs))
+            using (JsonWriter Jw = new JsonTextWriter(Sw))
+            {
+                Jw.Formatting = Formatting.Indented;
+                JsonSerializer Js = new JsonSerializer();
+                Js.Serialize(Jw, TargetObject);
+            }
+        }
+
+        public static Object DeserializeObjectFromFile_Json(Type TargetObjectType, String FileName)
+        {
+            if (!File.Exists(FileName))
+            { return null; }
+
+            Object DeserializedObject = null;
+            using (StreamReader Sr = new StreamReader(FileName))
+            using (JsonReader Jr = new JsonTextReader(Sr))
+            {
+                try
+                {
+                    JsonSerializer Js = new JsonSerializer();
+                    DeserializedObject = Js.Deserialize(Jr, TargetObjectType);
+                }
+                catch { }
+            }
+
+            return DeserializedObject;
+        }
+
+        public static T DeserializeObjectFromFile_Json<T>(String FileName)
+        {
+            if (!File.Exists(FileName))
+            { return default(T); }
+
+            T DeserializedObject = default(T);
+            using (StreamReader Sr = new StreamReader(FileName))
+            using (JsonReader Jr = new JsonTextReader(Sr))
+            {
+                try
+                {
+                    JsonSerializer Js = new JsonSerializer();
+                    DeserializedObject = (T)Js.Deserialize(Jr, typeof(T));
+                }
+                catch { }
+            }
+
             return DeserializedObject;
         }
 
@@ -636,10 +988,10 @@ namespace DataObjects_Framework.Common
                 byte[] Bytes_SerializedData = System.Text.Encoding.UTF8.GetBytes(SerializedData);
                 Ms.Write(Bytes_SerializedData, 0, Bytes_SerializedData.Length);
                 Ms.Position = 0;
-                Rv = F.Deserialize(Ms);                
+                Rv = F.Deserialize(Ms);
             }
 
-            return Rv;            
+            return Rv;
         }
 
         public static String GenerateGuid(List<String> List)

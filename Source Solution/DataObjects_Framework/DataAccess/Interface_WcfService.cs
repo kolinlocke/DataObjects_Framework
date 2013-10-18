@@ -15,21 +15,21 @@ namespace DataObjects_Framework.DataAccess
     [ServiceContract(Name = "ServiceContract", Namespace = "http://DataObjects_Wcf/")]
     public interface Interface_WcfService
     {
-		[OperationContract]
-		[WebInvoke(
-			Method = "POST"
-			, ResponseFormat = WebMessageFormat.Json
-			, RequestFormat = WebMessageFormat.Json
-			, UriTemplate = "NewSession")]
-		String NewSession();
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "NewSession")]
+        String NewSession();
 
-		[OperationContract]
-		[WebInvoke(
-			Method = "POST"
-			, ResponseFormat = WebMessageFormat.Json
-			, RequestFormat = WebMessageFormat.Json
-			, UriTemplate = "List")]
-		String List(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "List")]
+        String List(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
 
         [OperationContract]
         [WebInvoke(
@@ -37,7 +37,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "List_Count")]
-		Int64 List_Count(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
+        Int64 List_Count(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
 
         [OperationContract]
         [WebInvoke(
@@ -45,7 +45,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "List_Empty")]
-		String List_Empty(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
+        String List_Empty(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
 
         [OperationContract]
         [WebInvoke(
@@ -53,7 +53,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "Load")]
-		String Load(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
+        String Load(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
 
         [OperationContract]
         [WebInvoke(
@@ -61,7 +61,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "Load_TableDetails")]
-		String Load_TableDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
+        String Load_TableDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
 
         [OperationContract]
         [WebInvoke(
@@ -69,7 +69,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "Load_RowDetails")]
-		String Load_RowDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
+        String Load_RowDetails(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Load Request_Load);
 
         [OperationContract]
         [WebInvoke(
@@ -77,7 +77,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "SaveDataRow")]
-		Boolean SaveDataRow(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Save Request_Save);
+        String SaveDataRow(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Save Request_Save);
 
         [OperationContract]
         [WebInvoke(
@@ -85,7 +85,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "GetQuery")]
-		String GetQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_GetQuery Request_GetQuery);
+        String GetQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_GetQuery Request_GetQuery);
 
         [OperationContract]
         [WebInvoke(
@@ -93,7 +93,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "ExecuteNonQuery")]
-        void ExecuteNonQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Execute Request_Execute);
+        String ExecuteNonQuery(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_Execute Request_Execute);
 
         [OperationContract]
         [WebInvoke(
@@ -133,7 +133,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "GetTableDef")]
-		String GetTableDef(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
+        String GetTableDef(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_List Request_List);
 
         [OperationContract]
         [WebInvoke(
@@ -141,7 +141,7 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "GetSystemParameter")]
-		String GetSystemParameter(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
+        String GetSystemParameter(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
 
         [OperationContract]
         [WebInvoke(
@@ -149,6 +149,14 @@ namespace DataObjects_Framework.DataAccess
             , ResponseFormat = WebMessageFormat.Json
             , RequestFormat = WebMessageFormat.Json
             , UriTemplate = "SetSystemParameter")]
-		void SetSystemParameter(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
+        void SetSystemParameter(Do_Constants.Str_Request_Session Request_Session, Do_Constants.Str_Request_SystemParameter Request_SystemParameter);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST"
+            , ResponseFormat = WebMessageFormat.Json
+            , RequestFormat = WebMessageFormat.Json
+            , UriTemplate = "InvokeError")]
+        void InvokeError();
     }
 }

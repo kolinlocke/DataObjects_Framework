@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.DataAccess;
-using DataObjects_Framework.PreparedQuery;
+using DataObjects_Framework.PreparedQueryObjects;
 using Microsoft.VisualBasic;
 using DataObjects_Framework.Objects;
 
@@ -16,7 +16,7 @@ namespace DataObjects_Framework.Connection
     /// <summary>
     /// The SQL Server implementation of Interface_Connection
     /// </summary>
-    public class ClsConnection_SqlServer: Interface_Connection
+    public class Connection_SqlServer: Interface_Connection
     {
         #region _Variables
 
@@ -114,7 +114,7 @@ namespace DataObjects_Framework.Connection
         /// A list of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public int ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        public int ExecuteNonQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
         { return this.ExecuteNonQuery(ProcedureName, ProcedureParameters.ToArray()); }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace DataObjects_Framework.Connection
         /// An array of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public int ExecuteNonQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
+        public int ExecuteNonQuery(string ProcedureName, QueryParameter[] ProcedureParameters)
         {
             bool IsConnection = false;
 
@@ -151,7 +151,7 @@ namespace DataObjects_Framework.Connection
 
                 if (!Information.IsNothing(ProcedureParameters))
                 {
-                    foreach (ClsParameter Inner_Obj in ProcedureParameters)
+                    foreach (QueryParameter Inner_Obj in ProcedureParameters)
                     { Cmd.Parameters.AddWithValue(Inner_Obj.Name, Inner_Obj.Value); }
                 }
 
@@ -252,7 +252,7 @@ namespace DataObjects_Framework.Connection
         /// A list of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        public DataSet ExecuteQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
         {
             return this.ExecuteQuery(ProcedureName, ProcedureParameters.ToArray());
         }
@@ -267,7 +267,7 @@ namespace DataObjects_Framework.Connection
         /// An array of parameters to use with the execution.
         /// </param>
         /// <returns></returns>
-        public DataSet ExecuteQuery(string ProcedureName, ClsParameter[] ProcedureParameters)
+        public DataSet ExecuteQuery(string ProcedureName, QueryParameter[] ProcedureParameters)
         {
             bool IsConnection = false;
 
@@ -293,7 +293,7 @@ namespace DataObjects_Framework.Connection
 
                 if (!Information.IsNothing(ProcedureParameters))
                 {
-                    foreach (ClsParameter Inner_Obj in ProcedureParameters)
+                    foreach (QueryParameter Inner_Obj in ProcedureParameters)
                     { Cmd.Parameters.AddWithValue(Inner_Obj.Name, Inner_Obj.Value); }
                 }
 
@@ -395,8 +395,6 @@ namespace DataObjects_Framework.Connection
             { throw Ex; }
             finally
             {
-                Cmd.Dispose();
-                Cmd = null;
                 Adp.Dispose();
                 Adp = null;
 
@@ -447,12 +445,12 @@ namespace DataObjects_Framework.Connection
             eProcess cProcess = eProcess.Process_Insert;
             DataTable Dt_TableDef = new DataTable(TableName);
             DataTable Dt_Def;
-            List<ClsParameter> List_Param;
+            List<QueryParameter> List_Param;
 
             //[Get Table Definition]
-            List_Param = new List<ClsParameter>();
-            List_Param.Add(new ClsParameter(@"@TableName", TableName));
-            List_Param.Add(new ClsParameter(@"@SchemaName", SchemaName));
+            List_Param = new List<QueryParameter>();
+            List_Param.Add(new QueryParameter(@"@TableName", TableName));
+            List_Param.Add(new QueryParameter(@"@SchemaName", SchemaName));
 
             Dt_Def = this.ExecuteQuery("usp_DataObjects_GetTableDef", List_Param).Tables[0];
             foreach (DataRow Inner_Dr in Dt_Def.Rows)
@@ -552,15 +550,15 @@ namespace DataObjects_Framework.Connection
                     if (Do_Methods.Convert_Int64(ObjDataRow[Inner_ColumnName]) != 0)
                     { continue; }
 
-                    ClsConnection_SqlServer Da = new ClsConnection_SqlServer();
+                    Connection_SqlServer Da = new Connection_SqlServer();
                     try
                     {
                         Da.Connect();
                         Da.BeginTransaction();
 
                         Int64 NewID;
-                        List_Param = new List<ClsParameter>();
-                        List_Param.Add(new ClsParameter(@"@TableName", TableName + "." + Inner_ColumnName));
+                        List_Param = new List<QueryParameter>();
+                        List_Param.Add(new QueryParameter(@"@TableName", TableName + "." + Inner_ColumnName));
                         NewID = Do_Methods.Convert_Int64(Da.ExecuteQuery("usp_DataObjects_GetNextID", List_Param).Tables[0].Rows[0][0]);
                         ObjDataRow[Inner_ColumnName] = NewID;
 
@@ -583,7 +581,9 @@ namespace DataObjects_Framework.Connection
                 //Check if Row to be updated has rows to be updated
                 //If none the return the function true
                 DataRow[] Inner_ArrDr = Dt_Def.Select(@"IsPk = 0 And IsIdentity = 0");
-                if (Inner_ArrDr.Length == 0) return true;
+                if (Inner_ArrDr.Length == 0) 
+                { return true; }
+
                 cProcess = eProcess.Process_Update;
             }
 
@@ -601,7 +601,7 @@ namespace DataObjects_Framework.Connection
             }
                 
             //Prepare SQL Statement
-            ClsPreparedQuery Pq = new ClsDataAccess_SqlServer().CreatePreparedQuery();
+            PreparedQuery Pq = new DataAccess_SqlServer().CreatePreparedQuery();
 
             string Query_InsertFields = "";
             string Query_InsertFieldsValues = "";
@@ -653,7 +653,7 @@ namespace DataObjects_Framework.Connection
                     //Inner_Sp.Scale = (byte)Inner_ArrDr_Def[0]["Scale"];
                     //Pq.pParameters.Add(Inner_Sp);
 
-                    Pq.Add_Parameter(new ClsParameter()
+                    Pq.Add_Parameter(new QueryParameter()
                     {
                         Name = Dc_ObjDataRow.ColumnName.Replace(" ", "_"),
                         Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_ArrDr_Def[0]["DataType"])),
@@ -724,7 +724,7 @@ namespace DataObjects_Framework.Connection
                         //Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
                         //Pq.pParameters.Add(Inner_Sp);
                         
-                        Pq.Add_Parameter(new ClsParameter()
+                        Pq.Add_Parameter(new QueryParameter()
                         {
                             Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ","_") ,
                             Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_Dr["DataType"])),
@@ -753,7 +753,7 @@ namespace DataObjects_Framework.Connection
                         //Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
                         //Pq.pParameters.Add(Inner_Sp);
 
-                        Pq.Add_Parameter(new ClsParameter()
+                        Pq.Add_Parameter(new QueryParameter()
                         {
                             Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ", "_"),
                             Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_Dr["DataType"])),
@@ -781,7 +781,7 @@ namespace DataObjects_Framework.Connection
                 //    }
                 //}
 
-                foreach (ClsParameter Inner_Sp in Pq.pParameters)
+                foreach (QueryParameter Inner_Sp in Pq.pParameters)
                 {
                     if (Dc_ObjDataRow.ColumnName.Replace(" ", "_") == Inner_Sp.Name)
                     {

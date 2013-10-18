@@ -32,7 +32,7 @@ namespace DataObjects_Framework.BaseObjects
         /// </summary>
         protected DataTable mDt_List;
 
-		internal List<BaseListObject> mBase_ListObject = new List<BaseListObject>();
+        internal List<BaseListObject> mBase_ListObject = new List<BaseListObject>();
 
         public struct Str_Desc
         {
@@ -72,27 +72,27 @@ namespace DataObjects_Framework.BaseObjects
             this.mQc_LoadCondition = Qc_LoadCondition;
         }
 
-		/// <summary>
-		/// Not Implemented. Don't use.
-		/// </summary>
-		/// <param name="TableName"></param>
-		/// <param name="ViewName"></param>
-		/// <param name="LoadCondition"></param>
-		/// <param name="CustomKeys"></param>
-		/// <param name="CustomForeignKeys"></param>
-		protected override void Setup_AddTableDetail(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
-		{ throw new NotImplementedException(); }
+        /// <summary>
+        /// Not Implemented. Don't use.
+        /// </summary>
+        /// <param name="TableName"></param>
+        /// <param name="ViewName"></param>
+        /// <param name="LoadCondition"></param>
+        /// <param name="CustomKeys"></param>
+        /// <param name="CustomForeignKeys"></param>
+        protected override void Setup_AddTableDetail(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
+        { throw new NotImplementedException(); }
 
-		/// <summary>
-		/// Not Implemented. Don't use.
-		/// </summary>
-		/// <param name="TableName"></param>
-		/// <param name="ViewName"></param>
-		/// <param name="LoadCondition"></param>
-		/// <param name="CustomKeys"></param>
-		/// <param name="CustomForeignKeys"></param>
-		protected override void Setup_AddRowDetails(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
-		{ throw new NotImplementedException(); }
+        /// <summary>
+        /// Not Implemented. Don't use.
+        /// </summary>
+        /// <param name="TableName"></param>
+        /// <param name="ViewName"></param>
+        /// <param name="LoadCondition"></param>
+        /// <param name="CustomKeys"></param>
+        /// <param name="CustomForeignKeys"></param>
+        protected override void Setup_AddRowDetails(string TableName, string ViewName = "", string LoadCondition = "", List<string> CustomKeys = null, List<Do_Constants.Str_ForeignKeyRelation> CustomForeignKeys = null)
+        { throw new NotImplementedException(); }
 
         /// <summary>
         /// Need comments.
@@ -104,15 +104,15 @@ namespace DataObjects_Framework.BaseObjects
         /// <param name="Template_FetchKeys"></param>
         /// <param name="Template_ForeignKeys"></param>
         /// <param name="Template_LoadCondition"></param>
-		protected virtual void Setup_AddListObject(
-			string Name
-			, Base Template_Obj
-			, List<Object> Template_Obj_Constructors
-			, string Template_ViewName
+        protected virtual void Setup_AddListObject(
+            string Name
+            , Base Template_Obj
+            , List<Object> Template_Obj_Constructors
+            , string Template_ViewName
             , List<Do_Constants.Str_ForeignKeyRelation> Template_FetchKeys
-			, List<Do_Constants.Str_ForeignKeyRelation> Template_ForeignKeys
-			, QueryCondition Template_LoadCondition = null)
-		{
+            , List<Do_Constants.Str_ForeignKeyRelation> Template_ForeignKeys
+            , QueryCondition Template_LoadCondition = null)
+        {
             this.mBase_ListObject.Add(
                 new BaseListObject(
                     this
@@ -123,7 +123,7 @@ namespace DataObjects_Framework.BaseObjects
                     , Template_FetchKeys
                     , Template_ForeignKeys
                     , Template_LoadCondition));
-		}
+        }
 
         /// <summary>
         /// Not Implemented, use Me.Load()
@@ -144,7 +144,7 @@ namespace DataObjects_Framework.BaseObjects
         /// <returns></returns>
         public override DataTable List(QueryCondition Condition = null, string Sort = "", Int64 Top = 0, int Page = 0)
         { throw new NotImplementedException(); }
-        
+
         /// <summary>
         /// Loads the List with the supplied Key.
         /// </summary>
@@ -157,7 +157,7 @@ namespace DataObjects_Framework.BaseObjects
         public override void Load(Keys Keys, Base Obj_Parent = null)
         {
             try
-            { 
+            {
                 this.mDa.Connect();
                 this.Load(this.mDa, Keys, Obj_Parent);
             }
@@ -351,17 +351,17 @@ namespace DataObjects_Framework.BaseObjects
         /// <summary>
         /// Adds a new data row to the collection.
         /// </summary>
-		public virtual DataRow Add_Item()
-		{
-			DataRow Dr = this.mDt_List.NewRow();
-			Dr["TmpKey"] = Base.GetNewTmpKey(this.mDt_List);
-			this.mDt_List.Rows.Add(Dr);
+        public virtual DataRow Add_Item()
+        {
+            DataRow Dr = this.mDt_List.NewRow();
+            Dr["TmpKey"] = Base.GetNewTmpKey(this.mDt_List);
+            this.mDt_List.Rows.Add(Dr);
 
-			foreach (BaseListObject Obj in this.mBase_ListObject)
-			{ Obj.Add_Object(Do_Methods.Convert_Int64(Dr["TmpKey"])); }
+            foreach (BaseListObject Obj in this.mBase_ListObject)
+            { Obj.Add_Object(Do_Methods.Convert_Int64(Dr["TmpKey"])); }
 
-			return Dr;
-		}
+            return Dr;
+        }
 
         /// <summary>
         /// Removes the data row and its corresponding List_Obj objects
@@ -418,8 +418,8 @@ namespace DataObjects_Framework.BaseObjects
         /// The name of the List Object to get.
         /// </param>
         /// <returns></returns>
-		public DataTable pDt_ListObject_Get(string Name)
-		{ return this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name).pDt_Obj; }
+        public DataTable pDt_ListObject_Get(string Name)
+        { return this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name).pDt_Obj; }
 
         /// <summary>
         /// Gets the data object of the List Object with the specified TmpKey.
@@ -431,12 +431,12 @@ namespace DataObjects_Framework.BaseObjects
         /// The TmpKey of the data object within the List Object.
         /// </param>
         /// <returns></returns>
-		public Base pObj_ListObject_Get(string Name, Int64 TmpKey)
-		{
-			BaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);
-			if (Obj != null) { return Obj.pList_Obj.FirstOrDefault(Item => Item.Name == TmpKey.ToString()).Obj; }
-			else { return null; }
-		}
+        public Base pObj_ListObject_Get(string Name, Int64 TmpKey)
+        {
+            BaseListObject Obj = this.mBase_ListObject.FirstOrDefault(Item => Item.pName == Name);
+            if (Obj != null) { return Obj.pList_Obj.FirstOrDefault(Item => Item.Name == TmpKey.ToString()).Obj; }
+            else { return null; }
+        }
 
         #endregion
     }

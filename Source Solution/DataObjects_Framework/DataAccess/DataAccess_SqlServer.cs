@@ -9,22 +9,34 @@ using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.PreparedQuery;
+using DataObjects_Framework.PreparedQueryObjects;
 
 namespace DataObjects_Framework.DataAccess
 {
     /// <summary>
     /// The SQL Server implementation of Interface_DataAccess
     /// </summary>
-    public class ClsDataAccess_SqlServer : Interface_DataAccess
+    public class DataAccess_SqlServer : Interface_DataAccess
     {
         #region _Variables
 
-        ClsConnection_SqlServer mConnection;
+        Connection_SqlServer mConnection;
 
         #endregion
 
-        #region _ImpelementedMethods
+        #region _ImplementedMethods
+
+        public String BuildQuery_SourceObject(String SourceObject, String Fields, String Condition, String Sort)
+        {
+            if (SourceObject.Trim() != "") SourceObject = " From " + SourceObject + " ";
+            if (Fields.Trim() == "") Fields = " * ";
+            if (Condition.Trim() != "") Condition = " Where " + Condition;
+            if (Sort.Trim() != "") Sort = " Order By " + Sort;
+
+            String Query = @"(Select " + Fields + " " + SourceObject + " " + Condition + " " + Sort + @") As [Source]";
+
+            return Query;
+        }
 
         /// <summary>
         /// Fetches a result set from a data source object
@@ -53,15 +65,13 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(
-            Interface_Connection Connection
-            , string SourceObject
-            , string Fields = ""
-            , string Condition = ""
-            , string Sort = ""
-            , Int64 Top = 0
-            , Int32 Page = 0)
+        public DataTable GetQuery(Interface_Connection Connection, String SourceObject, String Fields = "", String Condition = "", String Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
+            SourceObject = Do_Methods.Convert_String(SourceObject);
+            Fields = Do_Methods.Convert_String(Fields);
+            Condition = Do_Methods.Convert_String(Condition);
+            Sort = Do_Methods.Convert_String(Sort);
+
             string Query_RowNumberSort = Sort;
             if (Query_RowNumberSort.Trim() == "") Query_RowNumberSort = "(Select 0)";
 
@@ -76,45 +86,16 @@ namespace DataObjects_Framework.DataAccess
             if (Condition.Trim() != "") Condition = " Where " + Condition;
             if (Sort.Trim() != "") Sort = " Order By " + Sort;
 
-            //ClsPreparedQuery_Ex Pq = new ClsPreparedQuery_Ex((ClsConnection_SqlServer)Connection);
-            ////Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ' + @Sort; Exec(@Query)";
-            ////Pq.Add_Parameter("ViewObject", SqlDbType.VarChar, 8000, 0, 0, SourceObject);
-            ////Pq.Add_Parameter("Fields", SqlDbType.VarChar, 8000, 0, 0, Fields);
-            ////Pq.Add_Parameter("Condition", SqlDbType.VarChar, 8000, 0, 0, Condition);
-            ////Pq.Add_Parameter("Sort", SqlDbType.VarChar, 8000, 0, 0, Sort);
-
-            //Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Top + ' [Tb].* From ( Select Row_Number() Over (Order By ' + @RowNumberSort + ') As [RowNumber], ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ) As [Tb] Where [Tb].RowNumber >= ' + @PageCondition + ' ' + @Sort; Exec(@Query)";
-            ////Pq.Add_Parameter("ViewObject", SqlDbType.VarChar, 8000, 0, 0, SourceObject);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "ViewObject", Value = SourceObject, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("Top", SqlDbType.VarChar, 8000, 0, 0, Query_Top);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Top", Value = Query_Top, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("RowNumberSort", SqlDbType.VarChar, 8000, 0, 0, Query_RowNumberSort);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "RowNumberSort", Value = Query_RowNumberSort, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("PageCondition", SqlDbType.VarChar, 8000, 0, 0, PageCondition.ToString());
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "PageCondition", Value = PageCondition.ToString(), SqlDbType = SqlDbType.VarChar, Size = 8000 });
-            
-            ////Pq.Add_Parameter("Fields", SqlDbType.VarChar, 8000, 0, 0, Fields);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Fields", Value = Fields, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("Condition", SqlDbType.VarChar, 8000, 0, 0, Condition);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Condition", Value = Condition, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("Sort", SqlDbType.VarChar, 8000, 0, 0, Sort);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Sort", Value = Sort, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ClsPreparedQuery Pq = this.CreatePreparedQuery();
+            PreparedQuery Pq = this.CreatePreparedQuery();
             Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Top + ' [Tb].* From ( Select Row_Number() Over (Order By ' + @RowNumberSort + ') As [RowNumber], ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ) As [Tb] Where [Tb].RowNumber >= ' + @PageCondition + ' ' + @Sort; Exec(@Query)";
-            Pq.Add_Parameter(new ClsParameter() { Name = "ViewObject", Value = SourceObject, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "Top", Value = Query_Top, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "RowNumberSort", Value = Query_RowNumberSort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "PageCondition", Value = PageCondition.ToString(), Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "Fields", Value = Fields, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "Condition", Value = Condition, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            Pq.Add_Parameter(new ClsParameter() { Name = "Sort", Value = Sort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            
+            Pq.Add_Parameter(new QueryParameter() { Name = "ViewObject", Value = SourceObject, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Top", Value = Query_Top, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "RowNumberSort", Value = Query_RowNumberSort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "PageCondition", Value = PageCondition.ToString(), Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Fields", Value = Fields, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Condition", Value = Condition, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Sort", Value = Sort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+
             Pq.Prepare();
 
             return Pq.ExecuteQuery().Tables[0];
@@ -144,17 +125,11 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(
-            string SourceObject
-            , string Fields = ""
-            , string Condition = ""
-            , string Sort = ""
-            , Int64 Top = 0
-            , Int32 Page = 0)
+        public DataTable GetQuery(String SourceObject, String Fields = "", String Condition = "", String Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -196,15 +171,12 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(
-            Interface_Connection Connection
-            , string SourceObject
-            , string Fields
-            , ClsQueryCondition Condition
-            , string Sort = ""
-            , long Top = 0
-            , int Page = 0)
+        public DataTable GetQuery(Interface_Connection Connection, String SourceObject, String Fields, QueryCondition Condition, String Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
+            SourceObject = Do_Methods.Convert_String(SourceObject);
+            Fields = Do_Methods.Convert_String(Fields);
+            Sort = Do_Methods.Convert_String(Sort);
+
             string Query_RowNumberSort = Sort;
             if (Query_RowNumberSort.Trim() == "") Query_RowNumberSort = "(Select 0)";
 
@@ -219,32 +191,7 @@ namespace DataObjects_Framework.DataAccess
             if (Fields.Trim() == "") Fields = " * ";
             if (Sort.Trim() != "") Sort = " Order By " + Sort;
 
-            //ClsPreparedQuery_Ex Pq = new ClsPreparedQuery_Ex((ClsConnection_SqlServer)Connection);
-            ////Pq.Add_Parameter("ViewObject", SqlDbType.VarChar, 8000, 0, 0, SourceObject);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "ViewObject", Value = SourceObject, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("Fields", SqlDbType.VarChar, 8000, 0, 0, Fields);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Fields", Value = Fields, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            ////Pq.Add_Parameter("Sort", SqlDbType.VarChar, 8000, 0, 0, Sort);
-            //Pq.Add_Parameter(new SqlParameter() { ParameterName = "Sort", Value = Sort, SqlDbType = SqlDbType.VarChar, Size = 8000 });
-
-            //string Query_Condition = "";
-            //if (Condition != null)
-            //{
-            //    Query_Condition = " Where 1 = 1 ";
-            //    Query_Condition += " And " + Condition.GetQueryCondition();
-            //    Pq.Add_Parameter(Condition.GetParameters());
-            //}
-
-            //Pq.pQuery = @"Select " + Query_Top + @" [Tb].* From ( Select Row_Number() Over (Order By " + Query_RowNumberSort + @") As [RowNumber], " + Fields + " " + SourceObject + " " + Query_Condition + @" ) As [Tb] Where [Tb].RowNumber > " + PageCondition + " " + Sort;
-            //Pq.Prepare();
-
-            ClsPreparedQuery Pq = this.CreatePreparedQuery();
-            //Pq.Add_Parameter(new Do_Constants.Str_Parameters() { Name = "ViewObject", Value = SourceObject, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            //Pq.Add_Parameter(new Do_Constants.Str_Parameters() { Name = "Fields", Value = Fields, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-            //Pq.Add_Parameter(new Do_Constants.Str_Parameters() { Name = "Sort", Value = Sort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
-
+            PreparedQuery Pq = this.CreatePreparedQuery();
             string Query_Condition = "";
             if (Condition != null)
             {
@@ -283,17 +230,11 @@ namespace DataObjects_Framework.DataAccess
         /// used in pagination
         /// </param>
         /// <returns></returns>
-        public DataTable GetQuery(
-            string SourceObject
-            , string Fields
-            , ClsQueryCondition Condition
-            , string Sort = ""
-            , long Top = 0
-            , int Page = 0)
+        public DataTable GetQuery(String SourceObject, String Fields, QueryCondition Condition, String Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -308,14 +249,86 @@ namespace DataObjects_Framework.DataAccess
             { return this.GetQuery(this.mConnection, SourceObject, Fields, Condition, Sort, Top, Page); }
         }
 
-        public int ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters)
-        { return (Connection as ClsConnection_SqlServer).ExecuteNonQuery(ProcedureName, ProcedureParameters); }
+        public DataTable GetQuery(Interface_Connection Connection, Do_Constants.Str_QuerySource SourceObject, string Fields, QueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        {
+            Fields = Do_Methods.Convert_String(Fields);
+            Sort = Do_Methods.Convert_String(Sort);
 
-        public int ExecuteNonQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+            string Query_RowNumberSort = Sort;
+            if (Query_RowNumberSort.Trim() == "") 
+            { Query_RowNumberSort = "(Select 0)"; }
+
+            string Query_Top = "";
+            if (Top > 0) 
+            { Query_Top = "Top " + Top.ToString(); }
+
+            Int64 PageCondition = 0;
+            if (Page > 0)
+            { PageCondition = Top * (Page - 1); }
+
+            if (SourceObject.ObjectName.Trim() != "")
+            { SourceObject.ObjectName = @" From  " + SourceObject.ObjectName + " "; }
+            if (SourceObject.Fields.Trim() == "")
+            { SourceObject.Fields = @" * "; }
+            if (SourceObject.Condition.Trim() != "")
+            { SourceObject.Condition = @" Where " + SourceObject.Condition; }
+
+            if (Fields.Trim() == "") 
+            { Fields = " * "; }
+            if (Sort.Trim() != "") 
+            { Sort = " Order By " + Sort; }
+
+            PreparedQuery Pq = this.CreatePreparedQuery();
+            string Query_Condition = "";
+            if (Condition != null)
+            {
+                Query_Condition = " Where 1 = 1 ";
+                Query_Condition += " And " + Condition.GetQueryCondition();
+                Pq.Add_Parameter(Condition.GetParameters());
+            }
+
+            //Pq.pQuery = @"Select " + Query_Top + @" [Tb].* From ( Select Row_Number() Over (Order By " + Query_RowNumberSort + @") As [RowNumber], " + Fields + " " + SourceObject + " " + Query_Condition + @" ) As [Tb] Where [Tb].RowNumber > " + PageCondition + " " + Sort;
+            //Pq.pQuery = @"Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Top + ' [Tb].* From ( Select Row_Number() Over (Order By ' + @RowNumberSort + ') As [RowNumber], ' + @Fields + ' ' + @ViewObject + ' ' + @Condition + ' ) As [Tb] Where [Tb].RowNumber >= ' + @PageCondition + ' ' + @Sort; Exec(@Query)";
+            Pq.pQuery = @"Declare @ViewObject As VarChar(Max); Set @ViewObject = ' Select * ' + @Param_ViewObject_TableName + ' ' + @Param_ViewObject_Condition + ' ';  Declare @Query As VarChar(Max); Set @Query = 'Select ' + @Param_Top + ' [Tb].* From ( Select Row_Number() Over (Order By ' + @Param_RowNumberSort + ') As [RowNumber] , ' + @Param_Fields + ' From ('+ @ViewObject + ') As [Source] '" + @Query_Condition + @"' ) As [Tb] Where [Tb].RowNumber >= ' + @Param_PageCondition + ' ' + @Param_Sort; Exec(@Query);";
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_ViewObject_TableName", Value = SourceObject.ObjectName, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_ViewObject_Condition", Value = SourceObject.Condition, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_Top", Value = Query_Top, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_RowNumberSort", Value = Query_RowNumberSort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_PageCondition", Value = PageCondition.ToString(), Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_Fields", Value = Fields, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Add_Parameter(new QueryParameter() { Name = "Param_Sort", Value = Sort, Type = Do_Constants.eParameterType.VarChar, Size = 8000 });
+            Pq.Prepare();
+
+            return Pq.ExecuteQuery().Tables[0];
+        }
+
+        public DataTable GetQuery(Do_Constants.Str_QuerySource SourceObject, String Fields, QueryCondition Condition, String Sort = "", Int64 Top = 0, Int32 Page = 0)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
+                try
+                {
+                    Cn.Connect();
+                    return this.GetQuery(Cn, SourceObject, Fields, Condition, Sort, Top, Page);
+                }
+                catch (Exception ex)
+                { throw ex; }
+                finally
+                { Cn.Close(); }
+            }
+            else
+            { return this.GetQuery(this.mConnection, SourceObject, Fields, Condition, Sort, Top, Page); }
+        }
+        
+        public int ExecuteNonQuery(Interface_Connection Connection, string ProcedureName, List<QueryParameter> ProcedureParameters)
+        { return (Connection as Connection_SqlServer).ExecuteNonQuery(ProcedureName, ProcedureParameters); }
+
+        public int ExecuteNonQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
+        {
+            if (this.mConnection == null)
+            {
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -329,11 +342,11 @@ namespace DataObjects_Framework.DataAccess
         }
 
         public int ExecuteNonQuery(Interface_Connection Connection, string Query)
-        { return (Connection as ClsConnection_SqlServer).ExecuteNonQuery(Query); }
+        { return (Connection as Connection_SqlServer).ExecuteNonQuery(Query); }
 
         public int ExecuteNonQuery(string Query)
         {
-            ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+            Connection_SqlServer Cn = new Connection_SqlServer();
             try
             {
                 Cn.Connect();
@@ -344,35 +357,35 @@ namespace DataObjects_Framework.DataAccess
         }
 
         public Int32 ExecuteNonQuery(Interface_Connection Cn, DbCommand Cmd)
-        { return (Cn as ClsConnection_SqlServer).ExecuteNonQuery((SqlCommand)Cmd); }
+        { return (Cn as Connection_SqlServer).ExecuteNonQuery((SqlCommand)Cmd); }
 
         public Int32 ExecuteNonQuery(DbCommand Cmd)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
                     return ExecuteNonQuery(Cn, Cmd);
                 }
-                catch (Exception Ex) 
+                catch (Exception Ex)
                 { throw Ex; }
-                finally 
+                finally
                 { Cn.Close(); }
             }
             else
             { return this.ExecuteNonQuery(this.mConnection, Cmd); }
         }
 
-        public DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<ClsParameter> ProcedureParameters)
-        { return (Connection as ClsConnection_SqlServer).ExecuteQuery(ProcedureName, ProcedureParameters); }
+        public DataSet ExecuteQuery(Interface_Connection Connection, string ProcedureName, List<QueryParameter> ProcedureParameters)
+        { return (Connection as Connection_SqlServer).ExecuteQuery(ProcedureName, ProcedureParameters); }
 
-        public DataSet ExecuteQuery(string ProcedureName, List<ClsParameter> ProcedureParameters)
+        public DataSet ExecuteQuery(string ProcedureName, List<QueryParameter> ProcedureParameters)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -386,13 +399,13 @@ namespace DataObjects_Framework.DataAccess
         }
 
         public DataSet ExecuteQuery(Interface_Connection Connection, string Query)
-        { return (Connection as ClsConnection_SqlServer).ExecuteQuery(Query); }
+        { return (Connection as Connection_SqlServer).ExecuteQuery(Query); }
 
         public DataSet ExecuteQuery(string Query)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -409,22 +422,22 @@ namespace DataObjects_Framework.DataAccess
 
         public DataSet ExecuteQuery(Interface_Connection Cn, DbCommand Cmd)
         {
-            return (Cn as ClsConnection_SqlServer).ExecuteQuery((SqlCommand)Cmd);
+            return (Cn as Connection_SqlServer).ExecuteQuery((SqlCommand)Cmd);
         }
 
         public DataSet ExecuteQuery(DbCommand Cmd)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
                     return ExecuteQuery(Cn, Cmd);
                 }
-                catch (Exception Ex) 
+                catch (Exception Ex)
                 { throw Ex; }
-                finally 
+                finally
                 { Cn.Close(); }
             }
             else
@@ -444,7 +457,7 @@ namespace DataObjects_Framework.DataAccess
         /// </summary>
         public void Connect()
         {
-            this.mConnection = new ClsConnection_SqlServer();
+            this.mConnection = new Connection_SqlServer();
             this.mConnection.Connect();
         }
 
@@ -456,7 +469,7 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         public void Connect(string ConnectionString)
         {
-            this.mConnection = new ClsConnection_SqlServer();
+            this.mConnection = new Connection_SqlServer();
             this.mConnection.Connect(ConnectionString);
         }
 
@@ -526,7 +539,7 @@ namespace DataObjects_Framework.DataAccess
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -568,14 +581,14 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         public DataTable List(
             string ObjectName
-            , ClsQueryCondition Condition
+            , QueryCondition Condition
             , string Sort = ""
             , Int64 Top = 0
             , Int32 Page = 0)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -590,7 +603,7 @@ namespace DataObjects_Framework.DataAccess
             { return this.List(this.mConnection, ObjectName, Condition, Sort, Top, Page); }
         }
 
-        public DataTable List(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
+        public DataTable List(Interface_Connection Cn, string ObjectName, QueryCondition Condition, string Sort = "", long Top = 0, int Page = 0)
         {
             DataTable Dt = this.GetQuery(Cn, ObjectName, "*", Condition, Sort, Top, Page);
             return Dt;
@@ -606,11 +619,11 @@ namespace DataObjects_Framework.DataAccess
         /// ClsQueryCondition Object to be used in fetching the data
         /// </param>
         /// <returns></returns>
-        public long List_Count(string ObjectName, ClsQueryCondition Condition = null)
+        public long List_Count(string ObjectName, QueryCondition Condition = null)
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -625,7 +638,7 @@ namespace DataObjects_Framework.DataAccess
             { return this.List_Count(this.mConnection, ObjectName, Condition); }
         }
 
-        public long List_Count(Interface_Connection Cn, string ObjectName, ClsQueryCondition Condition = null)
+        public long List_Count(Interface_Connection Cn, string ObjectName, QueryCondition Condition = null)
         {
             DataTable Dt = this.GetQuery(Cn, ObjectName, "Count(1) As [Ct]", Condition);
             Int64 ReturnValue = 0;
@@ -646,7 +659,7 @@ namespace DataObjects_Framework.DataAccess
         {
             if (this.mConnection == null)
             {
-                ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+                Connection_SqlServer Cn = new Connection_SqlServer();
                 try
                 {
                     Cn.Connect();
@@ -658,7 +671,7 @@ namespace DataObjects_Framework.DataAccess
                 { Cn.Close(); }
             }
             else
-            { return this.List_Empty(this.mConnection, ObjectName); }            
+            { return this.List_Empty(this.mConnection, ObjectName); }
         }
 
         public DataTable List_Empty(Interface_Connection Cn, string ObjectName)
@@ -681,7 +694,7 @@ namespace DataObjects_Framework.DataAccess
         /// The ClsKey object to use
         /// </param>
         /// <returns></returns>
-        public DataRow Load(string ObjectName, List<string> List_Key, ClsKeys Keys)
+        public DataRow Load(string ObjectName, List<string> List_Key, Keys Keys)
         {
             DataTable Dt;
             DataRow Dr;
@@ -708,7 +721,7 @@ namespace DataObjects_Framework.DataAccess
                 if (Dt.Rows.Count > 0)
                 { Dr = Dt.Rows[0]; }
                 else
-                { throw new ClsCustomException("Record not found."); }
+                { throw new CustomException("Record not found."); }
             }
             return Dr;
         }
@@ -729,7 +742,7 @@ namespace DataObjects_Framework.DataAccess
         /// Custom defined Keys of the Table Detail
         /// </param>
         /// <returns></returns>
-        public DataTable Load_TableDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
+        public DataTable Load_TableDetails(string ObjectName, Keys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
             StringBuilder Sb_Condition = new StringBuilder();
             DataTable Dt;
@@ -786,7 +799,7 @@ namespace DataObjects_Framework.DataAccess
 
                 Dt = this.GetQuery(this.Connection, ObjectName, "*", Sb_Condition.ToString() + OtherCondition);
             }
-            
+
             return Dt;
         }
 
@@ -806,7 +819,7 @@ namespace DataObjects_Framework.DataAccess
         /// Custom defined Keys of the Row Detail
         /// </param>
         /// <returns></returns>
-        public DataRow Load_RowDetails(string ObjectName, ClsKeys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
+        public DataRow Load_RowDetails(string ObjectName, Keys Keys, string Condition, List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys)
         {
             StringBuilder Sb_Condition = new StringBuilder();
             DataTable Dt = null;
@@ -873,29 +886,29 @@ namespace DataObjects_Framework.DataAccess
 
         public Interface_Connection CreateConnection()
         {
-            return new ClsConnection_SqlServer();
+            return new Connection_SqlServer();
         }
 
         /// <summary>
         /// Creates a ClsQueryCondition based on the SQL Server implementation
         /// </summary>
         /// <returns></returns>
-        public ClsQueryCondition CreateQueryCondition()
-        { return new ClsQueryCondition(); }
+        public QueryCondition CreateQueryCondition()
+        { return new QueryCondition(); }
 
-        public ClsPreparedQuery CreatePreparedQuery(Interface_Connection Cn, string Query = "", List<ClsParameter> Parameters = null)
-        { return new ClsPreparedQuery_SqlServer(Cn, Query, Parameters); }
+        public PreparedQuery CreatePreparedQuery(Interface_Connection Cn, string Query = "", List<QueryParameter> Parameters = null)
+        { return new PreparedQuery_SqlServer(Cn, Query, Parameters); }
 
-        public ClsPreparedQuery CreatePreparedQuery(string Query = "", List<ClsParameter> Parameters = null)
+        public PreparedQuery CreatePreparedQuery(string Query = "", List<QueryParameter> Parameters = null)
         {
-            ClsConnection_SqlServer Cn = this.mConnection;
+            Connection_SqlServer Cn = this.mConnection;
             if (Cn == null)
             {
-                Cn = new ClsConnection_SqlServer();
+                Cn = new Connection_SqlServer();
                 Cn.Connect();
             }
 
-            return new ClsPreparedQuery_SqlServer(Cn, Query, Parameters);
+            return new PreparedQuery_SqlServer(Cn, Query, Parameters);
         }
 
         /// <summary>
@@ -908,9 +921,9 @@ namespace DataObjects_Framework.DataAccess
         public DataTable GetTableDef(string TableName)
         {
             DataTable Rv = null;
-            List<ClsParameter> Sp = new List<ClsParameter>();
-            Sp.Add(new ClsParameter("@TableName", TableName));
-            ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+            List<QueryParameter> Sp = new List<QueryParameter>();
+            Sp.Add(new QueryParameter("@TableName", TableName));
+            Connection_SqlServer Cn = new Connection_SqlServer();
             try
             {
                 Cn.Connect();
@@ -934,7 +947,7 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         public string GetSystemParameter(string ParameterName, string DefaultValue = "")
         {
-            ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+            Connection_SqlServer Cn = new Connection_SqlServer();
             try
             {
                 Cn.Connect();
@@ -961,16 +974,16 @@ namespace DataObjects_Framework.DataAccess
         /// <returns></returns>
         public string GetSystemParameter(Interface_Connection Connection, string ParameterName, string DefaultValue = "")
         {
-            ClsConnection_SqlServer Cn = (ClsConnection_SqlServer)Connection;
+            Connection_SqlServer Cn = (Connection_SqlServer)Connection;
 
             string Rv = "";
-            List<ClsParameter> Sp = new List<ClsParameter>();
-            Sp.Add(new ClsParameter("ParameterName", ParameterName));
-            Sp.Add(new ClsParameter("DefaultValue", DefaultValue));
+            List<QueryParameter> Sp = new List<QueryParameter>();
+            Sp.Add(new QueryParameter("ParameterName", ParameterName));
+            Sp.Add(new QueryParameter("DefaultValue", DefaultValue));
             DataTable Dt = Cn.ExecuteQuery("usp_DataObjects_Parameter_Get", Sp).Tables[0];
             if (Dt.Rows.Count > 0)
             { Rv = (string)Dt.Rows[0][0]; }
-            return Rv;                
+            return Rv;
         }
 
         /// <summary>
@@ -984,7 +997,7 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         public void SetSystemParameter(string ParameterName, string ParameterValue)
         {
-            ClsConnection_SqlServer Cn = new ClsConnection_SqlServer();
+            Connection_SqlServer Cn = new Connection_SqlServer();
             try
             {
                 Cn.Connect();
@@ -995,7 +1008,7 @@ namespace DataObjects_Framework.DataAccess
             finally
             { Cn.Close(); }
         }
-        
+
         /// <summary>
         /// Sets a new value to the specified system parameter
         /// </summary>
@@ -1010,10 +1023,10 @@ namespace DataObjects_Framework.DataAccess
         /// </param>
         public void SetSystemParameter(Interface_Connection Connection, string ParameterName, string ParameterValue)
         {
-            ClsConnection_SqlServer Cn = (ClsConnection_SqlServer)Connection;
-            List<ClsParameter> Sp = new List<ClsParameter>();
-            Sp.Add(new ClsParameter("ParameterName", ParameterName));
-            Sp.Add(new ClsParameter("ParameterValue", ParameterValue));
+            Connection_SqlServer Cn = (Connection_SqlServer)Connection;
+            List<QueryParameter> Sp = new List<QueryParameter>();
+            Sp.Add(new QueryParameter("ParameterName", ParameterName));
+            Sp.Add(new QueryParameter("ParameterValue", ParameterValue));
             Cn.ExecuteNonQuery("usp_DataObjects_Parameter_Set", Sp);
         }
 
@@ -1023,6 +1036,11 @@ namespace DataObjects_Framework.DataAccess
             { this.mConnection.Close(); }
         }
 
-        #endregion        
+        public void InvokeError()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

@@ -13,8 +13,9 @@ using DataObjects_Framework.Objects;
 
 namespace DataObjects_Framework.PreparedQueryObjects
 {
-    //Continue Here
-
+    /// <summary>
+    /// Wcf implementation of PreparedQuery
+    /// </summary>
     public class PreparedQuery_Wcf : PreparedQuery
     {
         #region _Variables
@@ -29,14 +30,14 @@ namespace DataObjects_Framework.PreparedQueryObjects
         { 
             this.mCn = Cn;
             this.mQuery = Query;
-            this.mParameters = Parameters;
+            this.mParameters = Parameters ?? new List<QueryParameter>();
         }
 
         public PreparedQuery_Wcf(String Query = "", List<QueryParameter> Parameters = null)
         { 
             this.mCn = Do_Methods.CreateDataAccess().CreateConnection();
             this.mQuery = Query;
-            this.mParameters = Parameters;
+            this.mParameters = Parameters ?? new List<QueryParameter>();
         }
 
         #endregion

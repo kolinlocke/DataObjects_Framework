@@ -523,7 +523,7 @@ namespace DataObjects_Framework.BaseObjects
 				}
 
 				Da.SaveDataRow(
-					this.mHeader_Dr
+                    this.mHeader_Dr
 					, this.mHeader_TableName
 					, ""
 					, false
@@ -544,6 +544,8 @@ namespace DataObjects_Framework.BaseObjects
 					foreach (BaseRowDetail Inner_Obj in this.mBase_RowDetail)
 					{ Inner_Obj.Save(Da); }
 				}
+
+                //[-]
 
 				if (this.mBase_ListDetail != null)
 				{

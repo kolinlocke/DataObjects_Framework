@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="DataObjects_Framework.BaseObjects.Base" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIAIwsAECIkAoJAiQAAMAMIAAEEAMIAAAABAEAAADEI=</HashCode>
+      <FileName>BaseObjects\Base.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="mBase_ListDetail" />
+      <Field Name="mBase_RowDetail" />
+      <Field Name="mBase_TableDetail" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DataObjects_Framework.BaseObjects.Base_List" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="DataObjects_Framework.BaseObjects.Base_List.Str_Desc" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>BaseObjects\Base_List.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgIAIiAAEAKUCAgBAAAAABACAAoAAAAAAAAAABEI=</HashCode>
+      <FileName>BaseObjects\Base_List.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="mBase_ListObject" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DataObjects_Framework.BaseObjects.BaseRowDetail" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAgMAgAAAAAAAAQAAIAIEAAAAAAQAAAgAAAAAAAEA=</HashCode>
+      <FileName>BaseObjects\BaseRowDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataObjects_Framework.BaseObjects.BaseTableDetail" Collapsed="true">
+    <Position X="8.25" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAgMAgAAAAAAAAQAAIAIEAAAAAAQAAAgAAAAAAAEA=</HashCode>
+      <FileName>BaseObjects\BaseTableDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataObjects_Framework.BaseObjects.BaseListDetail" Collapsed="true">
+    <Position X="8.25" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAgIAAAEAAAAAAAAAAAAAAAAAAAAAAAgoQAAAAAAA=</HashCode>
+      <FileName>BaseObjects\BaseListDetail.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="pObj_List" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataObjects_Framework.BaseObjects.BaseListObject" Collapsed="true">
+    <Position X="8.25" Y="2.75" Width="2.25" />
+    <Members>
+      <Field Name="mObj_Base" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="DataObjects_Framework.BaseObjects.BaseListObject.Str_Obj" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>BaseObjects\BaseListObject.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAABgIAICEAAAAAQAQAIAAEAAhAAAAAQQggAAAgAAAA=</HashCode>
+      <FileName>BaseObjects\BaseListObject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="mObj_Base" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

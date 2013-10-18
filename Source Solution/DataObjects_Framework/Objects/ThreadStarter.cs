@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace DataObjects_Framework.Objects
 {
-    public class ClsThreadStarter
+    public class ThreadStarter
     {
         #region _Events
 

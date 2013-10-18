@@ -1,0 +1,13 @@
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\obj\x86\Debug\Test.csprojResolveAssemblyReference.cache
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\obj\x86\Debug\Test.Properties.Resources.resources
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\obj\x86\Debug\Test.csproj.GenerateResource.Cache
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\Test.exe.config
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\Test.exe
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\Test.pdb
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\DataObjects_Framework.dll
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\Newtonsoft.Json.dll
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\DataObjects_Framework.pdb
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\DataObjects_Framework.xml
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\bin\Debug\Newtonsoft.Json.xml
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\obj\x86\Debug\Test.exe
+D:\Ex\Ex Projects\DataObjects_Framework\Source Solution\Test\obj\x86\Debug\Test.pdb

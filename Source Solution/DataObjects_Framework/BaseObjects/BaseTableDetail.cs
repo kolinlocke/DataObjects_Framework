@@ -14,50 +14,50 @@ using DataObjects_Framework.BaseObjects;
 
 namespace DataObjects_Framework.BaseObjects
 {
-	/// <summary>
-	/// Internal, manages the defined table detail
-	/// </summary>
-	internal class BaseTableDetail
-	{
-		#region _Variables
+    /// <summary>
+    /// Internal, manages the defined table detail
+    /// </summary>
+    internal class BaseTableDetail
+    {
+        #region _Variables
 
-		string mHeaderName;
-		string mTableName;
-		string mViewName;
-		List<string> mList_Key = new List<string>();
+        string mHeaderName;
+        string mTableName;
+        string mViewName;
+        List<string> mList_Key = new List<string>();
         List<Do_Constants.Str_ForeignKeyRelation> mList_ForeignKey = new List<Do_Constants.Str_ForeignKeyRelation>();
-		Base mObj_Base;
+        Base mObj_Base;
         bool mIsCustomKeys = false;
 
-		string mOtherLoadCondition;
-		DataTable mDt;
+        string mOtherLoadCondition;
+        DataTable mDt;
 
-		Interface_DataAccess mDa;
+        Interface_DataAccess mDa;
 
-		#endregion
+        #endregion
 
-		#region _Constructor
+        #region _Constructor
 
-		private BaseTableDetail() { }
+        private BaseTableDetail() { }
 
-		/// <summary>
-		/// Constructor for this class
-		/// </summary>
-		/// <param name="Obj_Base">
-		/// Parent Object Base
-		/// </param>
-		/// <param name="HeaderName">
-		/// Parent Table Name, (apparently not used at all)
-		/// </param>
-		/// <param name="TableName">
-		/// Table Detail Table Name
-		/// </param>
-		/// <param name="ViewName">
-		/// Table Detail View Name
-		/// </param>
-		/// <param name="OtherLoadCondition">
-		/// Additional conditions for fetching
-		/// </param>
+        /// <summary>
+        /// Constructor for this class
+        /// </summary>
+        /// <param name="Obj_Base">
+        /// Parent Object Base
+        /// </param>
+        /// <param name="HeaderName">
+        /// Parent Table Name, (apparently not used at all)
+        /// </param>
+        /// <param name="TableName">
+        /// Table Detail Table Name
+        /// </param>
+        /// <param name="ViewName">
+        /// Table Detail View Name
+        /// </param>
+        /// <param name="OtherLoadCondition">
+        /// Additional conditions for fetching
+        /// </param>
         /// <param name="CustomKeys">
         /// Custom Key definition
         /// </param>
@@ -95,44 +95,36 @@ namespace DataObjects_Framework.BaseObjects
             { this.mList_Key = CustomKeys; }
         }
 
-		#endregion
+        #endregion
 
-		#region _Methods
+        #region _Methods
 
-		/// <summary>
-		/// Loads the table detail data
-		/// </summary>
-		/// <param name="Da">
-		/// An open DataAccess object from calling method
-		/// </param>
-		/// <param name="Keys">
-		/// Key Object to use
-		/// </param>
+        /// <summary>
+        /// Loads the table detail data
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess object from calling method
+        /// </param>
+        /// <param name="Keys">
+        /// Key Object to use
+        /// </param>
         public void Load(Interface_DataAccess Da, Keys Keys)
         { this.mDt = Da.Load_TableDetails(this.mViewName, Keys, this.mOtherLoadCondition, this.mList_ForeignKey); }
 
         /// <summary>
-		/// Saves the changes to the detail table
-		/// </summary>
-		/// <param name="Da">
-		/// An open DataAccess from calling method
-		/// </param>
-		public void Save(Interface_DataAccess Da)
-		{
-			DataRow[] ArrDr = this.mDt.Select("", "", DataViewRowState.CurrentRows);
-			foreach (DataRow Dr in ArrDr)
-			{
-				if (Dr.RowState == DataRowState.Added || Dr.RowState == DataRowState.Modified)
-				{
-                    /*
-					foreach (string Header_Key in this.mObj_Base.pHeader_Key)
-					{
-                        Int64 Inner_ID = Do_Methods.Convert_Int64(this.mObj_Base.pDr[Header_Key]);
-						Dr[Header_Key] = Inner_ID;
-					}
-                    */
-
-                    if (!this.mIsCustomKeys) 
+        /// Saves the changes to the detail table
+        /// </summary>
+        /// <param name="Da">
+        /// An open DataAccess from calling method
+        /// </param>
+        public void Save(Interface_DataAccess Da)
+        {
+            DataRow[] ArrDr = this.mDt.Select("", "", DataViewRowState.CurrentRows);
+            foreach (DataRow Dr in ArrDr)
+            {
+                if (Dr.RowState == DataRowState.Added || Dr.RowState == DataRowState.Modified)
+                {
+                    if (!this.mIsCustomKeys)
                     {
                         foreach (string Header_Key in this.mObj_Base.pHeader_Key)
                         {
@@ -140,7 +132,7 @@ namespace DataObjects_Framework.BaseObjects
                             Dr[Header_Key] = Inner_ID;
                         }
                     }
-                    else 
+                    else
                     {
                         foreach (Do_Constants.Str_ForeignKeyRelation Inner_Keys in this.mList_ForeignKey)
                         {
@@ -148,56 +140,56 @@ namespace DataObjects_Framework.BaseObjects
                             Dr[Inner_Keys.Child_Key] = Inner_ID;
                         }
                     }
-                    
+
                     Da.SaveDataRow(Dr, this.mTableName, "", false, this.mIsCustomKeys ? this.mList_Key : null);
-				}
-			}
+                }
+            }
 
-			ArrDr = this.mDt.Select("", "", DataViewRowState.Deleted);
-			foreach (DataRow Dr in ArrDr)
-			{
-				DataRow Nr = Dr.Table.NewRow();
-				foreach (DataColumn Dc in Dr.Table.Columns)
-				{
-					Nr[Dc.ColumnName] = Dr[Dc.ColumnName, DataRowVersion.Original];
-				}
+            ArrDr = this.mDt.Select("", "", DataViewRowState.Deleted);
+            foreach (DataRow Dr in ArrDr)
+            {
+                DataRow Nr = Dr.Table.NewRow();
+                foreach (DataColumn Dc in Dr.Table.Columns)
+                {
+                    Nr[Dc.ColumnName] = Dr[Dc.ColumnName, DataRowVersion.Original];
+                }
 
-				bool IsPKComplete = true;
-				foreach (string Key in this.mList_Key)
-				{
-					if (Information.IsDBNull(Dr[Key]))
-					{
-						IsPKComplete = false;
-						break;
-					}
-				}
+                bool IsPKComplete = true;
+                foreach (string Key in this.mList_Key)
+                {
+                    if (Information.IsDBNull(Dr[Key]))
+                    {
+                        IsPKComplete = false;
+                        break;
+                    }
+                }
 
                 if (IsPKComplete)
                 { Da.SaveDataRow(Dr, this.mTableName, "", true, this.mIsCustomKeys ? this.mList_Key : null); }
-			}
-		}
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region _Properties
+        #region _Properties
 
-		/// <summary>
-		/// Gets the defined table name for this detail table
-		/// </summary>
-		public string pTableName
-		{
+        /// <summary>
+        /// Gets the defined table name for this detail table
+        /// </summary>
+        public string pTableName
+        {
             get { return this.mTableName; }
-		}
+        }
 
-		/// <summary>
-		/// Get/Set Property, gets or sets the datatable object for this detail table
-		/// </summary>
-		public DataTable pDt
-		{
+        /// <summary>
+        /// Get/Set Property, gets or sets the datatable object for this detail table
+        /// </summary>
+        public DataTable pDt
+        {
             get { return this.mDt; }
             set { this.mDt = value; }
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

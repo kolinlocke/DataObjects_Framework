@@ -9,14 +9,14 @@ using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
 namespace DataObjects_Framework.Objects
 {
     /// <summary>
     /// Object storage for list of ClsBase objects
     /// </summary>
-    public class ClsBaseObjs
+    public class BaseObjs
     {
         #region _Variables
 
@@ -33,14 +33,14 @@ namespace DataObjects_Framework.Objects
             /// <summary>
             /// The ClsBase object
             /// </summary>
-            public ClsBase Obj;
+            public Base Obj;
 
             /// <summary>
             /// Constructor for Str_Obj
             /// </summary>
             /// <param name="pName"></param>
             /// <param name="pObj"></param>
-            public Str_Obj(string pName, ClsBase pObj)
+            public Str_Obj(string pName, Base pObj)
             {
                 this.Name = pName;
                 this.Obj = pObj;
@@ -62,7 +62,7 @@ namespace DataObjects_Framework.Objects
         /// <param name="Obj">
         /// The ClsBase object to be added
         /// </param>
-        public void Add(string Name, ClsBase Obj)
+        public void Add(string Name, Base Obj)
         { this.mList_Obj.Add(new Str_Obj(Name, Obj)); }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace DataObjects_Framework.Objects
         /// The name of the object to retrieve
         /// </param>
         /// <returns></returns>
-        public ClsBase this[string Name]
+        public Base this[string Name]
         {
             get
             {

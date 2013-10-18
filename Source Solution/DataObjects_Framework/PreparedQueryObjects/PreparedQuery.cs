@@ -14,7 +14,7 @@ using DataObjects_Framework.Objects;
 namespace DataObjects_Framework.PreparedQueryObjects
 {
     /// <summary>
-    /// Abstract class ClsPreparedQuery
+    /// Abstract class PreparedQuery
     /// Wrapper for using prepared statements
     /// </summary>
     public abstract class PreparedQuery
@@ -30,6 +30,8 @@ namespace DataObjects_Framework.PreparedQueryObjects
         #endregion
 
         #region _Constructors
+
+        internal PreparedQuery() { }
 
         public PreparedQuery(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null)
         { this.Setup(Cn, Query, Parameters); }
@@ -61,7 +63,7 @@ namespace DataObjects_Framework.PreparedQueryObjects
         #region _Methods
 
         public void Add_Parameter(QueryParameter Parameter)
-        { 
+        {
             DbParameter Dbp = this.ConvertParameter(Parameter);
             if (Dbp != null) { this.mCmd.Parameters.Add(Dbp); }
 
@@ -74,21 +76,21 @@ namespace DataObjects_Framework.PreparedQueryObjects
             { this.Add_Parameter(Inner_Parameter); }
         }
 
-		public void Add_Parameter(String Name, Do_Constants.eParameterType Type, Object Value = null, Int32 Size = 0, Byte Scale = 0, Byte Precision = 0)
-		{
-			QueryParameter Parameter =
-				new QueryParameter()
-				{
-					Name = Name,
-					Value = Value,
-					Type = Type,
-					Size = Size,
-					Scale = Scale,
-					Precision = Precision
-				};
+        public void Add_Parameter(String Name, Do_Constants.eParameterType Type, Object Value = null, Int32 Size = 0, Byte Scale = 0, Byte Precision = 0)
+        {
+            QueryParameter Parameter =
+                new QueryParameter()
+                {
+                    Name = Name,
+                    Value = Value,
+                    Type = Type,
+                    Size = Size,
+                    Scale = Scale,
+                    Precision = Precision
+                };
 
-			this.Add_Parameter(Parameter);
-		}
+            this.Add_Parameter(Parameter);
+        }
 
         public void UpdateParameterValue()
         {
@@ -133,7 +135,7 @@ namespace DataObjects_Framework.PreparedQueryObjects
             { return DBNull.Value; }
 
             switch (Type)
-            { 
+            {
                 case Do_Constants.eParameterType.Binary:
                     Input = Do_Methods.Convert_Byte(Input);
                     break;
@@ -161,7 +163,7 @@ namespace DataObjects_Framework.PreparedQueryObjects
 
             return Input;
         }
-        
+
         public virtual DataSet ExecuteQuery()
         {
             this.CheckParameterValues();
@@ -196,13 +198,13 @@ namespace DataObjects_Framework.PreparedQueryObjects
 
         public String pQuery
         {
-            get 
+            get
             { return this.mQuery; }
-            set 
+            set
             {
                 this.mQuery = value;
                 if (this.mCmd != null)
-                { this.mCmd.CommandText = this.mQuery; }                
+                { this.mCmd.CommandText = this.mQuery; }
             }
         }
 

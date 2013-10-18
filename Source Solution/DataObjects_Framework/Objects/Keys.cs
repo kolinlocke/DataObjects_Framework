@@ -8,20 +8,22 @@ using DataObjects_Framework;
 using DataObjects_Framework.Common;
 using DataObjects_Framework.Connection;
 using DataObjects_Framework.Objects;
-using DataObjects_Framework.Base;
+using DataObjects_Framework.BaseObjects;
 
 namespace DataObjects_Framework.Objects
 {
     /// <summary>
     /// Used for loading Data Objects
     /// </summary>
-    public class ClsKeys
+    [Serializable()]
+    public class Keys
     {
         #region _Variables
 
         /// <summary>
         /// Struct Str_Keys
         /// </summary>
+        [Serializable()]
         public struct Str_Keys
         {
             /// <summary>

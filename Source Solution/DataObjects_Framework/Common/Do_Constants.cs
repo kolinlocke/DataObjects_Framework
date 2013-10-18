@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using DataObjects_Framework;
 using DataObjects_Framework.Objects;
+using System.Runtime.Serialization;
 
 namespace DataObjects_Framework.Common
 {
@@ -24,7 +25,7 @@ namespace DataObjects_Framework.Common
             public Byte Scale;
             public Byte Precision;
             public eParameterType Type;
-            
+
             /// <summary>
             /// Constructor for Str_Parameters
             /// </summary>
@@ -64,6 +65,7 @@ namespace DataObjects_Framework.Common
         /// <summary>
         /// Provides structure for custom Foreign Key definitions
         /// </summary>
+        [Serializable()]
         public struct Str_ForeignKeyRelation
         {
             /// <summary>
@@ -88,25 +90,33 @@ namespace DataObjects_Framework.Common
             }
         }
 
-		/// <summary>
-		/// Data Access Type settings enum for DataObjects_Framework
-		/// </summary>
-        public enum eDataAccessType : long
-        { 
-			/// <summary>
-			/// connect to a SQL Server with the provided connection string in the Do_Globals.gSettings.pConnectionString
-			/// </summary>
-            DataAccess_SqlServer = 0, 
+        [Serializable()]
+        public struct Str_QuerySource
+        {
+            public String ObjectName;
+            public String Fields;
+            public String Condition;
+        }
 
-			/// <summary>
-			/// connect to a WCF Server with the provided server address in the Do_Globals.gSettings.pWcfAddress
-			/// </summary>
-			DataAccess_WCF = 1
+        /// <summary>
+        /// Data Access Type settings enum for DataObjects_Framework
+        /// </summary>
+        public enum eDataAccessType : long
+        {
+            /// <summary>
+            /// connect to a SQL Server with the provided connection string in the Do_Globals.gSettings.pConnectionString
+            /// </summary>
+            DataAccess_SqlServer = 0,
+
+            /// <summary>
+            /// connect to a WCF Server with the provided server address in the Do_Globals.gSettings.pWcfAddress
+            /// </summary>
+            DataAccess_WCF = 1
         }
 
         [Serializable()]
         public enum eParameterType : long
-        { 
+        {
             None,
             VarChar,
             Numeric,
@@ -123,7 +133,7 @@ namespace DataObjects_Framework.Common
         {
             public String ObjectName;
             public String Fields;
-            public ClsQueryCondition Condition;
+            public QueryCondition Condition;
             public String Condition_String;
             public String Sort;
             public Int64 Top;
@@ -135,8 +145,8 @@ namespace DataObjects_Framework.Common
         public struct Str_Request_Load
         {
             public String ObjectName;
-            public List<string> ObjectKeys;
-            public ClsKeys Key;
+            public List<String> ObjectKeys;
+            public Keys Key;
             public String Condition;
             public List<Do_Constants.Str_ForeignKeyRelation> ForeignKeys;
             public String ConnectionString;
@@ -153,12 +163,22 @@ namespace DataObjects_Framework.Common
             public String ConnectionString;
         }
 
+        //[Serializable()]
+        //public struct Str_Request_BuildQuerySource
+        //{
+        //    public String ObjectName;
+        //    public String Fields;
+        //    public String Condition;
+        //    public String Sort;
+        //}
+
         [Serializable()]
         public struct Str_Request_GetQuery
         {
             public String ObjectName;
+            public Str_QuerySource ObjectQuerySource;
             public String Fields;
-            public ClsQueryCondition Condition;
+            public QueryCondition Condition;
             public String Condition_String;
             public String Sort;
             public Int64 Top;
@@ -171,7 +191,7 @@ namespace DataObjects_Framework.Common
         {
             public String Query;
             public String ProcedureName;
-            public List<ClsParameter> ProcedureParameters;
+            public List<QueryParameter> ProcedureParameters;
             public String ConnectionString;
         }
 
@@ -179,14 +199,14 @@ namespace DataObjects_Framework.Common
         public struct Str_Request_PreparedQuery_Prepare
         {
             public String Query;
-            public List<ClsParameter> Parameters;
+            public List<QueryParameter> Parameters;
             public String ConnectionString;
         }
 
         [Serializable()]
         public struct Str_Request_PreparedQuery_Parameters
         {
-            public List<ClsParameter> Parameters;
+            public List<QueryParameter> Parameters;
         }
 
         [Serializable()]
@@ -197,10 +217,17 @@ namespace DataObjects_Framework.Common
             public String ConnectionString;
         }
 
-		[Serializable()]
-		public struct Str_Request_Session
-		{
-			public String SessionID;
-		}
+        [Serializable()]
+        public struct Str_Request_Session
+        {
+            public String SessionID;
+        }
+
+        [Serializable()]
+        public struct Str_Response_Save
+        {
+            public SimpleDataRow Sdr;
+            public Boolean SaveResult;
+        }
     }
 }
