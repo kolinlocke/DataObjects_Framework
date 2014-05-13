@@ -2,14 +2,14 @@
 <publishData>
   <publishProfile publishUrl="D:\Websites\DataObjects_Wcf" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="localhost/DataObjects" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="False" userName="Janerad" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAKW5Dx3XiCEKDVif8RssC3gAAAAACAAAAAAADZgAAwAAAABAAAABVkkpmVve8OitfOtONOyGRAAAAAASAAACgAAAAEAAAAOZooG44nKiJX05kiVy5mVgoAAAAJ8Wyshk0336548BND2OZ1VJVdqF8pOIBQnn9Uhy/MON2AP19TT5G7hQAAAALMpJn176+s0b2nkV5Ux/DhNhggg==" SelectedForPublish="True">
     <file relUrl="bin/Newtonsoft.Json.dll" publishTime="09/13/2012 06:11:56" />
-    <file relUrl="bin/DataObjects_Wcf.pdb" publishTime="04/26/2013 16:04:34" />
-    <file relUrl="bin/DataObjects_Wcf.dll" publishTime="04/26/2013 16:04:34" />
-    <file relUrl="bin/DataObjects_Framework.xml" publishTime="04/26/2013 16:04:34" />
-    <file relUrl="bin/DataObjects_Framework.dll" publishTime="04/26/2013 16:04:34" />
+    <file relUrl="bin/DataObjects_Wcf.pdb" publishTime="09/27/2013 12:27:35" />
+    <file relUrl="bin/DataObjects_Wcf.dll" publishTime="09/27/2013 12:27:35" />
+    <file relUrl="bin/DataObjects_Framework.xml" publishTime="09/27/2013 12:18:55" />
+    <file relUrl="bin/DataObjects_Framework.dll" publishTime="09/27/2013 12:18:55" />
     <file relUrl="WcfService.svc" publishTime="09/13/2012 06:11:56" />
-    <file relUrl="Web.config" publishTime="04/26/2013 16:04:52" />
+    <file relUrl="Web.config" publishTime="09/27/2013 12:27:36" />
     <file relUrl="bin/Newtonsoft.Json.xml" publishTime="09/13/2012 06:11:56" />
     <file relUrl="App.config" publishTime="02/26/2013 20:20:01" />
-    <file relUrl="bin/DataObjects_Framework.pdb" publishTime="04/26/2013 16:04:34" />
+    <file relUrl="bin/DataObjects_Framework.pdb" publishTime="09/27/2013 12:18:55" />
   </publishProfile>
 </publishData>

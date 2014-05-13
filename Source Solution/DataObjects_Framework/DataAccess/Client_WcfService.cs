@@ -24,6 +24,9 @@ namespace DataObjects_Framework.DataAccess
             Binding.OpenTimeout = ConnectionTimeout;
             Binding.CloseTimeout = ConnectionTimeout;
 
+            Binding.Security.Mode = BasicHttpSecurityMode.Transport;
+            Binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+
             EndpointAddress Address = new EndpointAddress(Do_Globals.gSettings.pWcfAddress);
 
             this.mChannel = new ChannelFactory<Interface_WcfService>(Binding, Address).CreateChannel();

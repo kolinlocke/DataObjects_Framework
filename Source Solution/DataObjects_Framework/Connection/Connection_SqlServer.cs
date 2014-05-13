@@ -16,7 +16,7 @@ namespace DataObjects_Framework.Connection
     /// <summary>
     /// The SQL Server implementation of Interface_Connection
     /// </summary>
-    public class Connection_SqlServer: Interface_Connection
+    public class Connection_SqlServer : Interface_Connection
     {
         #region _Variables
 
@@ -27,8 +27,9 @@ namespace DataObjects_Framework.Connection
         enum eProcess : long
         {
             Process_Insert = 0
-            , Process_Update = 1
-            , Process_Delete = 2
+            ,
+            Process_Update = 1
+                , Process_Delete = 2
         }
 
         #endregion
@@ -57,7 +58,7 @@ namespace DataObjects_Framework.Connection
         /// <summary>
         /// Closes the current connection and disposes the transaction object if it exists.
         /// </summary>
-        public void Close() 
+        public void Close()
         {
             try
             {
@@ -68,7 +69,7 @@ namespace DataObjects_Framework.Connection
             { throw ex; }
             finally
             {
-                if (!Information.IsNothing(this.mTransaction)) 
+                if (!Information.IsNothing(this.mTransaction))
                 {
                     this.mTransaction.Dispose();
                     this.mTransaction = null;
@@ -144,7 +145,7 @@ namespace DataObjects_Framework.Connection
             SqlCommand Cmd = new SqlCommand();
             int ReturnValue = 0;
             try
-            {                    
+            {
                 Cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 Cmd.CommandText = ProcedureName;
                 Cmd.CommandTimeout = CnsQueryTimeout;
@@ -189,7 +190,7 @@ namespace DataObjects_Framework.Connection
 
             //[-]
 
-            SqlCommand Cmd = new SqlCommand(Query,this.mConnection);
+            SqlCommand Cmd = new SqlCommand(Query, this.mConnection);
             int ReturnValue = 0;
             try
             {
@@ -314,7 +315,7 @@ namespace DataObjects_Framework.Connection
                 if (!IsConnection)
                 { this.Close(); }
             }
-                
+
             return Ds;
         }
 
@@ -408,7 +409,7 @@ namespace DataObjects_Framework.Connection
         #endregion
 
         #region _Save
-            
+
         /// <summary>
         /// Saves the datarow to the target table in the current connection.
         /// </summary>
@@ -497,7 +498,7 @@ namespace DataObjects_Framework.Connection
 
                 if (Inner_IsFound) { Dt_TableDef.Columns.Add((string)Do_Methods.IsNull(Inner_Dr["ColumnName"], ""), Inner_Type); }
             }
-                
+
             if (CustomKeys != null)
             {
                 foreach (DataRow Inner_Dr in Dt_Def.Rows)
@@ -535,7 +536,7 @@ namespace DataObjects_Framework.Connection
                     }
                 }
             }
-                                
+
             //Check Process
             if (PKsFoundCt != PKsCt)
             {
@@ -581,7 +582,7 @@ namespace DataObjects_Framework.Connection
                 //Check if Row to be updated has rows to be updated
                 //If none the return the function true
                 DataRow[] Inner_ArrDr = Dt_Def.Select(@"IsPk = 0 And IsIdentity = 0");
-                if (Inner_ArrDr.Length == 0) 
+                if (Inner_ArrDr.Length == 0)
                 { return true; }
 
                 cProcess = eProcess.Process_Update;
@@ -599,7 +600,7 @@ namespace DataObjects_Framework.Connection
                 else
                 { return true; }
             }
-                
+
             //Prepare SQL Statement
             PreparedQuery Pq = new DataAccess_SqlServer().CreatePreparedQuery();
 
@@ -723,10 +724,10 @@ namespace DataObjects_Framework.Connection
                         //Inner_Sp.Precision = (byte)Inner_Dr["Precision"];
                         //Inner_Sp.Scale = (byte)Inner_Dr["Scale"];
                         //Pq.pParameters.Add(Inner_Sp);
-                        
+
                         Pq.Add_Parameter(new QueryParameter()
                         {
-                            Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ","_") ,
+                            Name = Do_Methods.Convert_String(Inner_Dr["ColumnName"]).Replace(" ", "_"),
                             Type = this.ParameterTypeLib(Do_Methods.Convert_String(Inner_Dr["DataType"])),
                             Size = Do_Methods.Convert_Int32(Inner_Dr["Length"]),
                             Precision = Do_Methods.Convert_Byte(Inner_Dr["Precision"]),
@@ -808,7 +809,7 @@ namespace DataObjects_Framework.Connection
             }
             return true;
         }
-            
+
         #endregion
 
         #region _Libs
@@ -842,7 +843,7 @@ namespace DataObjects_Framework.Connection
                 {
                     if (InputObj != DBNull.Value) return (bool)InputObj;
                     else return DBNull.Value;
-                }                       
+                }
                 if (
                     (DataType == SqlDbType.Char.ToString().ToLower())
                     || (DataType == SqlDbType.NChar.ToString().ToLower())
@@ -896,7 +897,7 @@ namespace DataObjects_Framework.Connection
                 {
                     if (InputObj != DBNull.Value) return Convert.ToSingle(InputObj);
                     else return DBNull.Value;
-                }                        
+                }
                 if (DataType == SqlDbType.SmallInt.ToString().ToLower())
                 {
                     if (InputObj != DBNull.Value) return Convert.ToInt16(InputObj);
@@ -928,7 +929,7 @@ namespace DataObjects_Framework.Connection
             Do_Constants.eParameterType Rv = Do_Constants.eParameterType.None;
             SqlDbType SqlDataType = this.SqlDataTypeLib(DataType);
             switch (SqlDataType)
-            { 
+            {
                 case SqlDbType.BigInt:
                     Rv = Do_Constants.eParameterType.Long;
                     break;
@@ -977,24 +978,24 @@ namespace DataObjects_Framework.Connection
 
         #region _InterfaceImplementations
 
-		/// <summary>
-		/// Gets the current connection object
-		/// </summary>
-		public DbConnection pConnection
-		{
-			get { return this.mConnection; }
-		}
+        /// <summary>
+        /// Gets the current connection object
+        /// </summary>
+        public DbConnection pConnection
+        {
+            get { return this.mConnection; }
+        }
 
-		/// <summary>
-		/// Gets the current transaction object
-		/// </summary>
-		public DbTransaction pTransaction
-		{
-			get { return this.mTransaction; }
-		}
+        /// <summary>
+        /// Gets the current transaction object
+        /// </summary>
+        public DbTransaction pTransaction
+        {
+            get { return this.mTransaction; }
+        }
 
-		public DbCommand CreateCommand()
-		{ return new SqlCommand(); }
+        public DbCommand CreateCommand()
+        { return new SqlCommand(); }
 
         public DbParameter CreateParameter()
         { return new SqlParameter(); }
@@ -1007,7 +1008,6 @@ namespace DataObjects_Framework.Connection
         public void Dispose()
         { this.Close(); }
 
-		#endregion
-
+        #endregion
     }
 }

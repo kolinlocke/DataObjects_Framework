@@ -132,11 +132,7 @@ namespace DataObjects_Framework.Common
         /// <returns>
         /// Returns a 2 dimensional array of objects
         /// </returns>
-        public static object[,] ConvertDataTo2DimArray(
-            DataTable Dt
-            , string[] Fields
-            , Int32 RowStart = -1
-            , Int32 RowEnd = -1)
+        public static object[,] ConvertDataTo2DimArray(DataTable Dt, string[] Fields, Int32 RowStart = -1, Int32 RowEnd = -1)
         {
             if (Dt.Rows.Count == 0)
             { return null; }
@@ -521,18 +517,22 @@ namespace DataObjects_Framework.Common
         {
             dynamic Dynamic_DefaultValue;
 
-            if (
-                (typeof(T) == typeof(Int16) || typeof(T) == typeof(Int16?))
-                || (typeof(T) == typeof(Int32) || typeof(T) == typeof(Int32?))
-                || (typeof(T) == typeof(Int64) || typeof(T) == typeof(Int64?))
-                || (typeof(T) == typeof(Decimal) || typeof(T) == typeof(Decimal?))
-                || (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
-                || (typeof(T) == typeof(Double) || typeof(T) == typeof(Double?))
-                || (typeof(T) == typeof(Byte) || typeof(T) == typeof(Byte?))
-                )
-            { Dynamic_DefaultValue = 0; }
+            if (typeof(T) == typeof(Int16) || typeof(T) == typeof(Int16?))
+            { Dynamic_DefaultValue = Convert.ToInt16(0); }
+            else if (typeof(T) == typeof(Int32) || typeof(T) == typeof(Int32?))
+            { Dynamic_DefaultValue = Convert.ToInt32(0); }
+            else if (typeof(T) == typeof(Int64) || typeof(T) == typeof(Int64?))
+            { Dynamic_DefaultValue = Convert.ToInt64(0); }
+            else if (typeof(T) == typeof(Decimal) || typeof(T) == typeof(Decimal?))
+            { Dynamic_DefaultValue = Convert.ToDecimal(0); }
+            else if (typeof(T) == typeof(Single) || typeof(T) == typeof(Single?))
+            { Dynamic_DefaultValue = Convert.ToSingle(0); }
+            else if (typeof(T) == typeof(Double) || typeof(T) == typeof(Double?))
+            { Dynamic_DefaultValue = Convert.ToDouble(0); }
+            else if (typeof(T) == typeof(Byte) || typeof(T) == typeof(Byte?))
+            { Dynamic_DefaultValue = Convert.ToByte(0); }
             else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
-            { Dynamic_DefaultValue = 0; }
+            { Dynamic_DefaultValue = DateTime.MinValue; }
             else if (typeof(T) == typeof(Boolean) || typeof(T) == typeof(Boolean?))
             { Dynamic_DefaultValue = false; }
             else if (typeof(T) == typeof(String))
@@ -830,27 +830,6 @@ namespace DataObjects_Framework.Common
             return Encoding.UTF8.GetString(md5Provider.ComputeHash(byteStr));
         }
 
-        public static DateTime GetServerDate(Connection_SqlServer Da)
-        {
-            DataTable Dt = Da.ExecuteQuery("Select GetDate() As ServerDate").Tables[0];
-            if (Dt.Rows.Count > 0) return (DateTime)Dt.Rows[0][0];
-            else return DateTime.Now;
-        }
-
-        public static DateTime GetServerDate()
-        {
-            Connection_SqlServer Da = new Connection_SqlServer();
-            try
-            {
-                Da.Connect();
-                return GetServerDate(Da);
-            }
-            catch (Exception ex)
-            { throw ex; }
-            finally
-            { Da.Close(); }
-        }
-
         public static Interface_DataAccess CreateDataAccess()
         {
             return new Base().pDa;
@@ -859,6 +838,21 @@ namespace DataObjects_Framework.Common
         public static Interface_Connection CreateConnection()
         {
             return CreateDataAccess().CreateConnection();
+        }
+
+        public static QueryCondition CreateQueryCondition()
+        {
+            return Do_Methods.CreateDataAccess().CreateQueryCondition();
+        }
+
+        public static PreparedQuery CreatePreparedQuery(Interface_Connection Cn, String Query = "", List<QueryParameter> Parameters = null)
+        {
+            return Do_Methods.CreateDataAccess().CreatePreparedQuery(Cn, Query, Parameters);
+        }
+
+        public static PreparedQuery CreatePreparedQuery(String Query = "", List<QueryParameter> Parameters = null)
+        {
+            return Do_Methods.CreateDataAccess().CreatePreparedQuery(Query, Parameters);
         }
 
         public static string SerializeObject_Json(Type TargetObjectType, Object TargetObject)
@@ -1080,6 +1074,27 @@ namespace DataObjects_Framework.Common
 
         //    //True means duplicates have been found
         //    return Rv;
+        //}
+
+        //public static DateTime GetServerDate(Connection_SqlServer Da)
+        //{
+        //    DataTable Dt = Da.ExecuteQuery("Select GetDate() As ServerDate").Tables[0];
+        //    if (Dt.Rows.Count > 0) return (DateTime)Dt.Rows[0][0];
+        //    else return DateTime.Now;
+        //}
+
+        //public static DateTime GetServerDate()
+        //{
+        //    Connection_SqlServer Da = new Connection_SqlServer();
+        //    try
+        //    {
+        //        Da.Connect();
+        //        return GetServerDate(Da);
+        //    }
+        //    catch (Exception ex)
+        //    { throw ex; }
+        //    finally
+        //    { Da.Close(); }
         //}
 
     }

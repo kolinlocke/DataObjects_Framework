@@ -24,7 +24,7 @@ namespace DataObjects_Framework.Objects
         /// Struct Query Condition
         /// </summary>
         [Serializable]
-        public struct Str_QueryCondition 
+        public struct Str_QueryCondition
         {
             /// <summary>
             /// The Name of the condition
@@ -116,18 +116,23 @@ namespace DataObjects_Framework.Objects
         {
             if (Operator.Trim() == "")
             {
-                if (DataType == "") DataType = typeof(string).ToString();
+                if (DataType == "")
+                { DataType = typeof(string).ToString(); }
 
                 if (DataType.ToUpper() == typeof(string).ToString().ToUpper() || DataType.ToUpper() == typeof(string).Name.ToUpper())
                 {
                     Operator = "Like";
                     Value = Value + @"%";
                 }
-                else Operator = "=";
+                else
+                { Operator = "="; }
             }
 
             if (DataType.ToUpper() == typeof(DateTime).ToString().ToUpper() || DataType.ToUpper() == typeof(DateTime).Name.ToUpper())
-            { if (!Information.IsDate(Value)) Value = DBNull.Value; }
+            {
+                if (!Information.IsDate(Value))
+                { Value = DBNull.Value; }
+            }
 
             bool IsFound = false;
             foreach (Str_QueryCondition Obj in this.mQc)
@@ -176,6 +181,28 @@ namespace DataObjects_Framework.Objects
         /// <param name="Name">
         /// Field Name on the data source
         /// </param>
+        /// <param name="Operator">
+        /// Operator to use (SQL valid operators)
+        /// </param>
+        /// <param name="Value">
+        /// The condition value
+        /// </param>
+        /// <param name="DataType">
+        /// Field Data Type
+        /// </param>
+        /// <param name="DefaultValue">
+        /// Default value to use with ISNULL function
+        /// </param>
+        /// <returns></returns>
+        public Str_QueryCondition Add(String Name, String Operator, Object Value, Type DataType = null, String DefaultValue = "")
+        { return this.Add(Name, Operator, Value, DataType ?? typeof(String), DefaultValue); }
+
+        /// <summary>
+        /// Add a condition
+        /// </summary>
+        /// <param name="Name">
+        /// Field Name on the data source
+        /// </param>
         /// <param name="Condition">
         /// The condition value
         /// </param>
@@ -188,7 +215,7 @@ namespace DataObjects_Framework.Objects
         /// <returns></returns>
         public Str_QueryCondition Add(string Name, string Condition, string DataType, string DefaultValue = "")
         {
-            string Condition_Operator ="";
+            string Condition_Operator = "";
             string Condition_Value = "";
 
             if (DataType.ToLower() == typeof(string).Name.ToLower())
@@ -231,6 +258,25 @@ namespace DataObjects_Framework.Objects
             }
             return this.Add(Name, Condition_Operator, Condition_Value, DataType, DefaultValue);
         }
+
+        /// <summary>
+        /// Add a condition
+        /// </summary>
+        /// <param name="Name">
+        /// Field Name on the data source
+        /// </param>
+        /// <param name="Condition">
+        /// The condition value
+        /// </param>
+        /// <param name="DataType">
+        /// Field Data Type
+        /// </param>
+        /// <param name="DefaultValue">
+        /// Default value to use with ISNULL function
+        /// </param>
+        /// <returns></returns>
+        public Str_QueryCondition Add(String Name, String Condition, Type DataType, String DefaultValue = "")
+        { return this.Add(Name, Condition, DataType.ToString(), DefaultValue); }
 
         /// <summary>
         /// Returns the number of conditions in this instance
@@ -296,9 +342,9 @@ namespace DataObjects_Framework.Objects
 
                 SqlParameter Sp = new SqlParameter();
                 Sp.ParameterName = "Condition_" + Name;
-                
+
                 if (
-                    DataType == typeof(string).Name.ToUpper() 
+                    DataType == typeof(string).Name.ToUpper()
                     || DataType == typeof(string).ToString().ToUpper()
                     )
                 {
@@ -306,18 +352,18 @@ namespace DataObjects_Framework.Objects
                     Sp.Size = 8000;
                 }
                 else if (
-                    DataType == typeof(Int16).Name.ToUpper() 
+                    DataType == typeof(Int16).Name.ToUpper()
                     || DataType == typeof(Int16).ToString().ToUpper()
                     )
-                { 
+                {
                     Int16 Out;
                     Int16.TryParse(Value.ToString(), out Out);
                     Value = Out;
 
-                    Sp.SqlDbType = SqlDbType.SmallInt; 
+                    Sp.SqlDbType = SqlDbType.SmallInt;
                 }
                 else if (
-                    DataType == typeof(Int32).Name.ToUpper() 
+                    DataType == typeof(Int32).Name.ToUpper()
                     || DataType == typeof(Int32).ToString().ToUpper()
                     )
                 {
@@ -325,10 +371,10 @@ namespace DataObjects_Framework.Objects
                     Int32.TryParse(Value.ToString(), out Out);
                     Value = Out;
 
-                    Sp.SqlDbType = SqlDbType.Int; 
+                    Sp.SqlDbType = SqlDbType.Int;
                 }
                 else if (
-                    DataType == typeof(Int64).Name.ToUpper() 
+                    DataType == typeof(Int64).Name.ToUpper()
                     || DataType == typeof(Int64).ToString().ToUpper()
                     )
                 {
@@ -336,12 +382,12 @@ namespace DataObjects_Framework.Objects
                     Int64.TryParse(Value.ToString(), out Out);
                     Value = Out;
 
-                    Sp.SqlDbType = SqlDbType.BigInt; 
+                    Sp.SqlDbType = SqlDbType.BigInt;
                 }
                 else if (
-                    DataType == typeof(decimal).Name.ToUpper() 
-                    || DataType == typeof(decimal).ToString().ToUpper() 
-                    || DataType == typeof(double).Name.ToUpper() 
+                    DataType == typeof(decimal).Name.ToUpper()
+                    || DataType == typeof(decimal).ToString().ToUpper()
+                    || DataType == typeof(double).Name.ToUpper()
                     || DataType == typeof(double).ToString().ToUpper()
                     )
                 {
@@ -354,7 +400,7 @@ namespace DataObjects_Framework.Objects
                     Sp.Scale = 4;
                 }
                 else if (
-                    DataType == typeof(bool).Name.ToUpper() 
+                    DataType == typeof(bool).Name.ToUpper()
                     || DataType == typeof(bool).ToString().ToUpper()
                     )
                 {
@@ -362,10 +408,10 @@ namespace DataObjects_Framework.Objects
                     Boolean.TryParse(Value.ToString(), out Out);
                     Value = Out;
 
-                    Sp.SqlDbType = SqlDbType.Bit; 
+                    Sp.SqlDbType = SqlDbType.Bit;
                 }
                 else if (
-                    DataType == typeof(DateTime).Name.ToUpper() 
+                    DataType == typeof(DateTime).Name.ToUpper()
                     || DataType == typeof(DateTime).ToString().ToUpper()
                     )
                 {
@@ -373,7 +419,7 @@ namespace DataObjects_Framework.Objects
                     DateTime.TryParse(Value.ToString(), out Out);
                     Value = Out;
 
-                    Sp.SqlDbType = SqlDbType.DateTime; 
+                    Sp.SqlDbType = SqlDbType.DateTime;
                 }
 
                 Sp.Value = Value;
@@ -383,6 +429,10 @@ namespace DataObjects_Framework.Objects
             return List_Sp.ToArray();
         }
 
+        /// <summary>
+        /// Get the list of QueryParameters associated in this QueryCondition
+        /// </summary>
+        /// <returns></returns>
         public List<QueryParameter> GetParameters()
         {
             List<QueryParameter> List_Sp = new List<QueryParameter>();
@@ -580,10 +630,10 @@ namespace DataObjects_Framework.Objects
                     Str_QueryCondition Inner_Obj = Obj;
                     Inner_Obj = Value;
                     return;
-                }                
+                }
             }
         }
-        
+
         /// <summary>
         /// Gets the condition object collection
         /// </summary>

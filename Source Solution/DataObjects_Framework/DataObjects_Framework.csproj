@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="BaseObjects\BaseListDetail.cs" />
     <Compile Include="BaseObjects\BaseListObject.cs" />
+    <Compile Include="Common\Do_Extensions.cs" />
     <Compile Include="Common\Do_Globals.cs" />
     <Compile Include="Common\Do_Constants.cs" />
     <Compile Include="Common\Do_Methods.cs" />
